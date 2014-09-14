@@ -74,7 +74,7 @@ public class Parser {
 				}
 
 				// Date and Place
-				if (line.contains(",")) {
+				if (line.contains(",") ) {
 					String[] datePlace = line.split(",");
 					String place = datePlace[0];
 					documentObj.setField(FieldNames.PLACE, place);
@@ -85,12 +85,16 @@ public class Parser {
 						documentObj.setField(FieldNames.NEWSDATE, newsDate);
 						modifiedArticle = modifiedArticle.replace("-", "")
 								.replace(newsDate, "").trim();
+						
+						// after removing all metadata, modifiedArticle holds the
+						// content.
+						documentObj.setField(FieldNames.CONTENT, modifiedArticle);
+						break;
 
 					}
 
-					// after removing all metadata, modifiedArticle holds the
-					// content.
-					documentObj.setField(FieldNames.CONTENT, modifiedArticle);
+					
+					
 
 				}
 
