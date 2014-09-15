@@ -4,6 +4,7 @@
 package edu.buffalo.cse.irf14;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.Date;
 
 import edu.buffalo.cse.irf14.document.Document;
@@ -28,8 +29,9 @@ public class Runner {
 	/**
 	 * @param args
 	 * @throws InterruptedException 
+	 * @throws IOException 
 	 */
-	public static void main(String[] args) throws InterruptedException {
+	public static void main(String[] args) throws InterruptedException, IOException {
 		
 		String ipDir = "C:\\Users\\Sathish\\Dropbox\\UB\\Fall\\535 - IR\\news_training\\training";
 		String indexDir = "";
@@ -46,7 +48,7 @@ public class Runner {
 		
 		Date startTime = new Date();
 		
-		System.out.print(startTime);
+		System.out.println(startTime);
 		
 		try {
 			for (String cat : catDirectories) {
@@ -59,6 +61,8 @@ public class Runner {
 				for (String f : files) {
 					try {
 						d = Parser.parse(dir.getAbsolutePath() + File.separator +f);
+						// Date fileTime = new Date();
+						// System.out.println(fileTime);
 						writer.addDocument(d);
 					} catch (ParserException e) {
 						// TODO Auto-generated catch block
@@ -71,7 +75,8 @@ public class Runner {
 			
 			writer.close();
 			Date endTime = new Date();
-			System.out.print(endTime);
+			System.out.println(endTime);
+			System.out.println("Terminated");
 			Thread.sleep(1000 * 60);          
 			
 		} catch (IndexerException e) {

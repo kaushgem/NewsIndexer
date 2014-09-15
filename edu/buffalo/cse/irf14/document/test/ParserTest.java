@@ -3,6 +3,7 @@ package edu.buffalo.cse.irf14.document.test;
 import static org.junit.Assert.*;
 
 import java.io.File;
+import java.io.IOException;
 
 import org.junit.Test;
 
@@ -39,7 +40,7 @@ public class ParserTest {
 	private Document d = null;
 	
 	@Test
-	public void testParseNullFile(){
+	public void testParseNullFile() throws IOException{
 		// Null file name (Test that the method will throw an exception)
 		try {
 			 d = Parser.parse(null);
@@ -50,7 +51,7 @@ public class ParserTest {
 	}
 	
 	@Test
-	public void testParseBlankFile(){
+	public void testParseBlankFile() throws IOException{
 		// Blank file name (Test that the method will throw an exception)
 		try {
 			 d = Parser.parse("");
@@ -61,7 +62,7 @@ public class ParserTest {
 	}
 	
 	@Test
-	public void testParseInvalidFile(){
+	public void testParseInvalidFile() throws IOException{
 		// Invalid file name (Test that the method will throw an exception)
 		try {
 			 d = Parser.parse("$%^thisFileNameWillNeverExist.txt");
@@ -72,7 +73,7 @@ public class ParserTest {
 	}
 	
 	@Test
-	public void testParseValidFileName() {		
+	public void testParseValidFileName() throws IOException {		
 		// Valid file name with document testing
 		try {
 			for(int i = 0; i < filenames.length; i++){

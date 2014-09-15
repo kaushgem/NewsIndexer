@@ -1,24 +1,43 @@
 package edu.buffalo.cse.util;
 
+import java.io.BufferedReader;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
 
 public class Utility {
-	
-	public static String readStream(InputStream is) {
-	    StringBuilder sb = new StringBuilder(512);
-	    try {
-	        Reader r = new InputStreamReader(is, "UTF-8");
-	        int c = 0;
-	        while ((c = r.read()) != -1) {
-	            sb.append((char) c);
-	        }
-	    } catch (IOException e) {
-	        throw new RuntimeException(e);
-	    }
-	    return sb.toString();
+	// reference:
+	// http://stackoverflow.com/questions/4716503/best-way-to-read-a-text-file
+	public static String readStream(String fileName) throws IOException {
+
+		BufferedReader br = null;
+		String everything = null;
+		try {
+			br = new BufferedReader(new FileReader(fileName));
+
+			StringBuilder sb = new StringBuilder();
+			String line;
+
+			line = br.readLine();
+
+			// TODO Auto-generated catch block
+
+			while (line != null) {
+				sb.append(line);
+				sb.append(System.lineSeparator());
+				line = br.readLine();
+			}
+			everything = sb.toString();
+		} catch (FileNotFoundException e) {
+		} catch (IOException e) {
+		} finally {
+			br.close();
+		}
+		return everything;
+
 	}
 
 }

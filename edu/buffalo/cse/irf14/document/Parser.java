@@ -6,6 +6,7 @@ package edu.buffalo.cse.irf14.document;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -24,21 +25,16 @@ public class Parser {
 	 * @return The parsed and fully loaded Document object
 	 * @throws ParserException
 	 *             In case any error occurs during parsing
+	 * @throws IOException 
 	 */
-	public static Document parse(String filepath) throws ParserException {
+	public static Document parse(String filepath) throws ParserException, IOException {
 		// TODO YOU MUST IMPLEMENT THIS
 
 		Document documentObj = new Document();
 
 		// file not found todo
-		InputStream inputStreamObj = null;
-		try {
-			inputStreamObj = new FileInputStream(filepath);
-		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		String article = Utility.readStream(inputStreamObj);
+		
+		String article = Utility.readStream(filepath);
 		File fileObj = new File(filepath);
 		String modifiedArticle = article.trim();
 		String[] lines = modifiedArticle.split("\\r?\\n");
@@ -60,6 +56,7 @@ public class Parser {
 		for (int i=1; i<lines.length; i++) {
 			
 			String line = lines[i];
+		
 			if (line != null
 					&& !line.replace("\n", "").replace("\r", "")
 							.replace(" ", "").replace("\t", "").isEmpty()) {
@@ -82,7 +79,7 @@ public class Parser {
 					String[] Authors = authorsAndOrg[0]
 							.trim().split("and");
 					
-					for (int j = 0; j < Authors.length; i++)
+					for (int j = 0; j < Authors.length; j++)
 						Authors[j] = Authors[j].trim();
 					
 					documentObj.setField(FieldNames.AUTHOR, Authors );
