@@ -5,7 +5,10 @@ package edu.buffalo.cse.irf14.document;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.InputStream;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import edu.buffalo.cse.util.*;
 
@@ -28,7 +31,13 @@ public class Parser {
 		Document documentObj = new Document();
 
 		// file not found todo
-		InputStream inputStreamObj = new FileInputStream(filepath);
+		InputStream inputStreamObj = null;
+		try {
+			inputStreamObj = new FileInputStream(filepath);
+		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		String article = Utility.readStream(inputStreamObj);
 		File fileObj = new File(filepath);
 		String modifiedArticle = article.trim();
@@ -48,11 +57,16 @@ public class Parser {
 																		// removed
 
 		//
-		for (String line : lines) {
-
+		for (int i=1; i<lines.length; i++) {
+			
+			String line = lines[i];
 			if (line != null
 					&& !line.replace("\n", "").replace("\r", "")
 							.replace(" ", "").replace("\t", "").isEmpty()) {
+				
+				
+				
+				
 				// Author
 				if (line.contains("<AUTHOR>")) {
 					// contains authors and organization
@@ -64,9 +78,15 @@ public class Parser {
 						documentObj.setField(FieldNames.AUTHORORG,
 								authorsAndOrg[1].trim());
 					}
-
-					documentObj.setField(FieldNames.AUTHOR, authorsAndOrg[0]
-							.trim().split(" and "));
+						
+					String[] Authors = authorsAndOrg[0]
+							.trim().split("and");
+					
+					for (int j = 0; j < Authors.length; i++)
+						Authors[j] = Authors[j].trim();
+					
+					documentObj.setField(FieldNames.AUTHOR, Authors );
+					
 					modifiedArticle = modifiedArticle.replace(line, "").trim(); // author
 																				// line
 																				// removed
@@ -74,27 +94,22 @@ public class Parser {
 				}
 
 				// Date and Place
-				if (line.contains(",") ) {
-					String[] datePlace = line.split(",");
-					String place = datePlace[0];
-					documentObj.setField(FieldNames.PLACE, place);
-					modifiedArticle = modifiedArticle.replace(place, "").trim(); // place
-																					// removed
-					if (datePlace[1].contains("-")) {
-						String newsDate = datePlace[1].split("-")[0];
-						documentObj.setField(FieldNames.NEWSDATE, newsDate);
-						modifiedArticle = modifiedArticle.replace("-", "")
-								.replace(newsDate, "").trim();
-						
-						// after removing all metadata, modifiedArticle holds the
-						// content.
-						documentObj.setField(FieldNames.CONTENT, modifiedArticle);
-						break;
-
-					}
-
+				if (line.contains("-") ) {
+				
 					
-					
+						String[] datePlace = line.split("-");
+						Pattern p = Pattern.compile(".*,\\s*(.*)");
+						Matcher m = p.matcher(datePlace[0]);
+						if (m.find())
+						{
+							String newsDate = m.group(1);
+							documentObj.setField(FieldNames.NEWSDATE,newsDate.trim() );
+							String ArticlePlace = datePlace[0].substring(0,datePlace[0].lastIndexOf(","));
+							documentObj.setField(FieldNames.PLACE,ArticlePlace.trim());
+							String Content = modifiedArticle.substring(modifiedArticle.indexOf('-')+1);
+							documentObj.setField(FieldNames.CONTENT,Content );
+							break;
+						}
 
 				}
 

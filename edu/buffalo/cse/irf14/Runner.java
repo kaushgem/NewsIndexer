@@ -4,6 +4,7 @@
 package edu.buffalo.cse.irf14;
 
 import java.io.File;
+import java.util.Date;
 
 import edu.buffalo.cse.irf14.document.Document;
 import edu.buffalo.cse.irf14.document.Parser;
@@ -26,10 +27,12 @@ public class Runner {
 
 	/**
 	 * @param args
+	 * @throws InterruptedException 
 	 */
-	public static void main(String[] args) {
-		String ipDir = args[0];
-		String indexDir = args[1];
+	public static void main(String[] args) throws InterruptedException {
+		
+		String ipDir = "C:\\Users\\Sathish\\Dropbox\\UB\\Fall\\535 - IR\\news_training\\training";
+		String indexDir = "";
 		//more? idk!
 		
 		File ipDirectory = new File(ipDir);
@@ -37,9 +40,13 @@ public class Runner {
 		
 		String[] files;
 		File dir;
-		
+		 
 		Document d = null;
 		IndexWriter writer = new IndexWriter(indexDir);
+		
+		Date startTime = new Date();
+		
+		System.out.print(startTime);
 		
 		try {
 			for (String cat : catDirectories) {
@@ -63,6 +70,10 @@ public class Runner {
 			}
 			
 			writer.close();
+			Date endTime = new Date();
+			System.out.print(endTime);
+			Thread.sleep(1000 * 60);          
+			
 		} catch (IndexerException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
