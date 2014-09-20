@@ -77,7 +77,7 @@ public class Runner {
 			Date endTime = new Date();
 			System.out.println(endTime);
 			System.out.println("Terminated");
-			Thread.sleep(1000 * 60);          
+			  
 			
 		} catch (IndexerException e) {
 			// TODO Auto-generated catch block

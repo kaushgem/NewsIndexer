@@ -3,7 +3,7 @@
  */
 package edu.buffalo.cse.irf14.analysis;
 
-import java.util.Iterator;
+import java.util.*;
 
 /**
  * @author nikhillo
@@ -19,10 +19,23 @@ public class TokenStream implements Iterator<Token>{
 	 * DOES NOT ADVANCE THE POINTER
 	 * @return true if at least one Token exists, false otherwise
 	 */
+	
+	ArrayList<Token> tokens;
+	
+	int currentIndex;
+	
+	public TokenStream(ArrayList<Token> tokens)
+	{
+		this.tokens = tokens;
+		currentIndex = 0;
+	}
+	
+	
 	@Override
 	public boolean hasNext() {
 		// TODO YOU MUST IMPLEMENT THIS
-		return false;
+		return tokens.size() > currentIndex;
+			
 	}
 
 	/**
@@ -34,7 +47,14 @@ public class TokenStream implements Iterator<Token>{
 	 */
 	@Override
 	public Token next() {
+		
 		// TODO YOU MUST IMPLEMENT THIS
+		if(hasNext())
+		{
+			return tokens.get(currentIndex++);
+			
+		}
+		else
 		return null;
 	}
 	
@@ -48,6 +68,8 @@ public class TokenStream implements Iterator<Token>{
 	public void remove() {
 		// TODO YOU MUST IMPLEMENT THIS
 		
+		tokens.remove(currentIndex);
+		
 	}
 	
 	/**
@@ -57,6 +79,7 @@ public class TokenStream implements Iterator<Token>{
 	 */
 	public void reset() {
 		//TODO : YOU MUST IMPLEMENT THIS
+		currentIndex = 0;
 	}
 	
 	/**

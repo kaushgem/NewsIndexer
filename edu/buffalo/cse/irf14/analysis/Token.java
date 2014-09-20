@@ -17,12 +17,25 @@ public class Token {
 	//The char array backing termText
 	private char[] termBuffer;
 	
+	
+	/* constructor
+	 * 
+	 */
+	
+	public Token(String text)
+	{
+		setTermText( text);
+		
+	}
+	
 	/**
 	 * Method to set the termText to given text.
 	 * This is a sample implementation and you CAN change this
 	 * to suit your class definition and data structure needs.
 	 * @param text
 	 */
+	
+	
 	protected void setTermText(String text) {
 		termText = text;
 		termBuffer = (termText != null) ? termText.toCharArray() : null;
