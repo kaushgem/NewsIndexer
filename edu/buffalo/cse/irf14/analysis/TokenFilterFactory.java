@@ -25,7 +25,7 @@ public class TokenFilterFactory {
 		//TODO : YOU MUST IMPLEMENT THIS METHOD
 		return null;
 	}
-	
+
 	/**
 	 * Returns a fully constructed {@link TokenFilter} instance
 	 * for a given {@link TokenFilterType} type
@@ -36,6 +36,49 @@ public class TokenFilterFactory {
 	 */
 	public TokenFilter getFilterByType(TokenFilterType type, TokenStream stream) {
 		//TODO : YOU MUST IMPLEMENT THIS METHOD
-		return null;
+		
+		TokenFilter tokenFilterObj = null;
+				
+		
+		switch(type)
+		{
+		case SYMBOL:
+		{
+			tokenFilterObj = new TokenFilterSymbol(stream);
+		}
+		case DATE:
+		{
+			tokenFilterObj = new TokenFilterDates(stream);
+		}
+		case NUMERIC:
+		{
+			tokenFilterObj = new TokenFilterNumbers(stream);
+		}
+		case CAPITALIZATION:
+		{
+			tokenFilterObj = new TokenFilterCapitalization(stream);
+		}
+		case STOPWORD:
+		{
+			tokenFilterObj = new TokenFilterStopwords(stream);
+		}
+		case STEMMER:
+		{
+			tokenFilterObj = new TokenFilterStemmer(stream);
+		}
+		case ACCENT:
+		{
+			tokenFilterObj = new TokenFilterAccent(stream);
+		}
+		case SPECIALCHARS:
+		{
+			tokenFilterObj = new TokenFilterSpecialChars(stream);
+		}
+		
+		default:
+			break;
+		}
+
+		return tokenFilterObj;
 	}
 }
