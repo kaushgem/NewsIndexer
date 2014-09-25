@@ -8,9 +8,18 @@ public class TokenFilterDates extends TokenFilter {
 	}
 
 	@Override
-	public void increment() throws TokenizerException {
+	public boolean increment() throws TokenizerException {
 		// TODO Auto-generated method stub
-
+		Token token =  tStream.next();
+		if(token ==null)
+			return false;
+		else
+		{
+			String str = token.getTermText();
+			
+			
+			return true;
+		}
 	}
 
 	@Override

@@ -21,21 +21,25 @@ public class DateRuleTest extends TFRuleBaseTest {
 		
 		try{
 				assertArrayEquals(
+						
 						new String[] { "Vidya", "Balan", "born",
 								"19780101", "is", "an", "Indian",
 								"actress." },
 						runTest(TokenFilterType.DATE, "Vidya Balan born 1 January "
 								+ "1978 is an Indian actress."));
+				
 				assertArrayEquals(
 						new String[] { "President", "Franklin", "D.",
 								"Roosevelt", "to", "proclaim", "19411207,",
-								"'a", "date", "which", "will", "live",
-								"in", "infamy'" },
+								"'a", "date", "which", "will", "live","in", "infamy'" },
+								
 						runTest(TokenFilterType.DATE, "President Franklin D. Roosevelt "
 								+ "to proclaim December 7, "
 								+ "1941, 'a date which will "
 								+ "live in infamy'"));
+				
 				assertArrayEquals(
+						
 						new String[] { "The", "Academy", "operated",
 								"until", "it", "was", "destroyed", "by",
 								"Lucius", "Cornelius", "Sulla", "in",
@@ -43,6 +47,7 @@ public class DateRuleTest extends TFRuleBaseTest {
 						runTest(TokenFilterType.DATE, "The Academy operated until "
 								+ "it was destroyed by Lucius "
 								+ "Cornelius Sulla in 84 BC"));
+				
 				assertArrayEquals(
 						new String[] { "For", "instance,", "the",
 								"19480101", "ABL", "finalist", "Baltimore",

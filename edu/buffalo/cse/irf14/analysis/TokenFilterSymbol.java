@@ -21,9 +21,9 @@ public class TokenFilterSymbol extends TokenFilter {
 	 * @see edu.buffalo.cse.irf14.analysis.Analyzer#increment()
 	 */
 	@Override
-	public void increment() throws TokenizerException {
+	public boolean increment() throws TokenizerException {
 		// TODO Auto-generated method stub
-
+		return true;
 	}
 
 	/* (non-Javadoc)

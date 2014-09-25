@@ -20,7 +20,7 @@ public class TokenStream implements Iterator<Token>{
 	 * @return true if at least one Token exists, false otherwise
 	 */
 	
-	ArrayList<Token> tokens;
+	List<Token> tokens;
 	
 	int currentIndex;
 	
@@ -91,6 +91,25 @@ public class TokenStream implements Iterator<Token>{
 	 * the end of the stream.
 	 * @param stream : The stream to be appended
 	 */
+	
+	/**
+	 * Method to get the current Token from the stream without iteration.
+	 * The only difference between this method and {@link TokenStream#next()} is that
+	 * the latter moves the stream forward, this one does not.
+	 * Calling this method multiple times would not alter the return value of {@link TokenStream#hasNext()}
+	 * @return The current {@link Token} if one exists, null if end of stream
+	 * has been reached or the current Token was removed
+	 */
+	public Token getCurrent() {
+		//TODO: YOU MUST IMPLEMENT THIS
+		if(currentIndex < 0 || currentIndex >=tokens.size() )
+		{
+			return null;
+			
+		}
+		else return tokens.get(currentIndex);
+	}
+	
 	public void append(TokenStream stream) {
 		//TODO : YOU MUST IMPLEMENT THIS
 	}

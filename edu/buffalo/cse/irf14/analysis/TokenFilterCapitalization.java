@@ -8,9 +8,10 @@ public class TokenFilterCapitalization extends TokenFilter {
 	}
 
 	@Override
-	public void increment() throws TokenizerException {
+	public boolean increment() throws TokenizerException {
 		// TODO Auto-generated method stub
 
+		return true;
 	}
 
 	@Override
