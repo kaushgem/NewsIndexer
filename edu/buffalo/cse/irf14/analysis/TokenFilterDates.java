@@ -40,7 +40,7 @@ public class TokenFilterDates extends TokenFilter {
 					
 
 
-				}
+				}  
 
 			}
 
