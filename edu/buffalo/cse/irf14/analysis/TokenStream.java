@@ -125,7 +125,7 @@ public class TokenStream implements Iterator<Token>{
 	 * @return The current {@link Token} if one exists, null if end of stream
 	 * has been reached or the current Token was removed
 	 */
-	public Token getCurrent() {
+	public Token getCurrent() { 
 		//TODO: YOU MUST IMPLEMENT THIS
 		if(currentIndex <=0  || currentIndex >tokens.size() )
 		{
