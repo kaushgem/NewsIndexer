@@ -6,8 +6,6 @@ package edu.buffalo.cse.irf14.analysis;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import regex.TokenFilterConstants;
-
 /**
  * @author Sathish
  *
