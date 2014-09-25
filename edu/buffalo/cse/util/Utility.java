@@ -27,7 +27,7 @@ public class Utility {
 
 			while (line != null) {
 				sb.append(line);
-				sb.append(System.lineSeparator());
+				sb.append(System.getProperty("lineSeparator"));
 				line = br.readLine();
 			}
 			everything = sb.toString();
