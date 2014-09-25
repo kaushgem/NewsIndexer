@@ -21,7 +21,7 @@ public class TokenFilterDates extends TokenFilter {
 		else
 		{
 			String str = token.getTermText();
-			str = str.toLowerCase();
+			str = str.toLowerCase();    
 			
 			if(Character.isDigit(str.charAt(0)))
 			{
