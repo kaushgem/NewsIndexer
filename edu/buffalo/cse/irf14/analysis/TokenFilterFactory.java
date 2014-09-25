@@ -21,9 +21,17 @@ public class TokenFilterFactory {
 	 * during instantiation
 	 * @return An instance of the factory
 	 */
+	private static TokenFilterFactory tFactory = null;
+	private TokenFilterFactory()
+	{
+		
+	}
 	public static TokenFilterFactory getInstance() {
 		//TODO : YOU MUST IMPLEMENT THIS METHOD
-		return null;
+		if(tFactory == null) {
+			tFactory = new TokenFilterFactory();
+	      }
+	      return tFactory;
 	}
 
 	/**
