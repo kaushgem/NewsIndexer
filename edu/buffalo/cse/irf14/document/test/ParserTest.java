@@ -17,8 +17,8 @@ public class ParserTest {
 	/* For testing purposes we are assuming that the corpus data is in the project directory. 
 	 * If you are going to be using these tests locally and your corpus data is not in your project
 	 * directory then feel free to change this. */
-	private static final String BASE_USER_DIR = 
-			System.getProperty("user.dir") + File.separatorChar + "training" ;
+	private static final String BASE_USER_DIR = "C:\\Users\\Sathish\\Dropbox\\UB\\Fall\\535 - IR\\news_training\\training";
+			///System.getProperty("user.dir") + File.separatorChar + "training" ;
 	
 	private static final String[] titles = {"COMPUTER TERMINAL SYSTEMS <CPML> COMPLETES SALE",
 		"DUTCH PLANNING AGENCY FORECASTS LOWER GROWTH", "WESTMIN TO RAISE MYRA FALLS CAPACITY BY 33 PCT",
@@ -75,8 +75,9 @@ public class ParserTest {
 	@Test
 	public void testParseValidFileName() throws IOException {		
 		// Valid file name with document testing
+		int i =0;
 		try {
-			for(int i = 0; i < filenames.length; i++){
+			for(i = 0; i < filenames.length; i++){
 				d = Parser.parse(filenames[i]);
 				validateTitle(d, i);
 				validateFileId(d, i);
@@ -88,11 +89,14 @@ public class ParserTest {
 			}
 		} catch (ParserException e) {
 			e.printStackTrace(); // So that debugging may be a bit easier.
+			System.out.print(filenames[i]);
 			fail("A ParserException was thrown when it should not have been thrown.");
 		}
 	}
 	
 	private void validateTitle(Document d, int count){
+		System.out.println(titles[count]);
+		//System.out.println(d.getField(FieldNames.TITLE).length);
 		assertEquals(titles[count],
 				d.getField(FieldNames.TITLE)[0]);
 	}

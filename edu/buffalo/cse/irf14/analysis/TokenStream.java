@@ -34,7 +34,8 @@ public class TokenStream implements Iterator<Token>{
 	@Override
 	public boolean hasNext() {
 		// TODO YOU MUST IMPLEMENT THIS
-		return tokens.size() > currentIndex;
+		return (tokens.size() > 0) &&  !(tokens.size() == currentIndex);
+		// return !(tokens.size() == currentIndex);
 			
 	}
 
@@ -48,6 +49,8 @@ public class TokenStream implements Iterator<Token>{
 	@Override
 	public Token next() {
 		
+		if(currentIndex == -1)
+			currentIndex++;
 		// TODO YOU MUST IMPLEMENT THIS
 		if(hasNext())
 		{
@@ -55,7 +58,13 @@ public class TokenStream implements Iterator<Token>{
 			
 		}
 		else
+		{
+			if(tokens.size() == currentIndex)
+			{
+				currentIndex++;
+			}
 		return null;
+		}
 	}
 	
 	/**
@@ -68,7 +77,8 @@ public class TokenStream implements Iterator<Token>{
 	public void remove() {
 		// TODO YOU MUST IMPLEMENT THIS
 		
-		tokens.remove(currentIndex);
+		if( currentIndex >0 && currentIndex <=tokens.size())
+		tokens.remove(--currentIndex);
 		
 	}
 	
@@ -88,7 +98,7 @@ public class TokenStream implements Iterator<Token>{
 	 */
 	public void reset() {
 		//TODO : YOU MUST IMPLEMENT THIS
-		currentIndex = 0;
+		currentIndex = -1;
 	}
 	
 	
@@ -102,6 +112,10 @@ public class TokenStream implements Iterator<Token>{
 	 * the end of the stream.
 	 * @param stream : The stream to be appended
 	 */
+	public void append(TokenStream stream) {
+		//TODO : YOU MUST IMPLEMENT THIS
+	}
+	
 	
 	/**
 	 * Method to get the current Token from the stream without iteration.
@@ -113,16 +127,23 @@ public class TokenStream implements Iterator<Token>{
 	 */
 	public Token getCurrent() {
 		//TODO: YOU MUST IMPLEMENT THIS
-		if(currentIndex < 0 || currentIndex >=tokens.size() )
+		if(currentIndex <=0  || currentIndex >tokens.size() )
 		{
 			return null;
 			
 		}
-		else return tokens.get(currentIndex);
+		else return tokens.get(currentIndex -1);
 	}
 	
-	public void append(TokenStream stream) {
-		//TODO : YOU MUST IMPLEMENT THIS
+	public int getSize()
+	{
+		return tokens.size();
 	}
+	public int getIndex()
+	{
+		return currentIndex;
+	}
+	
+	
 	
 }

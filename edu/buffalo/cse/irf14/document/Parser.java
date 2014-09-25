@@ -33,8 +33,20 @@ public class Parser {
 		Document documentObj = new Document();
 
 		// file not found todo
-
-		String article = Utility.readStream(filepath);
+		String article = "";
+		if(filepath == null)
+		{
+			throw new ParserException()	;
+		}
+		try
+		{
+		article = Utility.readStream(filepath);
+		}
+		catch(Exception ex)
+		{
+			// System.out.print(filepath);
+			throw new ParserException();
+		}
 		File fileObj = new File(filepath);
 		String modifiedArticle = article.trim();
 		String[] lines = modifiedArticle.split("\\r?\\n");
@@ -48,8 +60,8 @@ public class Parser {
 		documentObj.setField(FieldNames.CATEGORY, category);
 
 		// Title
-	//	String title = lines[0];
-	//	modifiedArticle = modifiedArticle.replace(title, "").trim(); // title
+		//	String title = lines[0];
+		//	modifiedArticle = modifiedArticle.replace(title, "").trim(); // title
 
 		// removed
 		String newsDate = null;
@@ -58,7 +70,7 @@ public class Parser {
 		String Title = null;
 		String AuthorOrg = null;
 		StringBuilder AuthorBuilder = new StringBuilder();
-				
+
 
 		boolean isTitle = false;
 		boolean isNextappended = false;
@@ -84,17 +96,17 @@ public class Parser {
 						modifiedArticle = modifiedArticle.replace(line, "");
 					}
 					String nextLine  = null;
-					
+
 					if(lines.length > i+1)
 					{
 						nextLine = lines[i+1];
-						
+
 						// if next line is empty end the loop
 						if(nextLine == null ||nextLine.replace("\n", "").replace("\r", "")
 								.replace(" ", "").replace("\t", "").isEmpty())
 						{
 							isTitle = true;
-							
+
 						}
 						else
 						{
@@ -112,12 +124,12 @@ public class Parser {
 					if(isTitle)
 					{
 						Title = titleBuilder.toString().trim();
-						documentObj.setField(FieldNames.PLACE,titleBuilder.toString().trim());
+						documentObj.setField(FieldNames.TITLE,titleBuilder.toString().trim());
 					}
 
 				}
 				// title manipulation ends
-				
+
 				// Author
 				if (line.contains("<AUTHOR>")) {
 
@@ -192,16 +204,16 @@ public class Parser {
 			// incase no date place is present, everything is content
 			documentObj.setField(FieldNames.CONTENT,modifiedArticle );
 		}
-		
+
 		System.out.println("Title: "+ Title);
 		System.out.println("Author org: "+ AuthorOrg);
 		System.out.println("Place: "+ArticlePlace);
 		System.out.println("Date: "+newsDate );
 		System.out.println("Authors: " + AuthorBuilder.toString());
-	
-	
-		
-		
+
+
+
+
 		return documentObj;
 	}
 
