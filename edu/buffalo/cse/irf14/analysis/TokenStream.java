@@ -72,6 +72,15 @@ public class TokenStream implements Iterator<Token>{
 		
 	}
 	
+	public List<Token> GetSurroundingTokens(int width)
+	{
+		int startingIndex = (currentIndex - width) <=0? 0: currentIndex - width;
+		int endingIndex = (currentIndex + width) >=tokens.size()-1? tokens.size(): currentIndex + width;
+		
+		List surroundingTokens = new ArrayList(tokens.subList(startingIndex, endingIndex));
+		return surroundingTokens;
+	}
+	
 	/**
 	 * Method to reset the stream to bring the iterator back to the beginning
 	 * of the stream. Unless the stream has no tokens, hasNext() after calling
@@ -81,6 +90,8 @@ public class TokenStream implements Iterator<Token>{
 		//TODO : YOU MUST IMPLEMENT THIS
 		currentIndex = 0;
 	}
+	
+	
 	
 	/**
 	 * Method to append the given TokenStream to the end of the current stream
