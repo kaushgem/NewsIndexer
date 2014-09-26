@@ -34,7 +34,7 @@ public class TokenFilterSymbol extends TokenFilter {
 			String str = token.getTermText();
 
 			// 2 - 'hv 'nt
-			TokenFilterConstants tConst = new TokenFilterConstants();
+			TokenFilterConstants tConst = TokenFilterConstants.getInstance();
 			String str1 = str.toLowerCase();
 			if (tConst.contractions.get(str1) != null) {
 				str1 = tConst.contractions.get(str1);

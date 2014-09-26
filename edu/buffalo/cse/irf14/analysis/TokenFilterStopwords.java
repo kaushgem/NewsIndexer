@@ -9,14 +9,27 @@ public class TokenFilterStopwords extends TokenFilter {
 
 	@Override
 	public boolean increment() throws TokenizerException {
-		// TODO Auto-generated method stub
+		try {
+			if (!tStream.hasNext())
+				return false;
+			Token token = tStream.next();
+			String str = token.getTermText();
+			TokenFilterConstants tConst = TokenFilterConstants.getInstance();
+			if (tConst.stopWords.get(str) != null)
+				if (tConst.stopWords.get(str))
+					str = "";
+			System.out.println(str);
+			token.setTermText(str);
+		} catch (Exception e) {
+			throw new TokenizerException();
+		}
+
 		return true;
 	}
 
 	@Override
 	public TokenStream getStream() {
-		// TODO Auto-generated method stub
-		return null;
+		return tStream;
 	}
 
 }

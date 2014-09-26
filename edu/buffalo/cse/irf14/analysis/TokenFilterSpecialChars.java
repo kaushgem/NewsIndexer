@@ -12,7 +12,6 @@ public class TokenFilterSpecialChars extends TokenFilter {
 
 	@Override
 	public boolean increment() throws TokenizerException {
-		// TODO Auto-generated method stub
 		try {
 			if (!tStream.hasNext())
 				return false;
