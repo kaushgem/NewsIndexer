@@ -11,8 +11,28 @@ public class TokenFilterConstants {
 
 	public Map<String, String> contractions = new HashMap<String, String>();
 	public Map<String, Boolean> stopWords = new HashMap<String, Boolean>();
+	public Map<Character, String> accents = new HashMap<Character, String>();
 
 	static TokenFilterConstants tokenFilterConstants;
+
+	public static TokenFilterConstants getInstance() {
+		if (tokenFilterConstants == null) {
+			tokenFilterConstants = new TokenFilterConstants();
+		}
+		return tokenFilterConstants;
+	}
+
+	private void addToMap(String str1, String str2) {
+		contractions.put(str1, str2);
+	}
+
+	private void addToStopWordMap(String str1, Boolean boo) {
+		stopWords.put(str1, boo);
+	}
+
+	private void addToAccentsMap(char ch, String str2) {
+		accents.put(ch, str2);
+	}
 
 	private TokenFilterConstants() {
 		// Common English Contractions
@@ -264,21 +284,8 @@ public class TokenFilterConstants {
 		addToStopWordMap("yet", true);
 		addToStopWordMap("you", true);
 		addToStopWordMap("your", true);
+		
+		// Accents
+		addToAccentsMap('À', "A");
 	}
-
-	public static TokenFilterConstants getInstance() {
-		if (tokenFilterConstants == null) {
-			tokenFilterConstants = new TokenFilterConstants();
-		}
-		return tokenFilterConstants;
-	}
-
-	private void addToMap(String str1, String str2) {
-		contractions.put(str1, str2);
-	}
-
-	private void addToStopWordMap(String str1, Boolean boo) {
-		stopWords.put(str1, boo);
-	}
-
 }
