@@ -2,6 +2,10 @@ package edu.buffalo.cse.irf14.analysis;
 
 import java.util.*;
 
+/**
+ * @author Kaushik
+ *
+ */
 
 public class TokenFilterConstants {
 
@@ -39,12 +43,12 @@ public class TokenFilterConstants {
 		//addToMap("how's", "how has / how is / how does");
 		addToMap("how's", "how is");
 		//addToMap("I'd", "I had / I would");
-		addToMap("I'd", "I had");
-		addToMap("I'd've", "I would have");
+		addToMap("i'd", "i had");
+		addToMap("i'd've", "i would have");
 		//addToMap("I'll", "I shall / I will");
-		addToMap("I'll", "I will");
-		addToMap("I'm", "I am");
-		addToMap("I've", "I have");
+		addToMap("i'll", "i will");
+		addToMap("i'm", "i am");
+		addToMap("i've", "i have");
 		addToMap("isn't", "is not");
 		//addToMap("it'd", "it had / it would");
 		addToMap("it'd", "it had");
@@ -83,7 +87,7 @@ public class TokenFilterConstants {
 		//addToMap("there's", "there has / there is");
 		addToMap("there's", "there is");
 		//addToMap("they'd", "they had / they would");
-		addToMap("they'd", "they had");
+		addToMap("they'd", "they would");
 		addToMap("they'd've", "they would have");
 		//addToMap("they'll", "they shall / they will");
 		addToMap("they'll", "they will");

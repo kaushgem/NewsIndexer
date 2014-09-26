@@ -34,7 +34,7 @@ public class TokenStream implements Iterator<Token>{
 	@Override
 	public boolean hasNext() {
 		// TODO YOU MUST IMPLEMENT THIS
-		return (tokens.size() > 0) &&  !(tokens.size() == currentIndex);
+		return  ((tokens.size() > 0) && !(tokens.size() <= currentIndex));
 		// return !(tokens.size() == currentIndex);
 			
 	}

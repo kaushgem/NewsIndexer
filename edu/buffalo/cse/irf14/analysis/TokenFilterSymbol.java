@@ -17,7 +17,6 @@ public class TokenFilterSymbol extends TokenFilter {
 	 */
 	public TokenFilterSymbol(TokenStream stream) {
 		super(stream);
-		// TODO Auto-generated constructor stub
 	}
 
 	/*
@@ -27,55 +26,60 @@ public class TokenFilterSymbol extends TokenFilter {
 	 */
 	@Override
 	public boolean increment() throws TokenizerException {
-		// TODO Auto-generated method stub
-		
-		Token token = tStream.next();
-		String str = token.getTermText();
-		
-		
 
-		// 2 - 'hv 'nt
-		//String str = "ain't";
-		TokenFilterConstants tk = new TokenFilterConstants();
-		System.out.println("Contractions - " + tk.contractions.get(str));
+		try {
+			if (!tStream.hasNext())
+				return false;
+			Token token = tStream.next();
+			String str = token.getTermText();
 
-		// 1 & 2
-		// apostrophe
-		//Stringstr = "0dfdf's'";
-		//str= "dfd$ffd??...--??";
-		Pattern p = Pattern.compile("\\S[^?!.'][?!.']+$");
-		Matcher m = p.matcher(str);
-		if (m.find()) {
-			str=str.replaceAll("[?!.']+$", "");
-			System.out.println(str);
-		}
-		str=str.replaceAll("'s$", "");
-		System.out.println(str);
+			// 2 - 'hv 'nt
+			TokenFilterConstants tConst = new TokenFilterConstants();
+			String str1 = str.toLowerCase();
+			if (tConst.contractions.get(str1) != null) {
+				str1 = tConst.contractions.get(str1);
+				if (!str.substring(0, 1).equals("'"))
+					str = str.substring(0, 1) + str1.substring(1);
+				else
+					str = str1;
+			}
 
-		//str= "df$dff d??.. .--??";
-		p = Pattern.compile("\\S[^?!.'][^a-zA-Z0-9]+$");
-		m = p.matcher(str);
-		if (m.find()) {
-			str=str.replaceAll("[^a-zA-Z0-9]+$", "");
-			System.out.println(str);
-		}
-		str=str.replaceAll("'s$", "");
-		System.out.println(str);
+			str = str.replaceAll("'s$", "");
+			str = str.replaceAll("'", "");
 
-		// 3
-		str= "b-v";
-		if (str.matches("[0-9]+-[A-Za-z]+") ||str.matches("[A-Za-z]+-[0-9]")) {
-			System.out.println("B-46");
-		}
+			Pattern p = Pattern.compile("\\S[^?!.']*[?!.'-]+$");
+			Matcher m = p.matcher(str);
+			if (m.find()) {
+				str = str.replaceAll("[?!.'-]+$", "");
+			}
 
-		if (str.matches("[0-9]+-")) {
-			System.out.println("fdfssf");
-		}
+			/*
+			 * p = Pattern.compile("\\S[^?!.'][^a-zA-Z0-9]+$"); m =
+			 * p.matcher(str); if (m.find()) { str =
+			 * str.replaceAll("[^a-zA-Z0-9]+$", ""); System.out.println(str); }
+			 */
 
-		if (str.matches("[A-Za-z]+-[A-Za-z]+")) {
-			str=str.replace("-", " ");
-			System.out.println("both alphabet");
-			System.out.println(str);
+			/*
+			 * if (str.matches("[0-9]+-[A-Za-z]+") ||
+			 * str.matches("[A-Za-z]+-[0-9]")) { str = str; }
+			 */
+
+			if (str.matches("[0-9]+-")) {
+				str = str.replaceAll("[-]+", "");
+			}
+
+			if (str.matches("[\n]*-+[\n]*") || str.matches("^-+\\S")) {
+				str = str.replaceAll("[-+]+", "");
+			}
+
+			if (str.matches("[A-Za-z]+-[A-Za-z]+")) {
+				str = str.replace("-", " ");
+			}
+
+			token.setTermText(str);
+
+		} catch (Exception e) {
+			throw new TokenizerException();
 		}
 
 		return true;
@@ -88,8 +92,7 @@ public class TokenFilterSymbol extends TokenFilter {
 	 */
 	@Override
 	public TokenStream getStream() {
-		// TODO Auto-generated method stub
-		return null;
+		return tStream;
 	}
 
 }

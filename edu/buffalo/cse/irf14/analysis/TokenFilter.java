@@ -23,4 +23,10 @@ public abstract class TokenFilter implements Analyzer {
 		//TODO : YOU MUST IMPLEMENT THIS METHOD
 		tStream = stream;
 	}
+	
+	
+	public TokenStream getStream() {
+		return tStream;
+		
+	}
 }

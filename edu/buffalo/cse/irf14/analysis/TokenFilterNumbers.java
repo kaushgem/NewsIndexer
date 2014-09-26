@@ -1,5 +1,8 @@
 package edu.buffalo.cse.irf14.analysis;
 
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 public class TokenFilterNumbers extends TokenFilter {
 
 	public TokenFilterNumbers(TokenStream stream) {
@@ -9,14 +12,27 @@ public class TokenFilterNumbers extends TokenFilter {
 
 	@Override
 	public boolean increment() throws TokenizerException {
-		// TODO Auto-generated method stub
+		try {
+			if (!tStream.hasNext())
+				return false;
+			Token token = tStream.next();
+			String str = token.getTermText();
+
+			str = str.replaceAll("^[0-9]+[.,][0-9]+", "");
+			if (str.matches("^[0-9]+[/][0-9]+$"))
+				str = str.replaceAll("[0-9]+", "");
+			str = str.replaceAll("[0-9]+", "");
+			System.out.println(str);
+			token.setTermText(str);
+		} catch (Exception e) {
+			throw new TokenizerException();
+		}
 		return true;
 	}
 
 	@Override
 	public TokenStream getStream() {
-		// TODO Auto-generated method stub
-		return null;
+		return tStream;
 	}
 
 }
