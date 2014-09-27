@@ -1,8 +1,5 @@
 package edu.buffalo.cse.irf14.analysis;
 
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
 public class TokenFilterNumbers extends TokenFilter {
 
 	public TokenFilterNumbers(TokenStream stream) {
