@@ -4,7 +4,7 @@
 package edu.buffalo.cse.irf14.analysis;
 
 import edu.buffalo.cse.irf14.document.FieldNames;
-import edu.buffalo.cse.irf14.analysis.analyzer.AnalyzerCategory;
+import edu.buffalo.cse.irf14.analysis.analyzer.*;
 
 /**
  * @author nikhillo This factory class is responsible for instantiating
@@ -51,26 +51,29 @@ public class AnalyzerFactory {
 		Analyzer analyzerObj = null;
 
 		switch (name) {
+		case FILEID:
+			analyzerObj = new AnalyzerFileID(stream);
+			break;
 		case CATEGORY:
 			analyzerObj = new AnalyzerCategory(stream);
 			break;
 		case TITLE:
-
+			analyzerObj = new AnalyzerTitle(stream);
 			break;
 		case AUTHOR:
-
+			analyzerObj = new AnalyzerAuthor(stream);
 			break;
 		case AUTHORORG:
-
+			analyzerObj = new AnalyzerAuthorOrg(stream);
 			break;
 		case PLACE:
-
+			analyzerObj = new AnalyzerPlace(stream);
 			break;
 		case NEWSDATE:
-
+			analyzerObj = new AnalyzerNewsDate(stream);
 			break;
 		case CONTENT:
-
+			analyzerObj = new AnalyzerContent(stream);
 			break;
 		default:
 			break;
