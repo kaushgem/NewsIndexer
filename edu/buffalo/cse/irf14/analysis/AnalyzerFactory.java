@@ -4,6 +4,7 @@
 package edu.buffalo.cse.irf14.analysis;
 
 import edu.buffalo.cse.irf14.document.FieldNames;
+import edu.buffalo.cse.irf14.analysis.analyzer.AnalyzerCategory;
 
 /**
  * @author nikhillo This factory class is responsible for instantiating
@@ -51,7 +52,7 @@ public class AnalyzerFactory {
 
 		switch (name) {
 		case CATEGORY:
-
+			analyzerObj = new AnalyzerCategory(stream);
 			break;
 		case TITLE:
 

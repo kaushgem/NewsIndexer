@@ -13,15 +13,12 @@ public class AnalyzerContent implements Analyzer {
 
 	TokenStream tStream;
 
-	public AnalyzerContent(TokenStream tStream) {
-
-		this.tStream = tStream;
+	public AnalyzerContent(TokenStream stream) {
+		tStream = stream;
 	}
 
 	@Override
 	public boolean increment() throws TokenizerException {
-
-		// TODO Auto-generated method stub
 
 		TokenFilterFactory factory = TokenFilterFactory.getInstance();
 
@@ -34,6 +31,7 @@ public class AnalyzerContent implements Analyzer {
 		TokenFilter specialCharFilter = factory.getFilterByType(TokenFilterType.SPECIALCHARS, tStream);
 		while (specialCharFilter.increment()) {
 		}
+		
 		// Stemmer
 		// Stopwords
 		// Symbol
@@ -44,8 +42,6 @@ public class AnalyzerContent implements Analyzer {
 
 	@Override
 	public TokenStream getStream() {
-		// TODO Auto-generated method stub
 		return tStream;
 	}
-
 }

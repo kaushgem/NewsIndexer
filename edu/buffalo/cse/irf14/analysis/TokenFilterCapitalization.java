@@ -1,5 +1,6 @@
 package edu.buffalo.cse.irf14.analysis;
 
+
 public class TokenFilterCapitalization extends TokenFilter {
 
 	public TokenFilterCapitalization(TokenStream stream) {

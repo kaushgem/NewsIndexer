@@ -1,5 +1,6 @@
 package edu.buffalo.cse.irf14.analysis;
 
+
 public class TokenFilterStopwords extends TokenFilter {
 
 	public TokenFilterStopwords(TokenStream stream) {

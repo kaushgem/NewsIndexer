@@ -71,7 +71,6 @@ public class IndexWriter {
 		}catch(Exception ex)
 		{
 			throw new IndexerException();
-
 		}
 
 

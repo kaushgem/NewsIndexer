@@ -1,5 +1,6 @@
 package edu.buffalo.cse.irf14.analysis;
 
+
 public class TokenFilterAccent extends TokenFilter {
 
 	public TokenFilterAccent(TokenStream stream) {

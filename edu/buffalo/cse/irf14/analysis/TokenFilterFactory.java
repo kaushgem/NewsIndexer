@@ -3,6 +3,7 @@
  */
 package edu.buffalo.cse.irf14.analysis;
 
+
 /**
  * Factory class for instantiating a given TokenFilter
  * 
