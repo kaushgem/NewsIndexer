@@ -82,12 +82,21 @@ public class TokenStream implements Iterator<Token>{
 		
 	}
 	
-	public List<Token> GetSurroundingTokens(int width)
+	public List<Token> GetBeforeTokens(int width)
 	{
 		int startingIndex = (currentIndex - width) <=0? 0: currentIndex - width;
-		int endingIndex = (currentIndex + width) >=tokens.size()-1? tokens.size(): currentIndex + width;
 		
-		List surroundingTokens = new ArrayList(tokens.subList(startingIndex, endingIndex));
+		
+		List surroundingTokens = new ArrayList(tokens.subList(startingIndex, currentIndex));
+		return surroundingTokens;
+	}
+	
+	public List<Token> GetAfterTokens(int width)
+	{
+		
+		int endingIndex = (currentIndex + width) >=tokens.size()-1? tokens.size()-1: currentIndex + width;
+		
+		List surroundingTokens = new ArrayList(tokens.subList(currentIndex, endingIndex));
 		return surroundingTokens;
 	}
 	

@@ -1,6 +1,5 @@
 package edu.buffalo.cse.irf14.analysis;
 
-import java.util.HashMap;
 import java.util.*;
 
 public class TokenFilterDates extends TokenFilter {
@@ -10,46 +9,72 @@ public class TokenFilterDates extends TokenFilter {
 		// TODO Auto-generated constructor stub
 	}
 
+	@SuppressWarnings("unused")
 	@Override
 	public boolean increment() throws TokenizerException {
 		// TODO Auto-generated method stub
 		Token token =  tStream.next();
 		Date date1 = new Date();
-		
+
 		if(token ==null)
 			return false;
 		else
 		{
 			String str = token.getTermText();
 			str = str.toLowerCase();    
-			
+
 			if(Character.isDigit(str.charAt(0)))
 			{
-				List<Token> surroundingTokens = tStream.GetSurroundingTokens(2);
+
+				// regex for ^[0-9]{2,4}(BC|AD)$ 78AD or BC
+				Calendar cal = Calendar.getInstance();
+				cal.set(Calendar.YEAR, 1900);
+				List<Token> afterTokens = tStream.GetAfterTokens(2);
+				List<Token> beforeTokens = tStream.GetBeforeTokens(2);
+
 				String[] strArray = str.split("-");
-				
+
 				if(strArray.length == 1)
 				{
 					int number = Integer.parseInt( str.replaceAll("[^0-9]", ""));
+					String NextWord1 = null;
+					if(afterTokens.size() !=0)
+					{
+						afterTokens.get(0).getTermText().replaceAll("[^a-zA-Z]"," " );
+					}
+
+					if(NextWord1!=null && 
+							(NextWord1.toLowerCase() == "bc" ||NextWord1.toLowerCase()=="ad" )
+							)
+					{
+						if(NextWord1.toLowerCase() == "bc") // 800 BC
+							cal.set(Calendar.YEAR, -number);
+						else
+							cal.set(Calendar.YEAR, number); // 80 AD
+
+						// set token & return
+
+					}
+
+					if(getMonth(NextWord1) >0)
+					{
+						cal.set(Calendar.MONTH,getMonth(NextWord1));
+					}
+
+
 				}
-				
-				
-				int month = isMonth(str);
-				if(month>=1 && month <=12)
-				{
-					        
 
 
-				}  
+				int month = getMonth(str);
 
 			}
 
-			
+
 			return true;
 		}
 	}
 
-	private int isMonth(String str)
+	private int getMonth(String str)
 	{
 		HashMap hm = new HashMap();
 		hm.put("january", 1);

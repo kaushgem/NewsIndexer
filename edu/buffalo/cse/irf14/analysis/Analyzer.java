@@ -24,5 +24,9 @@ public interface Analyzer {
 	 * Return the underlying {@link TokenStream} instance
 	 * @return The underlying stream
 	 */
+	
+	public abstract void analyze() throws TokenizerException;
+	
 	public abstract TokenStream getStream();
+	
 }

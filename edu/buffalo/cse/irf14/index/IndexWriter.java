@@ -3,7 +3,9 @@
  */
 package edu.buffalo.cse.irf14.index;
 
+import edu.buffalo.cse.irf14.analysis.*;
 import edu.buffalo.cse.irf14.document.Document;
+import edu.buffalo.cse.irf14.document.FieldNames;
 
 /**
  * @author nikhillo
@@ -17,7 +19,7 @@ public class IndexWriter {
 	public IndexWriter(String indexDir) {
 		//TODO : YOU MUST IMPLEMENT THIS
 	}
-	
+
 	/**
 	 * Method to add the given Document to the index
 	 * This method should take care of reading the filed values, passing
@@ -26,10 +28,58 @@ public class IndexWriter {
 	 * @param d : The Document to be added
 	 * @throws IndexerException : In case any error occurs
 	 */
+
 	public void addDocument(Document d) throws IndexerException {
+
 		//TODO : YOU MUST IMPLEMENT THIS
+
+		// Content tokenization
+
+		Tokenizer tokenizer = new Tokenizer();
+		try
+		{
+			String[] stringarr = d.getField(FieldNames.CONTENT);
+			for(String s:stringarr)
+			{
+				TokenStream tStream = tokenizer.consume(s);
+				AnalyzerFactory A =  AnalyzerFactory.getInstance();
+				Analyzer contentAnalyser = A.getAnalyzerForField(FieldNames.CONTENT,tStream );
+				contentAnalyser.analyze();
+				
+				
+
+			}
+			
+			
+			
+			// Title
+			
+			
+			
+			//AUthors
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+		}catch(Exception ex)
+		{
+			throw new IndexerException();
+
+		}
+
+
+
+
+
 	}
-	
+
 	/**
 	 * Method that indicates that all open resources must be closed
 	 * and cleaned and that the entire indexing operation has been completed.
