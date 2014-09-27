@@ -44,7 +44,7 @@ public class IndexWriter {
 				TokenStream tStream = tokenizer.consume(s);
 				AnalyzerFactory A =  AnalyzerFactory.getInstance();
 				Analyzer contentAnalyser = A.getAnalyzerForField(FieldNames.CONTENT,tStream );
-				contentAnalyser.analyze();
+				//contentAnalyser.analyze();
 				
 				
 

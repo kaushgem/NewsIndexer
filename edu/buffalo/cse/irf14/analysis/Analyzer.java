@@ -25,8 +25,6 @@ public interface Analyzer {
 	 * @return The underlying stream
 	 */
 	
-	public abstract void analyze() throws TokenizerException;
-	
 	public abstract TokenStream getStream();
 	
 }
