@@ -16,6 +16,8 @@ public class TokenFilterStemmer extends TokenFilter {
 				return false;
 			Token token = tStream.next();
 			String str = token.getTermText();
+			if(str == null || str.isEmpty())
+				return true;
 			char[] ch = str.toCharArray();
 
 			if (str.matches("^[A-Za-z]+")) {

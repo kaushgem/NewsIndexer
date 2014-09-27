@@ -21,12 +21,11 @@ public class IndexWriter {
 	 *            : The root directory to be sued for indexing
 	 */
 
-	static  HashMap<String,HashMap<String,Integer>> invertedIndex;
+	public static  HashMap<String,HashMap<String,Integer>> invertedIndex;
+	
 	public IndexWriter(String indexDir) {
-		// TODO : YOU MUST IMPLEMENT THIS
 		invertedIndex = new HashMap<String,HashMap<String,Integer>>();
 	}
-
 
 	public HashMap<String,HashMap<String,Integer>> getInvertedIndex()
 	{
@@ -34,14 +33,12 @@ public class IndexWriter {
 		{
 			ComputeInvertedIndex();
 		}
-
 		return invertedIndex;
 	}
 
 	public void ComputeInvertedIndex()
 	{
 		invertedIndex = new HashMap<String,HashMap<String,Integer>>();
-
 	}
 
 	public void insertToHashmap(TokenStream tStream,String fileID){
@@ -50,14 +47,17 @@ public class IndexWriter {
 		{
 			String token = tStream.next().toString();
 			HashMap<String,Integer> indexPostings = invertedIndex.get(token);
+			
+			//Keyword check
 			if(indexPostings == null)
 			{
 				indexPostings = new HashMap<String,Integer>();
 				indexPostings.put(fileID, 1);
-						
+				invertedIndex.put(token, indexPostings);
 			}
 			else
 			{
+				//fileID check
 				if(indexPostings.get(fileID)==null)
 				{
 					indexPostings.put(fileID, 1);
@@ -66,8 +66,6 @@ public class IndexWriter {
 				{
 					indexPostings.put(fileID, indexPostings.get(fileID) +1);
 				}
-				
-				
 			}
 		}
 	}
@@ -95,17 +93,22 @@ public class IndexWriter {
 		try {
 			for (FieldNames field : FieldNames.values()) {
 				stringArray = d.getField(field);
+				if(stringArray==null) continue;
 				for (String s : stringArray) {
 					if(s!=null && !s.isEmpty())
 					{
+						try{
 						TokenStream	tStream = tokenizer.consume(s);
 						analyzerObj = analyzerFactoryObj.getAnalyzerForField(field,tStream);
 						analyzerObj.increment();
 						//to-do
 						insertToHashmap( tStream, fileID);
+						}catch(Exception e)
+						{
+							System.out.println("loop"+fileID);
+							e.printStackTrace();
+						}
 					}
-
-
 				}
 			}
 
@@ -119,6 +122,7 @@ public class IndexWriter {
 			 */
 
 		} catch (Exception ex) {
+			ex.printStackTrace();
 			throw new IndexerException();
 		}
 

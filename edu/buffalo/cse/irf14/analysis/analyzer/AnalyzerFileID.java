@@ -18,8 +18,7 @@ public class AnalyzerFileID implements Analyzer {
 
 	@Override
 	public boolean increment() throws TokenizerException {
-		// TODO Auto-generated method stub
-		return true;
+		return false;
 	}
 
 	@Override

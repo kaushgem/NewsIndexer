@@ -15,9 +15,12 @@ public class TokenFilterStopwords extends TokenFilter {
 				return false;
 			Token token = tStream.next();
 			String str = token.getTermText();
+			if(str == null || str.isEmpty())
+				return true;
+			
 			TokenFilterConstants tConst = TokenFilterConstants.getInstance();
-			if (tConst.stopWords.get(str) != null)
-				if (tConst.stopWords.get(str))
+			if (tConst.stopWords.get(str.toLowerCase()) != null)
+				if (tConst.stopWords.get(str.toLowerCase()))
 					str = "";
 			System.out.println(str);
 			token.setTermText(str);

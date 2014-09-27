@@ -12,15 +12,19 @@ public class TokenFilterDates extends TokenFilter {
 	@SuppressWarnings("unused")
 	@Override
 	public boolean increment() throws TokenizerException {
-		// TODO Auto-generated method stub
-		Token token =  tStream.next();
+
+		if (!tStream.hasNext())
+			return false;
+		Token token = tStream.next();
 		Date date1 = new Date();
 
-		if(token ==null)
+		if(token == null)
 			return false;
 		else
 		{
 			String str = token.getTermText();
+			if(str == null || str.isEmpty())
+				return true;
 			str = str.toLowerCase();    
 
 			if(Character.isDigit(str.charAt(0)))

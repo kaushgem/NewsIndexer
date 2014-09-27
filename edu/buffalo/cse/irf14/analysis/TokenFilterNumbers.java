@@ -15,7 +15,9 @@ public class TokenFilterNumbers extends TokenFilter {
 				return false;
 			Token token = tStream.next();
 			String str = token.getTermText();
-
+			if(str == null || str.isEmpty())
+				return true;
+			
 			str = str.replaceAll("^[0-9]+[.,][0-9]+", "");
 			if (str.matches("^[0-9]+[/][0-9]+$"))
 				str = str.replaceAll("[0-9]+", "");

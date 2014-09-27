@@ -1,6 +1,9 @@
 package edu.buffalo.cse.irf14.analysis.analyzer;
 
 import edu.buffalo.cse.irf14.analysis.Analyzer;
+import edu.buffalo.cse.irf14.analysis.TokenFilter;
+import edu.buffalo.cse.irf14.analysis.TokenFilterFactory;
+import edu.buffalo.cse.irf14.analysis.TokenFilterType;
 import edu.buffalo.cse.irf14.analysis.TokenStream;
 import edu.buffalo.cse.irf14.analysis.TokenizerException;
 
@@ -18,7 +21,20 @@ public class AnalyzerNewsDate implements Analyzer {
 
 	@Override
 	public boolean increment() throws TokenizerException {
-		// TODO Auto-generated method stub
+		TokenFilterFactory factory = TokenFilterFactory.getInstance();
+		TokenFilter tokenFilterObj;
+		try{
+			TokenFilterType[] filterOrder = {
+					TokenFilterType.DATE,
+					TokenFilterType.NUMERIC };
+			for (TokenFilterType tokenFilType : filterOrder) {
+				tokenFilterObj = factory.getFilterByType(tokenFilType, tStream);
+				while (tokenFilterObj.increment()) {
+				}
+			}
+		}catch(Exception e){
+			throw new TokenizerException();
+		}
 		return false;
 	}
 

@@ -17,7 +17,9 @@ public class TokenFilterSpecialChars extends TokenFilter {
 				return false;
 			Token token = tStream.next();
 			String str = token.getTermText();
-
+			if(str == null || str.isEmpty())
+				return true;
+			
 			// Pattern p = Pattern.compile("[$&+,:;=?@#|`~()]+");
 			str = str.replaceAll("[^a-zA-Z0-9.-]+", "");
 			// Pattern p = Pattern.compile("[a-zA-Z]*-+[a-zA-Z]*");

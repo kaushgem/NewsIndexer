@@ -32,7 +32,9 @@ public class TokenFilterSymbol extends TokenFilter {
 				return false;
 			Token token = tStream.next();
 			String str = token.getTermText();
-
+			if(str == null || str.isEmpty())
+				return true;
+			
 			// 2 - 'hv 'nt
 			TokenFilterConstants tConst = TokenFilterConstants.getInstance();
 			String str1 = str.toLowerCase();

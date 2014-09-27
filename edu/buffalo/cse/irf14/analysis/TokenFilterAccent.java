@@ -15,6 +15,8 @@ public class TokenFilterAccent extends TokenFilter {
 				return false;
 			Token token = tStream.next();
 			String str = token.getTermText();
+			if(str == null || str.isEmpty())
+				return true;
 			StringBuilder strB = new StringBuilder("");
 			
 			if (!str.matches("^\\w*$")) {
