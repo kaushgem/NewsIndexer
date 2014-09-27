@@ -12,6 +12,7 @@ import edu.buffalo.cse.irf14.document.FieldNames;
 /**
  * @author nikhillo Class responsible for writing indexes to disk
  */
+
 public class IndexWriter {
 	/**
 	 * Default constructor
@@ -19,37 +20,55 @@ public class IndexWriter {
 	 * @param indexDir
 	 *            : The root directory to be sued for indexing
 	 */
-	
-	HashMap<String,String> invertedIndex = null;
+
+	static  HashMap<String,HashMap<String,Integer>> invertedIndex;
 	public IndexWriter(String indexDir) {
 		// TODO : YOU MUST IMPLEMENT THIS
-		invertedIndex = new HashMap<String,String>();
+		invertedIndex = new HashMap<String,HashMap<String,Integer>>();
 	}
-	
-	
-	public HashMap<String,String> getInvertedIndex()
+
+
+	public HashMap<String,HashMap<String,Integer>> getInvertedIndex()
 	{
 		if(invertedIndex == null)
 		{
 			ComputeInvertedIndex();
 		}
-		
+
 		return invertedIndex;
 	}
-	
+
 	public void ComputeInvertedIndex()
 	{
-		invertedIndex = new HashMap<String,String>();
-		
+		invertedIndex = new HashMap<String,HashMap<String,Integer>>();
+
 	}
-	
+
 	public void insertToHashmap(TokenStream tStream,String fileID){
 
 		while(tStream.hasNext())
 		{
 			String token = tStream.next().toString();
-			String existingToken =invertedIndex.get(token); 
-			invertedIndex.put(token,existingToken+","+fileID);
+			HashMap<String,Integer> indexPostings = invertedIndex.get(token);
+			if(indexPostings == null)
+			{
+				indexPostings = new HashMap<String,Integer>();
+				indexPostings.put(fileID, 1);
+						
+			}
+			else
+			{
+				if(indexPostings.get(fileID)==null)
+				{
+					indexPostings.put(fileID, 1);
+				}
+				else
+				{
+					indexPostings.put(fileID, indexPostings.get(fileID) +1);
+				}
+				
+				
+			}
 		}
 	}
 
@@ -69,7 +88,7 @@ public class IndexWriter {
 
 		Tokenizer tokenizer = new Tokenizer();
 		String[] stringArray = null;
-		
+
 		AnalyzerFactory analyzerFactoryObj = AnalyzerFactory.getInstance();
 		Analyzer analyzerObj = null;
 		String fileID = d.getField(FieldNames.FILEID)[0];
@@ -77,13 +96,16 @@ public class IndexWriter {
 			for (FieldNames field : FieldNames.values()) {
 				stringArray = d.getField(field);
 				for (String s : stringArray) {
-					TokenStream	tStream = tokenizer.consume(s);
-					analyzerObj = analyzerFactoryObj.getAnalyzerForField(field,tStream);
-					analyzerObj.increment();
-					//to-do
-					
-					
-					
+					if(s!=null && !s.isEmpty())
+					{
+						TokenStream	tStream = tokenizer.consume(s);
+						analyzerObj = analyzerFactoryObj.getAnalyzerForField(field,tStream);
+						analyzerObj.increment();
+						//to-do
+						insertToHashmap( tStream, fileID);
+					}
+
+
 				}
 			}
 

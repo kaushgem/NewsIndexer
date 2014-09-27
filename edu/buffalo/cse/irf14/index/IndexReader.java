@@ -3,6 +3,7 @@
  */
 package edu.buffalo.cse.irf14.index;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -18,8 +19,14 @@ public class IndexReader {
 	 * you make subdirectories etc., you will have to handle it accordingly.
 	 * @param type The {@link IndexType} to read from
 	 */
+	
+	HashMap<String,HashMap<String,Integer>> invertedIndex = null;
+	
 	public IndexReader(String indexDir, IndexType type) {
 		//TODO
+		
+		// check if it is in main memory
+		invertedIndex = IndexWriter.invertedIndex; 
 	}
 	
 	/**
@@ -29,7 +36,8 @@ public class IndexReader {
 	 */
 	public int getTotalKeyTerms() {
 		//TODO : YOU MUST IMPLEMENT THIS
-		return -1;
+		return invertedIndex.size();
+		// return -1;
 	}
 	
 	/**
@@ -39,7 +47,7 @@ public class IndexReader {
 	 */
 	public int getTotalValueTerms() {
 		//TODO: YOU MUST IMPLEMENT THIS
-		return -1;
+		return invertedIndex.size();
 	}
 	
 	/**
@@ -52,6 +60,8 @@ public class IndexReader {
 	 */
 	public Map<String, Integer> getPostings(String term) {
 		//TODO:YOU MUST IMPLEMENT THIS
+		if(invertedIndex!=null)
+			return invertedIndex.get(term);
 		return null;
 	}
 	
@@ -63,7 +73,7 @@ public class IndexReader {
 	 * null for invalid k values
 	 */
 	public List<String> getTopK(int k) {
-		//TODO YOU MUST IMPLEMENT THIS
+		
 		return null;
 	}
 	
