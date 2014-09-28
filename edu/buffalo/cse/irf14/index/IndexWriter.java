@@ -18,6 +18,7 @@ import edu.buffalo.cse.irf14.analysis.TokenStream;
 import edu.buffalo.cse.irf14.analysis.Tokenizer;
 import edu.buffalo.cse.irf14.document.Document;
 import edu.buffalo.cse.irf14.document.FieldNames;
+import edu.buffalo.cse.util.TrieNode;
 
 /**
  * @author nikhillo Class responsible for writing indexes to disk
@@ -41,6 +42,11 @@ public class IndexWriter {
 	public static HashMap<String, HashMap<String, Integer>> authorIndex;
 	public static HashMap<String, HashMap<String, Integer>> placeIndex;
 
+	// get top K
+	// get top K
+	public static TrieNode root = new TrieNode(null, '?');
+		
+	
 	public IndexWriter(String indexDir) {
 		if (invertedIndex == null)
 			invertedIndex = new HashMap<String, HashMap<String, Integer>>();
@@ -162,7 +168,7 @@ public class IndexWriter {
 				String token = tStream.next().toString();
 				if (token == null || token.isEmpty())
 					continue;
-
+				root.AddWord(token,0);
 				// indexPostings HashMap check
 				indexPostings = indexMap.get(token);
 				if (indexPostings == null) {
