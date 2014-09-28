@@ -31,6 +31,9 @@ public class IndexWriter {
 
 	public static HashMap<String,HashMap<String,Integer>> invertedIndex;
 	public static HashMap<Integer, String> fileIDLookup;
+	
+	
+	
 
 	public IndexWriter(String indexDir) {
 		if(invertedIndex ==null)
@@ -145,10 +148,8 @@ public class IndexWriter {
 
 			//System.out.println("File - "+d.getField(FieldNames.CATEGORY)[0]+" / "+ 
 			//d.getField(FieldNames.FILEID)[0]);
-			//fileWrite();
-			//fileRead();
+
 		} catch (Exception ex) {
-			ex.printStackTrace();
 			throw new IndexerException();
 		}
 	}
@@ -161,6 +162,9 @@ public class IndexWriter {
 	 *             : In case any error occurs
 	 */
 	public void close() throws IndexerException {
+		//fileWrite();
+		//fileRead();
+		System.out.println("Size : "+invertedIndex.size());
 		// TODO
 	}
 

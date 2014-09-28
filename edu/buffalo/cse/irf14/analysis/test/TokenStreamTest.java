@@ -294,6 +294,7 @@ public class TokenStreamTest {
 		tCurrent = stream.getCurrent();
 		assertNull(tCurrent);
 		//assertNotEquals(tNext, tCurrent);
+		assertTrue(tNext!=tCurrent);
 	}
 
 }

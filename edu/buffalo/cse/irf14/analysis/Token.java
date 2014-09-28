@@ -79,17 +79,18 @@ public class Token {
 	 * @param tokens The token array to be merged
 	 */
 	protected void merge(Token...tokens) {
-		//TODO : YOU MUST IMPLEMENT THIS METHOD
 
-		for(Token t:tokens)
+		if(null != tokens)
 		{
-			if(t.getTermText() !=null)
+			for(Token t:tokens)
 			{
-				termText += (termText !=null)?" " + t.getTermText() :t.getTermText() ;
+				if(t !=null && t.getTermText()!=null && !t.getTermText().isEmpty())
+				{
+					termText += (termText !=null)?" " + t.getTermText() :t.getTermText() ;
+				}
 			}
+			termBuffer = (termText != null) ? termText.toCharArray() : null;
 		}
-
-		termBuffer = (termText != null) ? termText.toCharArray() : null;
 	}
 
 	/**

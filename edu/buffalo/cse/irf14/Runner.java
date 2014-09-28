@@ -68,9 +68,7 @@ public class Runner {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
 					} 
-					
 				}
-				
 			}
 			
 			writer.close();
@@ -85,5 +83,4 @@ public class Runner {
 			e.printStackTrace();
 		}
 	}
-
 }
