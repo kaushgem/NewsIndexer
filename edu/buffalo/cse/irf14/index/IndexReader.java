@@ -3,9 +3,13 @@
  */
 package edu.buffalo.cse.irf14.index;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import edu.buffalo.cse.util.*;
 
 import javax.swing.plaf.metal.MetalIconFactory.FileIcon16;
 
@@ -76,7 +80,37 @@ public class IndexReader {
 	 */
 	public List<String> getTopK(int k) {
 		
-		return null;
+		if(k<=0)
+			return null;
+		List<TrieNode> topk_nodes = new ArrayList<TrieNode>();
+		List<String> topKwords = new ArrayList<String>();
+		
+		
+		int distinct_word_count = 0;
+		int total_word_count = 0;
+		
+		
+		
+		
+		for(int p=0;p<k; p++ )
+		{
+			
+			topk_nodes.add( IndexWriter.root);
+		
+		}
+		// { root, root, root, root, root, root, root, root, root, root };
+       
+        IndexWriter.root.GetTopCounts(topk_nodes,  distinct_word_count,  total_word_count);
+        Collections.sort(topk_nodes);
+        
+        for(TrieNode t:topk_nodes)
+        {
+        	topKwords.add(t.toString());
+        }
+        
+        Collections.reverse(topKwords);
+        return topKwords;
+        
 	}
 	
 	/**
