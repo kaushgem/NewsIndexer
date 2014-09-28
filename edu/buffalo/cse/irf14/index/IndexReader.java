@@ -27,12 +27,10 @@ public class IndexReader {
 	 */
 	
 	HashMap<String,HashMap<String,Integer>> invertedIndex = null;
+	IndexType type = null;
 	
 	public IndexReader(String indexDir, IndexType type) {
-		//TODO
-		
-		// check if it is in main memory
-		invertedIndex = IndexWriter.invertedIndex; 
+		this.type = type;
 	}
 	
 	/**
@@ -41,9 +39,25 @@ public class IndexReader {
 	 * @return The total number of terms
 	 */
 	public int getTotalKeyTerms() {
-		//TODO : YOU MUST IMPLEMENT THIS
-		return invertedIndex.size();
-		// return -1;
+		int size = 0;
+		switch(type)
+		{
+		case TERM:
+			size = IndexWriter.termIndex.size();
+			break;
+		case CATEGORY:
+			size = IndexWriter.categoryIndex.size();
+			break;
+		case AUTHOR:
+			size = IndexWriter.authorIndex.size();
+			break;
+		case PLACE:
+			size = IndexWriter.placeIndex.size();
+			break;
+		default:
+			break;
+		}
+		return size;
 	}
 	
 	/**
@@ -52,7 +66,6 @@ public class IndexReader {
 	 * @return The total number of terms
 	 */
 	public int getTotalValueTerms() {
-		//TODO: YOU MUST IMPLEMENT THIS
 		return IndexWriter.fileIDLookup.size();
 	}
 	
@@ -65,10 +78,25 @@ public class IndexReader {
 	 * number of occurrences as values if the given term was found, null otherwise.
 	 */
 	public Map<String, Integer> getPostings(String term) {
-		//TODO:YOU MUST IMPLEMENT THIS
-		if(invertedIndex!=null)
-			return invertedIndex.get(term);
-		return null;
+		HashMap<String, Integer> indexPostings = new HashMap<String, Integer>(); 
+		switch(type)
+		{
+		case TERM:
+			indexPostings = IndexWriter.termIndex.get(term);
+			break;
+		case CATEGORY:
+			indexPostings = IndexWriter.categoryIndex.get(term);
+			break;
+		case AUTHOR:
+			indexPostings = IndexWriter.authorIndex.get(term);
+			break;
+		case PLACE:
+			indexPostings = IndexWriter.placeIndex.get(term);
+			break;
+		default:
+			break;
+		}
+		return indexPostings;
 	}
 	
 	/**
@@ -85,18 +113,12 @@ public class IndexReader {
 		List<TrieNode> topk_nodes = new ArrayList<TrieNode>();
 		List<String> topKwords = new ArrayList<String>();
 		
-		
 		int distinct_word_count = 0;
 		int total_word_count = 0;
 		
-		
-		
-		
 		for(int p=0;p<k; p++ )
 		{
-			
 			topk_nodes.add( IndexWriter.root);
-		
 		}
 		// { root, root, root, root, root, root, root, root, root, root };
        
@@ -110,7 +132,6 @@ public class IndexReader {
         
         Collections.reverse(topKwords);
         return topKwords;
-        
 	}
 	
 	/**

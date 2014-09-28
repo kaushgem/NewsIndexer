@@ -7,13 +7,15 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
-import edu.buffalo.cse.irf14.analysis.*;
+import edu.buffalo.cse.irf14.analysis.Analyzer;
+import edu.buffalo.cse.irf14.analysis.AnalyzerFactory;
+import edu.buffalo.cse.irf14.analysis.TokenStream;
+import edu.buffalo.cse.irf14.analysis.Tokenizer;
 import edu.buffalo.cse.irf14.document.Document;
 import edu.buffalo.cse.irf14.document.FieldNames;
 
@@ -29,59 +31,30 @@ public class IndexWriter {
 	 *            : The root directory to be sued for indexing
 	 */
 
-	public static HashMap<String,HashMap<String,Integer>> invertedIndex;
+	public static HashMap<String, HashMap<String, Integer>> invertedIndex;
+
+	// LookUp
 	public static HashMap<Integer, String> fileIDLookup;
-	
-	
-	
+
+	public static HashMap<String, HashMap<String, Integer>> termIndex;
+	public static HashMap<String, HashMap<String, Integer>> categoryIndex;
+	public static HashMap<String, HashMap<String, Integer>> authorIndex;
+	public static HashMap<String, HashMap<String, Integer>> placeIndex;
 
 	public IndexWriter(String indexDir) {
-		if(invertedIndex ==null)
-			invertedIndex = new HashMap<String,HashMap<String,Integer>>();
-		if(fileIDLookup == null)
-			fileIDLookup = new HashMap<Integer, String>(); 
-	}
+		if (invertedIndex == null)
+			invertedIndex = new HashMap<String, HashMap<String, Integer>>();
+		if (fileIDLookup == null)
+			fileIDLookup = new HashMap<Integer, String>();
 
-	public HashMap<String,HashMap<String,Integer>> getInvertedIndex()
-	{
-		if(invertedIndex == null) { ComputeInvertedIndex(); }
-		return invertedIndex;
-	}
-
-	public void ComputeInvertedIndex()
-	{
-		invertedIndex = new HashMap<String,HashMap<String,Integer>>();
-	}
-
-	public void insertToHashmap(TokenStream tStream,String fileID){
-
-		while(tStream.hasNext())
-		{
-			String token = tStream.next().toString();
-			HashMap<String,Integer> indexPostings = invertedIndex.get(token);
-			if(token == null || token.isEmpty())
-				continue;
-
-			//Keyword check
-			if(indexPostings == null)
-			{
-				indexPostings = new HashMap<String,Integer>();
-				indexPostings.put(fileID, 1);
-				invertedIndex.put(token, indexPostings);
-			}
-			else
-			{
-				//fileID check
-				if(indexPostings.get(fileID)==null)
-				{
-					indexPostings.put(fileID, 1);
-				}
-				else
-				{
-					indexPostings.put(fileID, indexPostings.get(fileID) +1);
-				}
-			}
-		}
+		if (termIndex == null)
+			termIndex = new HashMap<String, HashMap<String, Integer>>();
+		if (categoryIndex == null)
+			categoryIndex = new HashMap<String, HashMap<String, Integer>>();
+		if (authorIndex == null)
+			authorIndex = new HashMap<String, HashMap<String, Integer>>();
+		if (placeIndex == null)
+			placeIndex = new HashMap<String, HashMap<String, Integer>>();
 	}
 
 	/**
@@ -99,57 +72,55 @@ public class IndexWriter {
 	public void addDocument(Document d) throws IndexerException {
 
 		Tokenizer tokenizer = new Tokenizer();
-		String[] stringArray = null;
-
 		AnalyzerFactory analyzerFactoryObj = AnalyzerFactory.getInstance();
 		Analyzer analyzerObj = null;
-
-		String fileID = d.getField(FieldNames.FILEID)[0];
-		fileIDLookup.put(fileIDLookup.size()+1, fileID);
-
+		String[] stringArray = null;
 		try {
+			// FileID Lookup
+			String fileID = d.getField(FieldNames.FILEID)[0];
+			fileIDLookup.put(fileIDLookup.size() + 1, fileID);
+
+			// Iterate FieldNames
 			for (FieldNames field : FieldNames.values()) {
-
 				stringArray = d.getField(field);
-				if(stringArray==null) continue;
-
-				if(field.equals(FieldNames.FILEID)) continue;
-				if(field.equals(FieldNames.NEWSDATE)) continue;
-
-				for (String s : stringArray) {
-					if(s!=null && !s.isEmpty())
-					{
-						try{
-							TokenStream	tStream = tokenizer.consume(s);
-							analyzerObj = analyzerFactoryObj.getAnalyzerForField(field,tStream);
+				if (stringArray != null) {
+					for (String s : stringArray) {
+						if (s != null && !s.isEmpty()) {
+							TokenStream tStream = tokenizer.consume(s);
+							analyzerObj = analyzerFactoryObj
+									.getAnalyzerForField(field, tStream);
 							analyzerObj.increment();
-							//to-do
 							tStream.reset();
-							insertToHashmap(tStream, fileID);
-
-							// invertedIndex
-						}catch(Exception e)
-						{
-							System.out.println("loop"+fileID);
-							e.printStackTrace();
+							switch(field)
+							{
+							case TITLE:
+							case AUTHORORG:
+							case NEWSDATE:
+							case CONTENT:
+								insertToIndex(tStream, fileID, termIndex);
+								break;
+							case CATEGORY:
+								insertToIndex(tStream, fileID, categoryIndex);
+								break;
+							case AUTHOR:
+								insertToIndex(tStream, fileID, authorIndex);
+								break;
+							case PLACE:
+								insertToIndex(tStream, fileID, placeIndex);
+								break;
+							default:
+								break;
+							}
 						}
-					}
+					}// stringArray forLoop
 				}
-			}
+			}// FieldNames forLoop
 
-			/*
-			 * String[] stringArray = d.getField(FieldNames.CONTENT); for(String
-			 * s:stringArray) { TokenStream tStream = tokenizer.consume(s);
-			 * AnalyzerFactory analyzerFactoryObj =
-			 * AnalyzerFactory.getInstance(); Analyzer contentAnalyser =
-			 * analyzerFactoryObj.getAnalyzerForField(FieldNames.CONTENT,tStream
-			 * ); contentAnalyser.increment(); }
-			 */
+			// System.out.println("File - "+d.getField(FieldNames.CATEGORY)[0]+" / "+
+			// d.getField(FieldNames.FILEID)[0]);
 
-			//System.out.println("File - "+d.getField(FieldNames.CATEGORY)[0]+" / "+ 
-			//d.getField(FieldNames.FILEID)[0]);
-
-		} catch (Exception ex) {
+		} catch (Exception e) {
+			e.printStackTrace();
 			throw new IndexerException();
 		}
 	}
@@ -162,58 +133,92 @@ public class IndexWriter {
 	 *             : In case any error occurs
 	 */
 	public void close() throws IndexerException {
-		//fileWrite();
-		//fileRead();
-		System.out.println("Size : "+invertedIndex.size());
+		// fileWrite();
+		// fileRead();
+		 System.out.println("Term Size : "+ termIndex.size());
+		 System.out.println("Cate Size : "+ categoryIndex.size());
+		 System.out.println("Auth Size : "+ authorIndex.size());
+		 System.out.println("Plac Size : "+ placeIndex.size());
 		// TODO
 	}
 
-	public void fileWrite()
-	{
-		//System.out.println("file write");
-		try{
+	public HashMap<String, HashMap<String, Integer>> getInvertedIndex() {
+		if (invertedIndex == null) {
+			ComputeInvertedIndex();
+		}
+		return invertedIndex;
+	}
+
+	public void ComputeInvertedIndex() {
+		invertedIndex = new HashMap<String, HashMap<String, Integer>>();
+	}
+	
+	public void insertToIndex(TokenStream tStream, String fileID, HashMap<String, HashMap<String, Integer>> indexMap) throws IndexerException {
+
+		HashMap<String, Integer> indexPostings = null;
+
+		try {
+			while (tStream.hasNext()) {
+				String token = tStream.next().toString();
+				if (token == null || token.isEmpty())
+					continue;
+
+				// indexPostings HashMap check
+				indexPostings = indexMap.get(token);
+				if (indexPostings == null) {
+					indexPostings = new HashMap<String, Integer>();
+					indexPostings.put(fileID, 1);
+					indexMap.put(token, indexPostings);
+				} else { // indexPostings map already exists
+					if (indexPostings.get(fileID) == null) {
+						indexPostings.put(fileID, 1);
+					} else {
+						indexPostings.put(fileID, indexPostings.get(fileID) + 1);
+					}
+				}
+			}// while
+		} catch (Exception e) {
+			throw new IndexerException();
+		}
+	}
+
+	public void fileWrite() {
+		// System.out.println("file write");
+		try {
 			FileOutputStream fos = new FileOutputStream("hashmap.txt");
 			ObjectOutputStream oos = new ObjectOutputStream(fos);
 			oos.writeObject(invertedIndex);
 			oos.close();
 			fos.close();
-			//System.out.printf("Serialized HashMap data is saved in hashmap.ser");
-		}catch(Exception ioe)
-		{
+			// System.out.printf("Serialized HashMap data is saved in hashmap.ser");
+		} catch (Exception ioe) {
 			ioe.printStackTrace();
 		}
 	}
 
-
-	public void fileRead()
-	{
-		//System.out.println("\n\n===============================");
-		//System.out.println("Deserialize()");
+	public void fileRead() {
+		// System.out.println("\n\n===============================");
+		// System.out.println("Deserialize()");
 		HashMap<Integer, String> map = null;
-		try
-		{
+		try {
 			FileInputStream fis = new FileInputStream("hashmap.txt");
 			ObjectInputStream ois = new ObjectInputStream(fis);
 			map = (HashMap) ois.readObject();
 			ois.close();
 			fis.close();
-		}catch(Exception ioe)
-		{
+		} catch (Exception ioe) {
 			ioe.printStackTrace();
 			return;
 		}
-		//System.out.println("Deserialized HashMap..");
+		// System.out.println("Deserialized HashMap..");
 		// Display content using Iterator
 		Set set = map.entrySet();
 		Iterator iterator = set.iterator();
-		while(iterator.hasNext()) {
-			Map.Entry mentry = (Map.Entry)iterator.next();
-			//System.out.print("key: "+ mentry.getKey() + " & Value: ");
-			//System.out.println(mentry.getValue());
+		while (iterator.hasNext()) {
+			Map.Entry mentry = (Map.Entry) iterator.next();
+			// System.out.print("key: "+ mentry.getKey() + " & Value: ");
+			// System.out.println(mentry.getValue());
 		}
 	}
 
 }
-
-
-
