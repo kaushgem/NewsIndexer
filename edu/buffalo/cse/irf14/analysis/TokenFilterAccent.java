@@ -31,7 +31,7 @@ public class TokenFilterAccent extends TokenFilter {
 				}
 				str = strB.toString();
 			}
-			System.out.println(str);
+			//System.out.println(str);
 			token.setTermText(str);
 		} catch (Exception e) {
 			throw new TokenizerException();

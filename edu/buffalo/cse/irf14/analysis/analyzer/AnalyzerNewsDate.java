@@ -29,8 +29,8 @@ public class AnalyzerNewsDate implements Analyzer {
 					TokenFilterType.NUMERIC };
 			for (TokenFilterType tokenFilType : filterOrder) {
 				tokenFilterObj = factory.getFilterByType(tokenFilType, tStream);
-				while (tokenFilterObj.increment()) {
-				}
+				while (tokenFilterObj.increment()) {}
+				tStream.reset();
 			}
 		}catch(Exception e){
 			throw new TokenizerException();

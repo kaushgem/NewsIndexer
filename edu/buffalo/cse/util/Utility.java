@@ -20,11 +20,7 @@ public class Utility {
 
 			StringBuilder sb = new StringBuilder();
 			String line;
-
 			line = br.readLine();
-
-			// TODO Auto-generated catch block
-
 			while (line != null) {
 				sb.append(line);
 				sb.append(System.getProperty("line.separator"));
@@ -34,10 +30,9 @@ public class Utility {
 		} catch (FileNotFoundException e) {
 		} catch (IOException e) {
 		} finally {
+
 			br.close();
 		}
 		return everything;
-
 	}
-
 }

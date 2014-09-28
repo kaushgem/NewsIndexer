@@ -3,7 +3,15 @@
  */
 package edu.buffalo.cse.irf14.index;
 
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.util.Date;
 import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.Set;
 
 import edu.buffalo.cse.irf14.analysis.*;
 import edu.buffalo.cse.irf14.document.Document;
@@ -21,18 +29,19 @@ public class IndexWriter {
 	 *            : The root directory to be sued for indexing
 	 */
 
-	public static  HashMap<String,HashMap<String,Integer>> invertedIndex;
-	
+	public static HashMap<String,HashMap<String,Integer>> invertedIndex;
+	public static HashMap<Integer, String> fileIDLookup;
+
 	public IndexWriter(String indexDir) {
-		invertedIndex = new HashMap<String,HashMap<String,Integer>>();
+		if(invertedIndex ==null)
+			invertedIndex = new HashMap<String,HashMap<String,Integer>>();
+		if(fileIDLookup == null)
+			fileIDLookup = new HashMap<Integer, String>(); 
 	}
 
 	public HashMap<String,HashMap<String,Integer>> getInvertedIndex()
 	{
-		if(invertedIndex == null)
-		{
-			ComputeInvertedIndex();
-		}
+		if(invertedIndex == null) { ComputeInvertedIndex(); }
 		return invertedIndex;
 	}
 
@@ -47,7 +56,9 @@ public class IndexWriter {
 		{
 			String token = tStream.next().toString();
 			HashMap<String,Integer> indexPostings = invertedIndex.get(token);
-			
+			if(token == null || token.isEmpty())
+				continue;
+
 			//Keyword check
 			if(indexPostings == null)
 			{
@@ -89,20 +100,31 @@ public class IndexWriter {
 
 		AnalyzerFactory analyzerFactoryObj = AnalyzerFactory.getInstance();
 		Analyzer analyzerObj = null;
+
 		String fileID = d.getField(FieldNames.FILEID)[0];
+		fileIDLookup.put(fileIDLookup.size()+1, fileID);
+
 		try {
 			for (FieldNames field : FieldNames.values()) {
+
 				stringArray = d.getField(field);
 				if(stringArray==null) continue;
+
+				if(field.equals(FieldNames.FILEID)) continue;
+				if(field.equals(FieldNames.NEWSDATE)) continue;
+
 				for (String s : stringArray) {
 					if(s!=null && !s.isEmpty())
 					{
 						try{
-						TokenStream	tStream = tokenizer.consume(s);
-						analyzerObj = analyzerFactoryObj.getAnalyzerForField(field,tStream);
-						analyzerObj.increment();
-						//to-do
-						insertToHashmap( tStream, fileID);
+							TokenStream	tStream = tokenizer.consume(s);
+							analyzerObj = analyzerFactoryObj.getAnalyzerForField(field,tStream);
+							analyzerObj.increment();
+							//to-do
+							tStream.reset();
+							insertToHashmap(tStream, fileID);
+
+							// invertedIndex
 						}catch(Exception e)
 						{
 							System.out.println("loop"+fileID);
@@ -121,11 +143,14 @@ public class IndexWriter {
 			 * ); contentAnalyser.increment(); }
 			 */
 
+			//System.out.println("File - "+d.getField(FieldNames.CATEGORY)[0]+" / "+ 
+			//d.getField(FieldNames.FILEID)[0]);
+			//fileWrite();
+			//fileRead();
 		} catch (Exception ex) {
 			ex.printStackTrace();
 			throw new IndexerException();
 		}
-
 	}
 
 	/**
@@ -138,4 +163,53 @@ public class IndexWriter {
 	public void close() throws IndexerException {
 		// TODO
 	}
+
+	public void fileWrite()
+	{
+		//System.out.println("file write");
+		try{
+			FileOutputStream fos = new FileOutputStream("hashmap.txt");
+			ObjectOutputStream oos = new ObjectOutputStream(fos);
+			oos.writeObject(invertedIndex);
+			oos.close();
+			fos.close();
+			//System.out.printf("Serialized HashMap data is saved in hashmap.ser");
+		}catch(Exception ioe)
+		{
+			ioe.printStackTrace();
+		}
+	}
+
+
+	public void fileRead()
+	{
+		//System.out.println("\n\n===============================");
+		//System.out.println("Deserialize()");
+		HashMap<Integer, String> map = null;
+		try
+		{
+			FileInputStream fis = new FileInputStream("hashmap.txt");
+			ObjectInputStream ois = new ObjectInputStream(fis);
+			map = (HashMap) ois.readObject();
+			ois.close();
+			fis.close();
+		}catch(Exception ioe)
+		{
+			ioe.printStackTrace();
+			return;
+		}
+		//System.out.println("Deserialized HashMap..");
+		// Display content using Iterator
+		Set set = map.entrySet();
+		Iterator iterator = set.iterator();
+		while(iterator.hasNext()) {
+			Map.Entry mentry = (Map.Entry)iterator.next();
+			//System.out.print("key: "+ mentry.getKey() + " & Value: ");
+			//System.out.println(mentry.getValue());
+		}
+	}
+
 }
+
+
+

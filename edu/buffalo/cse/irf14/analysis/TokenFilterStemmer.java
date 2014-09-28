@@ -26,7 +26,7 @@ public class TokenFilterStemmer extends TokenFilter {
 				stem.stem();
 				str = stem.toString();
 			}
-			System.out.println(str);
+			//System.out.println(str);
 			token.setTermText(str);
 		} catch (Exception e) {
 			throw new TokenizerException();

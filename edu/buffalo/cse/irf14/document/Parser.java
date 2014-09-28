@@ -27,10 +27,9 @@ public class Parser {
 	 *             In case any error occurs during parsing
 	 * @throws IOException
 	 */
-	public static Document parse(String filepath) throws ParserException,
-			IOException {
-		// TODO YOU MUST IMPLEMENT THIS
-
+	public static Document parse(String filepath) throws ParserException, IOException {
+		//System.out.println("Parser.parse() in..");
+		
 		Document documentObj = new Document();
 		String article = "";
 
@@ -207,7 +206,7 @@ public class Parser {
 		} catch (Exception e) {
 			throw new ParserException();
 		}
-
+		
 		return documentObj;
 	}
 

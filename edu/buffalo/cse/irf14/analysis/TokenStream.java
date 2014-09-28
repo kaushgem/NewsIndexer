@@ -144,9 +144,17 @@ public class TokenStream implements Iterator<Token>{
 	{
 		return tokens.size();
 	}
+	
 	public int getIndex()
 	{
 		return currentIndex;
+	}
+	
+	@Override
+	public String toString()
+	{
+		return "";
+		
 	}
 	
 	

@@ -22,7 +22,7 @@ public class TokenFilterStopwords extends TokenFilter {
 			if (tConst.stopWords.get(str.toLowerCase()) != null)
 				if (tConst.stopWords.get(str.toLowerCase()))
 					str = "";
-			System.out.println(str);
+			//System.out.println(str);
 			token.setTermText(str);
 		} catch (Exception e) {
 			throw new TokenizerException();

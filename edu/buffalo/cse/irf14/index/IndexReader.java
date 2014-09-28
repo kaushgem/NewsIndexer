@@ -7,6 +7,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.swing.plaf.metal.MetalIconFactory.FileIcon16;
+
 /**
  * @author nikhillo
  * Class that emulates reading data back from a written index
@@ -47,7 +49,7 @@ public class IndexReader {
 	 */
 	public int getTotalValueTerms() {
 		//TODO: YOU MUST IMPLEMENT THIS
-		return invertedIndex.size();
+		return IndexWriter.fileIDLookup.size();
 	}
 	
 	/**

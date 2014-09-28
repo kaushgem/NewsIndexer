@@ -36,8 +36,8 @@ public class AnalyzerAuthor implements Analyzer {
 					TokenFilterType.CAPITALIZATION };
 			for (TokenFilterType tokenFilType : filterOrder) {
 				tokenFilterObj = factory.getFilterByType(tokenFilType, tStream);
-				while (tokenFilterObj.increment()) {
-				}
+				while (tokenFilterObj.increment()) {}
+				tStream.reset();
 			}
 		}catch(Exception e){
 			throw new TokenizerException();

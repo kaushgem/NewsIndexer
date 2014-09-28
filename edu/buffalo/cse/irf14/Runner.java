@@ -75,8 +75,9 @@ public class Runner {
 			
 			writer.close();
 			Date endTime = new Date();
+			System.out.println(startTime);
 			System.out.println(endTime);
-			System.out.println("Terminated");
+			System.out.println("Terminated TotalTime = "+ endTime.compareTo(startTime));
 			  
 			
 		} catch (IndexerException e) {

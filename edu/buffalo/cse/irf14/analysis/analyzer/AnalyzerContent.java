@@ -38,10 +38,11 @@ public class AnalyzerContent implements Analyzer {
 					TokenFilterType.CAPITALIZATION };
 			for (TokenFilterType tokenFilType : filterOrder) {
 				tokenFilterObj = factory.getFilterByType(tokenFilType, tStream);
-				while (tokenFilterObj.increment()) {
-				}
+				while (tokenFilterObj.increment()) {}
+				tStream.reset();
 			}
 		}catch(Exception e){
+			e.printStackTrace();
 			throw new TokenizerException();
 		}
 		return false;

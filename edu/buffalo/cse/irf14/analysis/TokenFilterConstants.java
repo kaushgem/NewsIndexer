@@ -11,7 +11,7 @@ public class TokenFilterConstants {
 
 	public Map<String, String> contractions = new HashMap<String, String>();
 	public Map<String, Boolean> stopWords = new HashMap<String, Boolean>();
-	public Map<String, String> accents = new HashMap<String, String>();
+	public Map<Character, String> accents = new HashMap<Character, String>();
 
 	private static TokenFilterConstants tokenFilterConstants = null;
 
@@ -30,8 +30,8 @@ public class TokenFilterConstants {
 		stopWords.put(str1, boo);
 	}
 
-	private void addToAccentsMap(String str1, String str2) {
-		accents.put(str1, str2);
+	private void addToAccentsMap(char ch, String str1) {
+		accents.put(ch, str1);
 	}
 
 	private TokenFilterConstants() {
@@ -286,79 +286,79 @@ public class TokenFilterConstants {
 		addToStopWordMap("your", true);
 		
 		// Accents - List taken from - https://raw.githubusercontent.com/lmjabreu/solr-conftemplate/master/mapping-ISOLatin1Accent.txt
-		addToAccentsMap("\\u00C0", "A");
-		addToAccentsMap("\\u00C1", "A");
-		addToAccentsMap("\\u00C2", "A");
-		addToAccentsMap("\\u00C3", "A");
-		addToAccentsMap("\\u00C4", "A");
-		addToAccentsMap("\\u00C5", "A");
-		addToAccentsMap("\\u00C6", "AE");
-		addToAccentsMap("\\u00C7", "C");
-		addToAccentsMap("\\u00C8", "E");
-		addToAccentsMap("\\u00C9", "E");
-		addToAccentsMap("\\u00CA", "E");
-		addToAccentsMap("\\u00CB", "E");
-		addToAccentsMap("\\u00CC", "I");
-		addToAccentsMap("\\u00CD", "I");
-		addToAccentsMap("\\u00CE", "I");
-		addToAccentsMap("\\u00CF", "I");
-		addToAccentsMap("\\u0132", "IJ");
-		addToAccentsMap("\\u00D0", "D");
-		addToAccentsMap("\\u00D1", "N");
-		addToAccentsMap("\\u00D2", "O");
-		addToAccentsMap("\\u00D3", "O");
-		addToAccentsMap("\\u00D4", "O");
-		addToAccentsMap("\\u00D5", "O");
-		addToAccentsMap("\\u00D6", "O");
-		addToAccentsMap("\\u00D8", "O");
-		addToAccentsMap("\\u0152", "OE");
-		addToAccentsMap("\\u00DE", "TH");
-		addToAccentsMap("\\u00D9", "U");
-		addToAccentsMap("\\u00DA", "U");
-		addToAccentsMap("\\u00DB", "U");
-		addToAccentsMap("\\u00DC", "U");
-		addToAccentsMap("\\u00DD", "Y");
-		addToAccentsMap("\\u0178", "Y");
-		addToAccentsMap("\\u00E0", "a");
-		addToAccentsMap("\\u00E1", "a");
-		addToAccentsMap("\\u00E2", "a");
-		addToAccentsMap("\\u00E3", "a");
-		addToAccentsMap("\\u00E4", "a");
-		addToAccentsMap("\\u00E5", "a");
-		addToAccentsMap("\\u00E6", "ae");
-		addToAccentsMap("\\u00E7", "c");
-		addToAccentsMap("\\u00E8", "e");
-		addToAccentsMap("\\u00E9", "e");
-		addToAccentsMap("\\u00EA", "e");
-		addToAccentsMap("\\u00EB", "e");
-		addToAccentsMap("\\u00EC", "i");
-		addToAccentsMap("\\u00ED", "i");
-		addToAccentsMap("\\u00EE", "i");
-		addToAccentsMap("\\u00EF", "i");
-		addToAccentsMap("\\u0133", "ij");
-		addToAccentsMap("\\u00F0", "d");
-		addToAccentsMap("\\u00F1", "n");
-		addToAccentsMap("\\u00F2", "o");
-		addToAccentsMap("\\u00F3", "o");
-		addToAccentsMap("\\u00F4", "o");
-		addToAccentsMap("\\u00F5", "o");
-		addToAccentsMap("\\u00F6", "o");
-		addToAccentsMap("\\u00F8", "o");
-		addToAccentsMap("\\u0153", "oe");
-		addToAccentsMap("\\u00DF", "ss");
-		addToAccentsMap("\\u00FE", "th");
-		addToAccentsMap("\\u00F9", "u");
-		addToAccentsMap("\\u00FA", "u");
-		addToAccentsMap("\\u00FB", "u");
-		addToAccentsMap("\\u00FC", "u");
-		addToAccentsMap("\\u00FD", "y");
-		addToAccentsMap("\\u00FF", "y");
-		addToAccentsMap("\\uFB00", "ff");
-		addToAccentsMap("\\uFB01", "fi");
-		addToAccentsMap("\\uFB02", "fl");
-		addToAccentsMap("\\uFB03", "ffi");
-		addToAccentsMap("\\uFB04", "ffl");
-		addToAccentsMap("\\uFB05", "ft");
-		addToAccentsMap("\\uFB06", "st");
+		addToAccentsMap('\u00C0', "A");
+		addToAccentsMap('\u00C1', "A");
+		addToAccentsMap('\u00C2', "A");
+		addToAccentsMap('\u00C3', "A");
+		addToAccentsMap('\u00C4', "A");
+		addToAccentsMap('\u00C5', "A");
+		addToAccentsMap('\u00C6', "AE");
+		addToAccentsMap('\u00C7', "C");
+		addToAccentsMap('\u00C8', "E");
+		addToAccentsMap('\u00C9', "E");
+		addToAccentsMap('\u00CA', "E");
+		addToAccentsMap('\u00CB', "E");
+		addToAccentsMap('\u00CC', "I");
+		addToAccentsMap('\u00CD', "I");
+		addToAccentsMap('\u00CE', "I");
+		addToAccentsMap('\u00CF', "I");
+		addToAccentsMap('\u0132', "IJ");
+		addToAccentsMap('\u00D0', "D");
+		addToAccentsMap('\u00D1', "N");
+		addToAccentsMap('\u00D2', "O");
+		addToAccentsMap('\u00D3', "O");
+		addToAccentsMap('\u00D4', "O");
+		addToAccentsMap('\u00D5', "O");
+		addToAccentsMap('\u00D6', "O");
+		addToAccentsMap('\u00D8', "O");
+		addToAccentsMap('\u0152', "OE");
+		addToAccentsMap('\u00DE', "TH");
+		addToAccentsMap('\u00D9', "U");
+		addToAccentsMap('\u00DA', "U");
+		addToAccentsMap('\u00DB', "U");
+		addToAccentsMap('\u00DC', "U");
+		addToAccentsMap('\u00DD', "Y");
+		addToAccentsMap('\u0178', "Y");
+		addToAccentsMap('\u00E0', "a");
+		addToAccentsMap('\u00E1', "a");
+		addToAccentsMap('\u00E2', "a");
+		addToAccentsMap('\u00E3', "a");
+		addToAccentsMap('\u00E4', "a");
+		addToAccentsMap('\u00E5', "a");
+		addToAccentsMap('\u00E6', "ae");
+		addToAccentsMap('\u00E7', "c");
+		addToAccentsMap('\u00E8', "e");
+		addToAccentsMap('\u00E9', "e");
+		addToAccentsMap('\u00EA', "e");
+		addToAccentsMap('\u00EB', "e");
+		addToAccentsMap('\u00EC', "i");
+		addToAccentsMap('\u00ED', "i");
+		addToAccentsMap('\u00EE', "i");
+		addToAccentsMap('\u00EF', "i");
+		addToAccentsMap('\u0133', "ij");
+		addToAccentsMap('\u00F0', "d");
+		addToAccentsMap('\u00F1', "n");
+		addToAccentsMap('\u00F2', "o");
+		addToAccentsMap('\u00F3', "o");
+		addToAccentsMap('\u00F4', "o");
+		addToAccentsMap('\u00F5', "o");
+		addToAccentsMap('\u00F6', "o");
+		addToAccentsMap('\u00F8', "o");
+		addToAccentsMap('\u0153', "oe");
+		addToAccentsMap('\u00DF', "ss");
+		addToAccentsMap('\u00FE', "th");
+		addToAccentsMap('\u00F9', "u");
+		addToAccentsMap('\u00FA', "u");
+		addToAccentsMap('\u00FB', "u");
+		addToAccentsMap('\u00FC', "u");
+		addToAccentsMap('\u00FD', "y");
+		addToAccentsMap('\u00FF', "y");
+		addToAccentsMap('\uFB00', "ff");
+		addToAccentsMap('\uFB01', "fi");
+		addToAccentsMap('\uFB02', "fl");
+		addToAccentsMap('\uFB03', "ffi");
+		addToAccentsMap('\uFB04', "ffl");
+		addToAccentsMap('\uFB05', "ft");
+		addToAccentsMap('\uFB06', "st");
 	}
 }

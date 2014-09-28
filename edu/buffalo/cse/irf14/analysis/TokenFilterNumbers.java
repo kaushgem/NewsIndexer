@@ -22,7 +22,7 @@ public class TokenFilterNumbers extends TokenFilter {
 			if (str.matches("^[0-9]+[/][0-9]+$"))
 				str = str.replaceAll("[0-9]+", "");
 			str = str.replaceAll("[0-9]+", "");
-			System.out.println(str);
+			//System.out.println(str);
 			token.setTermText(str);
 		} catch (Exception e) {
 			throw new TokenizerException();
