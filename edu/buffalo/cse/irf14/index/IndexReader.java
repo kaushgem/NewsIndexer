@@ -3,13 +3,13 @@
  */
 package edu.buffalo.cse.irf14.index;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import edu.buffalo.cse.util.TrieNode;
-
 
 import edu.buffalo.cse.util.*;
 
@@ -19,7 +19,7 @@ import javax.swing.plaf.metal.MetalIconFactory.FileIcon16;
  * @author nikhillo
  * Class that emulates reading data back from a written index
  */
-public class IndexReader {
+public class IndexReader  {
 	/**
 	 * Default constructor
 	 * @param indexDir : The root directory from which the index is to be read.
@@ -27,14 +27,15 @@ public class IndexReader {
 	 * you make subdirectories etc., you will have to handle it accordingly.
 	 * @param type The {@link IndexType} to read from
 	 */
-	
+
 	HashMap<String,HashMap<String,Integer>> invertedIndex = null;
 	IndexType type = null;
-	
+	String indexDirectory = null;
 	public IndexReader(String indexDir, IndexType type) {
 		this.type = type;
+		this.indexDirectory = indexDir;
 	}
-	
+
 	/**
 	 * Get total number of terms from the "key" dictionary associated with this 
 	 * index. A postings list is always created against the "key" dictionary
@@ -61,7 +62,7 @@ public class IndexReader {
 		}
 		return size;
 	}
-	
+
 	/**
 	 * Get total number of terms from the "value" dictionary associated with this 
 	 * index. A postings list is always created with the "value" dictionary
@@ -70,7 +71,7 @@ public class IndexReader {
 	public int getTotalValueTerms() {
 		return IndexWriter.fileIDLookup.size();
 	}
-	
+
 	/**
 	 * Method to get the postings for a given term. You can assume that
 	 * the raw string that is used to query would be passed through the same
@@ -81,6 +82,9 @@ public class IndexReader {
 	 */
 	public Map<String, Integer> getPostings(String term) {
 		HashMap<String, Integer> indexPostings = new HashMap<String, Integer>(); 
+		
+		boolean isInmemory = IndexWriter.inMemory;
+		
 		switch(type)
 		{
 		case TERM:
@@ -100,7 +104,7 @@ public class IndexReader {
 		}
 		return indexPostings;
 	}
-	
+
 	/**
 	 * Method to get the top k terms from the index in terms of the total number
 	 * of occurrences.
@@ -109,33 +113,33 @@ public class IndexReader {
 	 * null for invalid k values
 	 */
 	public List<String> getTopK(int k) {
-		
+
 		if(k<=0)
 			return null;
 		List<TrieNode> topk_nodes = new ArrayList<TrieNode>();
 		List<String> topKwords = new ArrayList<String>();
-		
+
 		int distinct_word_count = 0;
 		int total_word_count = 0;
-		
+
 		for(int p=0;p<k; p++ )
 		{
 			topk_nodes.add( IndexWriter.root);
 		}
 		// { root, root, root, root, root, root, root, root, root, root };
-       
-        IndexWriter.root.GetTopCounts(topk_nodes,  distinct_word_count,  total_word_count);
-        Collections.sort(topk_nodes);
-        
-        for(TrieNode t:topk_nodes)
-        {
-        	topKwords.add(t.toString());
-        }
-        
-        Collections.reverse(topKwords);
-        return topKwords;
+
+		IndexWriter.root.GetTopCounts(topk_nodes,  distinct_word_count,  total_word_count);
+		Collections.sort(topk_nodes);
+
+		for(TrieNode t:topk_nodes)
+		{
+			topKwords.add(t.toString());
+		}
+
+		Collections.reverse(topKwords);
+		return topKwords;
 	}
-	
+
 	/**
 	 * Method to implement a simple boolean AND query on the given index
 	 * @param terms The ordered set of terms to AND, similar to getPostings()
@@ -148,6 +152,52 @@ public class IndexReader {
 	 */
 	public Map<String, Integer> query(String...terms) {
 		//TODO : BONUS ONLY
+
+		List<HashMap<String,Integer>> allPostings = new ArrayList<HashMap<String,Integer>>(); 
+
+		if(allPostings!=null && allPostings.size()>0)
+		{
+			Collections.sort(allPostings,new HashSizeComparator());
+			HashMap<String,Integer> hashMap = allPostings.get(0);
+			
+			allPostings.remove(0);
+			
+			for(String token: hashMap.keySet())
+			{
+				
+				
+			}
+			
+			
+		}
+		
+		
+		
+		
+		
+
 		return null;
 	}
+	
+	private void populateIndex()
+	{
+		String indexDir = this.indexDirectory;
+		String termIndexFilepath = this.indexDirectory + File.separator + IndexType.TERM.toString()+".txt";
+		IndexWriter.termIndex = IndexWriter.GetIndexHashMapFromFile(termIndexFilepath);
+		String categoryIndexFilepath = this.indexDirectory + File.separator + IndexType.TERM.toString()+".txt";
+		IndexWriter.categoryIndex = IndexWriter.GetIndexHashMapFromFile(categoryIndexFilepath);
+		String authorIndexFilepath = this.indexDirectory + File.separator + IndexType.TERM.toString()+".txt";
+		IndexWriter.authorIndex = IndexWriter.GetIndexHashMapFromFile(authorIndexFilepath);
+		String placeIndexFilepath = this.indexDirectory + File.separator + IndexType.TERM.toString()+".txt";
+		IndexWriter.placeIndex = IndexWriter.GetIndexHashMapFromFile(placeIndexFilepath);
+		// term index;
+		
+		
+		
+		
+		
+		
+	}
+
+
 }

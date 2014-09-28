@@ -31,7 +31,8 @@ public class IndexWriter {
 	 * @param indexDir
 	 *            : The root directory to be sued for indexing
 	 */
-
+	
+	public static boolean inMemory = false ;
 	public static HashMap<String, HashMap<String, Integer>> invertedIndex;
 
 	// LookUp
@@ -48,6 +49,7 @@ public class IndexWriter {
 		
 	
 	public IndexWriter(String indexDir) {
+		
 		if (invertedIndex == null)
 			invertedIndex = new HashMap<String, HashMap<String, Integer>>();
 		if (fileIDLookup == null)
@@ -76,7 +78,7 @@ public class IndexWriter {
 	 */
 
 	public void addDocument(Document d) throws IndexerException {
-
+		inMemory = true;
 		Tokenizer tokenizer = new Tokenizer();
 		AnalyzerFactory analyzerFactoryObj = AnalyzerFactory.getInstance();
 		Analyzer analyzerObj = null;
@@ -202,7 +204,7 @@ public class IndexWriter {
 		}
 	}
 
-	public void fileRead() {
+	public static void fileRead() {
 		// System.out.println("\n\n===============================");
 		// System.out.println("Deserialize()");
 		HashMap<Integer, String> map = null;
