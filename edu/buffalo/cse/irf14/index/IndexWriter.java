@@ -3,14 +3,10 @@
  */
 package edu.buffalo.cse.irf14.index;
 
-import java.io.FileInputStream;
+import java.io.File;
 import java.io.FileOutputStream;
-import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.Set;
 
 import edu.buffalo.cse.irf14.analysis.Analyzer;
 import edu.buffalo.cse.irf14.analysis.AnalyzerFactory;
@@ -31,9 +27,10 @@ public class IndexWriter {
 	 * @param indexDir
 	 *            : The root directory to be sued for indexing
 	 */
-	
-	public static boolean inMemory = false ;
+
+	public static boolean inMemory = false;
 	public static HashMap<String, HashMap<String, Integer>> invertedIndex;
+	String indexDirectory = null;
 
 	// LookUp
 	public static HashMap<Integer, String> fileIDLookup;
@@ -46,10 +43,9 @@ public class IndexWriter {
 	// get top K
 	// get top K
 	public static TrieNode root = new TrieNode(null, '?');
-		
-	
+
 	public IndexWriter(String indexDir) {
-		
+
 		if (invertedIndex == null)
 			invertedIndex = new HashMap<String, HashMap<String, Integer>>();
 		if (fileIDLookup == null)
@@ -99,8 +95,7 @@ public class IndexWriter {
 									.getAnalyzerForField(field, tStream);
 							analyzerObj.increment();
 							tStream.reset();
-							switch(field)
-							{
+							switch (field) {
 							case TITLE:
 							case AUTHORORG:
 							case NEWSDATE:
@@ -143,10 +138,10 @@ public class IndexWriter {
 	public void close() throws IndexerException {
 		// fileWrite();
 		// fileRead();
-		 System.out.println("Term Size : "+ termIndex.size());
-		 System.out.println("Cate Size : "+ categoryIndex.size());
-		 System.out.println("Auth Size : "+ authorIndex.size());
-		 System.out.println("Plac Size : "+ placeIndex.size());
+		System.out.println("Term Size : " + termIndex.size());
+		System.out.println("Cate Size : " + categoryIndex.size());
+		System.out.println("Auth Size : " + authorIndex.size());
+		System.out.println("Plac Size : " + placeIndex.size());
 		// TODO
 	}
 
@@ -160,8 +155,10 @@ public class IndexWriter {
 	public void ComputeInvertedIndex() {
 		invertedIndex = new HashMap<String, HashMap<String, Integer>>();
 	}
-	
-	public void insertToIndex(TokenStream tStream, String fileID, HashMap<String, HashMap<String, Integer>> indexMap) throws IndexerException {
+
+	public void insertToIndex(TokenStream tStream, String fileID,
+			HashMap<String, HashMap<String, Integer>> indexMap)
+			throws IndexerException {
 
 		HashMap<String, Integer> indexPostings = null;
 
@@ -170,7 +167,7 @@ public class IndexWriter {
 				String token = tStream.next().toString();
 				if (token == null || token.isEmpty())
 					continue;
-				root.AddWord(token,0);
+				root.AddWord(token, 0);
 				// indexPostings HashMap check
 				indexPostings = indexMap.get(token);
 				if (indexPostings == null) {
@@ -181,7 +178,8 @@ public class IndexWriter {
 					if (indexPostings.get(fileID) == null) {
 						indexPostings.put(fileID, 1);
 					} else {
-						indexPostings.put(fileID, indexPostings.get(fileID) + 1);
+						indexPostings
+								.put(fileID, indexPostings.get(fileID) + 1);
 					}
 				}
 			}// while
@@ -190,42 +188,38 @@ public class IndexWriter {
 		}
 	}
 
-	public void fileWrite() {
-		// System.out.println("file write");
+	public void writeIndex() throws IndexerException {
 		try {
-			FileOutputStream fos = new FileOutputStream("hashmap.txt");
-			ObjectOutputStream oos = new ObjectOutputStream(fos);
-			oos.writeObject(invertedIndex);
-			oos.close();
-			fos.close();
-			// System.out.printf("Serialized HashMap data is saved in hashmap.ser");
-		} catch (Exception ioe) {
-			ioe.printStackTrace();
+			String termIndexFilepath = this.indexDirectory + File.separator
+					+ IndexType.TERM.toString() + ".txt";
+			indexToFile(termIndexFilepath, termIndex);
+			String categoryIndexFilepath = this.indexDirectory + File.separator
+					+ IndexType.CATEGORY.toString() + ".txt";
+			indexToFile(categoryIndexFilepath, categoryIndex);
+			String authorIndexFilepath = this.indexDirectory + File.separator
+					+ IndexType.AUTHOR.toString() + ".txt";
+			indexToFile(authorIndexFilepath, authorIndex);
+			String placeIndexFilepath = this.indexDirectory + File.separator
+					+ IndexType.PLACE.toString() + ".txt";
+			indexToFile(placeIndexFilepath, placeIndex);
+		} catch (Exception e) {
+			e.printStackTrace();
+			throw new IndexerException();
 		}
 	}
 
-	public void fileRead() {
-		// System.out.println("\n\n===============================");
-		// System.out.println("Deserialize()");
-		HashMap<Integer, String> map = null;
+	public void indexToFile(String path,
+			HashMap<String, HashMap<String, Integer>> indexMap)
+			throws IndexerException {
 		try {
-			FileInputStream fis = new FileInputStream("hashmap.txt");
-			ObjectInputStream ois = new ObjectInputStream(fis);
-			map = (HashMap) ois.readObject();
-			ois.close();
-			fis.close();
-		} catch (Exception ioe) {
-			ioe.printStackTrace();
-			return;
-		}
-		// System.out.println("Deserialized HashMap..");
-		// Display content using Iterator
-		Set set = map.entrySet();
-		Iterator iterator = set.iterator();
-		while (iterator.hasNext()) {
-			Map.Entry mentry = (Map.Entry) iterator.next();
-			// System.out.print("key: "+ mentry.getKey() + " & Value: ");
-			// System.out.println(mentry.getValue());	
+			FileOutputStream fout = new FileOutputStream(path);
+			ObjectOutputStream oout = new ObjectOutputStream(fout);
+			oout.writeObject(indexMap);
+			oout.close();
+			fout.close();
+		} catch (Exception e) {
+			e.printStackTrace();
+			throw new IndexerException();
 		}
 	}
 

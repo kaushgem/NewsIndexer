@@ -4,14 +4,11 @@
 package edu.buffalo.cse.irf14.document;
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import edu.buffalo.cse.util.*;
+import edu.buffalo.cse.util.Utility;
 
 /**
  * @author nikhillo Class that parses a given file into a Document
@@ -27,9 +24,10 @@ public class Parser {
 	 *             In case any error occurs during parsing
 	 * @throws IOException
 	 */
-	public static Document parse(String filepath) throws ParserException, IOException {
-		//System.out.println("Parser.parse() in..");
-		
+	public static Document parse(String filepath) throws ParserException,
+			IOException {
+		// System.out.println("Parser.parse() in..");
+
 		Document documentObj = new Document();
 		String article = "";
 
@@ -110,8 +108,7 @@ public class Parser {
 						}
 						if (isTitle) {
 							Title = titleBuilder.toString().trim();
-							documentObj.setField(FieldNames.TITLE, titleBuilder
-									.toString().trim());
+							documentObj.setField(FieldNames.TITLE, Title);
 						}
 
 					}
@@ -196,17 +193,17 @@ public class Parser {
 			}
 
 			/*
-			System.out.println("Title: " + Title);
-			System.out.println("Author org: " + AuthorOrg);
-			System.out.println("Place: " + ArticlePlace);
-			System.out.println("Date: " + newsDate);
-			System.out.println("Authors: " + AuthorBuilder.toString());
-			*/
-			
+			 * System.out.println("Title: " + Title);
+			 * System.out.println("Author org: " + AuthorOrg);
+			 * System.out.println("Place: " + ArticlePlace);
+			 * System.out.println("Date: " + newsDate);
+			 * System.out.println("Authors: " + AuthorBuilder.toString());
+			 */
+
 		} catch (Exception e) {
 			throw new ParserException();
 		}
-		
+
 		return documentObj;
 	}
 

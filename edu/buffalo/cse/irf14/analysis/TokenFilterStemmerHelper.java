@@ -2,7 +2,7 @@ package edu.buffalo.cse.irf14.analysis;
 
 /*
  * 
- * This has been taken from - http://tartarus.org/martin/PorterStemmer/java.txt
+ * Reference - http://tartarus.org/martin/PorterStemmer/java.txt
 
    Porter stemmer in Java. The original paper is in
 
