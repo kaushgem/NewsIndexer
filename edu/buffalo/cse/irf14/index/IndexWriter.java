@@ -204,7 +204,7 @@ public class IndexWriter {
 		}
 	}
 
-	public static void fileRead() {
+	public void fileRead() {
 		// System.out.println("\n\n===============================");
 		// System.out.println("Deserialize()");
 		HashMap<Integer, String> map = null;
@@ -225,7 +225,7 @@ public class IndexWriter {
 		while (iterator.hasNext()) {
 			Map.Entry mentry = (Map.Entry) iterator.next();
 			// System.out.print("key: "+ mentry.getKey() + " & Value: ");
-			// System.out.println(mentry.getValue());
+			// System.out.println(mentry.getValue());	
 		}
 	}
 

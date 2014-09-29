@@ -8,8 +8,10 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import edu.buffalo.cse.util.*;
 
@@ -34,6 +36,11 @@ public class IndexReader  {
 	public IndexReader(String indexDir, IndexType type) {
 		this.type = type;
 		this.indexDirectory = indexDir;
+		boolean isInmemory = IndexWriter.inMemory;
+		if(isInmemory)
+		{
+			
+		}
 	}
 
 	/**
@@ -82,9 +89,9 @@ public class IndexReader  {
 	 */
 	public Map<String, Integer> getPostings(String term) {
 		HashMap<String, Integer> indexPostings = new HashMap<String, Integer>(); 
+
 		
-		boolean isInmemory = IndexWriter.inMemory;
-		
+
 		switch(type)
 		{
 		case TERM:
@@ -153,51 +160,78 @@ public class IndexReader  {
 	public Map<String, Integer> query(String...terms) {
 		//TODO : BONUS ONLY
 
-		List<HashMap<String,Integer>> allPostings = new ArrayList<HashMap<String,Integer>>(); 
-
-		if(allPostings!=null && allPostings.size()>0)
+		List<Map<String,Integer>> hashMaps = new ArrayList<Map<String,Integer>>(); 
+		for(String term: terms)
 		{
-			Collections.sort(allPostings,new HashSizeComparator());
-			HashMap<String,Integer> hashMap = allPostings.get(0);
-			
-			allPostings.remove(0);
-			
-			for(String token: hashMap.keySet())
+			Map<String,Integer> map =getPostings( term);
+			if(map!=null)
 			{
-				
-				
+				hashMaps.add( getPostings( term));
 			}
-			
-			
+
+		}
+		HashMap<String, Integer> containter = new HashMap<String, Integer>(hashMaps.get(0));
+
+		int size = hashMaps.size();
+		String key;
+		int value;
+		for (int i = 1; i < size; i++) {
+			containter.keySet().retainAll(hashMaps.get(i).keySet());
 		}
 		
 		
-		
-		
-		
+		for (int i = 1; i < size; i++) {
+			for (Entry<String, Integer> indexEntry : hashMaps.get(i).entrySet()) {
+				key = indexEntry.getKey();
+				value = indexEntry.getValue();
 
-		return null;
+				if (containter.containsKey(key)) {
+					containter.put(key, containter.get(key) + value);
+				}
+			}}
+
+		if (containter.isEmpty())
+		{
+			return null;
+		}
+		for (Entry<String, Integer> entry : containter.entrySet())
+		{
+			System.out.println(entry.getKey() + " " + entry.getValue() );
+		}
+
+		return containter;
+
+
+		/*	
+		for(String term: terms)
+		{
+			Map<String,Integer> map =getPostings( term);
+			allPostings.add( (map instanceof HashMap) 
+				      ? (HashMap) map : new HashMap<String, Integer>(map));
+		}
+		HashMap<String,Integer> hashMap  = null;
+		if(allPostings!=null && allPostings.size()>0)
+		{
+			Collections.sort(allPostings,new HashSizeComparator());
+			hashMap= allPostings.get(0);
+			allPostings.remove(0);
+			for(Iterator<Map.Entry<String, Integer>> it = hashMap.entrySet().iterator(); it.hasNext(); ) {
+				Map.Entry<String, Integer> entry = it.next();
+				for(HashMap<String,Integer> otherqueryHash :allPostings )
+				{
+					if(  otherqueryHash.get(entry.getKey()) == null)
+					{
+						it.remove();
+
+					}
+				}
+			}
+		}
+
+		return hashMap;*/
 	}
+
 	
-	private void populateIndex()
-	{
-		String indexDir = this.indexDirectory;
-		String termIndexFilepath = this.indexDirectory + File.separator + IndexType.TERM.toString()+".txt";
-		IndexWriter.termIndex = IndexWriter.GetIndexHashMapFromFile(termIndexFilepath);
-		String categoryIndexFilepath = this.indexDirectory + File.separator + IndexType.TERM.toString()+".txt";
-		IndexWriter.categoryIndex = IndexWriter.GetIndexHashMapFromFile(categoryIndexFilepath);
-		String authorIndexFilepath = this.indexDirectory + File.separator + IndexType.TERM.toString()+".txt";
-		IndexWriter.authorIndex = IndexWriter.GetIndexHashMapFromFile(authorIndexFilepath);
-		String placeIndexFilepath = this.indexDirectory + File.separator + IndexType.TERM.toString()+".txt";
-		IndexWriter.placeIndex = IndexWriter.GetIndexHashMapFromFile(placeIndexFilepath);
-		// term index;
-		
-		
-		
-		
-		
-		
-	}
 
-
+	 
 }

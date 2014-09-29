@@ -33,7 +33,7 @@ public class Runner {
 	 */
 	public static void main(String[] args) throws InterruptedException, IOException {
 		
-		String ipDir = args[0];
+		String ipDir = "C:\\Users\\Sathish\\Dropbox\\UB\\Fall\\535 - IR\\news_training\\training";//args[0];
 		String indexDir = "";
 		//more? idk!
 		
