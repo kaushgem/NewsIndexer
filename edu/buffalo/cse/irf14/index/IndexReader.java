@@ -35,9 +35,14 @@ public class IndexReader {
 	public IndexReader(String indexDir, IndexType type) {
 		this.type = type;
 		this.indexDirectory = indexDir;
-		boolean isInmemory = IndexWriter.inMemory;
-		if (isInmemory) {
-
+		boolean isInmemory = IndexWriter.fileIDLookup.size() > 0;
+		//isInmemory = false;
+		if (!isInmemory) {
+			try {
+				readIndex();
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
 		}
 	}
 
@@ -218,7 +223,7 @@ public class IndexReader {
 		 */
 	}
 
-	public void readIndex() throws IndexerException {
+	private void readIndex() throws IndexerException {
 		try {
 			String termIndexFilepath = this.indexDirectory + File.separator
 					+ IndexType.TERM.toString() + ".txt";
@@ -232,15 +237,26 @@ public class IndexReader {
 			String placeIndexFilepath = this.indexDirectory + File.separator
 					+ IndexType.PLACE.toString() + ".txt";
 			IndexWriter.placeIndex = fileToIndex(placeIndexFilepath);
-			// term index;
+			String fileIDLookupFilepath = this.indexDirectory + File.separator
+					+ "fileidlookup" + ".txt";
+			IndexWriter.fileIDLookup = fileToLookup(fileIDLookupFilepath);
+			
+			System.out.println("Term Size : " + IndexWriter.termIndex.size());
+			System.out.println("Cate Size : " + IndexWriter.categoryIndex.size());
+			System.out.println("Auth Size : " + IndexWriter.authorIndex.size());
+			System.out.println("Plac Size : " + IndexWriter.placeIndex.size());
+			System.out.println("File Size : " + IndexWriter.fileIDLookup.size());
+		
+			
 		} catch (Exception e) {
+			e.printStackTrace();
 			throw new IndexerException();
 		}
 
 	}
 
 	@SuppressWarnings("unchecked")
-	public static HashMap<String, HashMap<String, Integer>> fileToIndex(
+	private static HashMap<String, HashMap<String, Integer>> fileToIndex(
 			String path) throws IndexerException {
 
 		HashMap<String, HashMap<String, Integer>> map = null;
@@ -253,6 +269,7 @@ public class IndexReader {
 			oin.close();
 			fin.close();
 		} catch (Exception e) {
+			e.printStackTrace();
 			throw new IndexerException();
 		}
 
@@ -271,6 +288,26 @@ public class IndexReader {
 		 * iterator.next(); System.out.print("key: " + mentry.getKey() +
 		 * " & Value: "); System.out.println(mentry.getValue()); }
 		 */
+		return map;
+	}
+	
+	@SuppressWarnings("unchecked")
+	public static HashMap<Integer, String> fileToLookup(
+			String path) throws IndexerException {
+
+		HashMap<Integer, String> map = null;
+
+		try {
+			FileInputStream fin = new FileInputStream(path);
+			ObjectInputStream oin = new ObjectInputStream(fin);
+			map = (HashMap<Integer, String>) oin.readObject();
+			System.out.println("a " + map.size());
+			oin.close();
+			fin.close();
+		} catch (Exception e) {
+			e.printStackTrace();
+			throw new IndexerException();
+		}
 		return map;
 	}
 

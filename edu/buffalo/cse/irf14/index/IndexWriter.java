@@ -45,6 +45,7 @@ public class IndexWriter {
 	public static TrieNode root = new TrieNode(null, '?');
 
 	public IndexWriter(String indexDir) {
+		indexDirectory = indexDir;
 
 		if (invertedIndex == null)
 			invertedIndex = new HashMap<String, HashMap<String, Integer>>();
@@ -136,14 +137,14 @@ public class IndexWriter {
 	 *             : In case any error occurs
 	 */
 	public void close() throws IndexerException {
-		// fileWrite();
-		// fileRead();
+		writeIndex();
 		System.out.println("Term Size : " + termIndex.size());
 		System.out.println("Cate Size : " + categoryIndex.size());
 		System.out.println("Auth Size : " + authorIndex.size());
 		System.out.println("Plac Size : " + placeIndex.size());
-		// TODO
+		System.out.println("File Size : " + fileIDLookup.size());
 	}
+		
 
 	public HashMap<String, HashMap<String, Integer>> getInvertedIndex() {
 		if (invertedIndex == null) {
@@ -202,6 +203,10 @@ public class IndexWriter {
 			String placeIndexFilepath = this.indexDirectory + File.separator
 					+ IndexType.PLACE.toString() + ".txt";
 			indexToFile(placeIndexFilepath, placeIndex);
+			
+			String fileIDLookupFilepath = this.indexDirectory + File.separator
+					+ "fileidlookup" + ".txt";
+			lookupToFile(fileIDLookupFilepath, fileIDLookup);
 		} catch (Exception e) {
 			e.printStackTrace();
 			throw new IndexerException();
@@ -222,5 +227,21 @@ public class IndexWriter {
 			throw new IndexerException();
 		}
 	}
+	
+	public void lookupToFile(String path,
+			HashMap<Integer, String> indexMap)
+			throws IndexerException {
+		try {
+			FileOutputStream fout = new FileOutputStream(path);
+			ObjectOutputStream oout = new ObjectOutputStream(fout);
+			oout.writeObject(indexMap);
+			oout.close();
+			fout.close();
+		} catch (Exception e) {
+			e.printStackTrace();
+			throw new IndexerException();
+		}
+	}
+
 
 }
