@@ -138,7 +138,6 @@ public class IndexReader {
 		for (int p = 0; p < k; p++) {
 			topk_nodes.add(IndexWriter.root);
 		}
-		// { root, root, root, root, root, root, root, root, root, root };
 
 		IndexWriter.root.GetTopCounts(topk_nodes, distinct_word_count,
 				total_word_count);
@@ -246,13 +245,11 @@ public class IndexReader {
 			System.out.println("Auth Size : " + IndexWriter.authorIndex.size());
 			System.out.println("Plac Size : " + IndexWriter.placeIndex.size());
 			System.out.println("File Size : " + IndexWriter.fileIDLookup.size());
-		
 			
 		} catch (Exception e) {
 			e.printStackTrace();
 			throw new IndexerException();
 		}
-
 	}
 
 	@SuppressWarnings("unchecked")
@@ -272,22 +269,6 @@ public class IndexReader {
 			e.printStackTrace();
 			throw new IndexerException();
 		}
-
-		// System.out.println("Deserialized HashMap.."); Display content using
-		// Iterator
-
-		/*
-		 * FileInputStream fis = null; ObjectInputStream in = null; try { fis =
-		 * new FileInputStream(filename); in = new ObjectInputStream(fis); p =
-		 * (Person) in.readObject(); in.close(); } catch (Exception ex) {
-		 * ex.printStackTrace(); }
-		 * 
-		 * 
-		 * Set set = map.entrySet(); Iterator iterator = set.iterator(); while
-		 * (iterator.hasNext()) { Map.Entry mentry = (Map.Entry)
-		 * iterator.next(); System.out.print("key: " + mentry.getKey() +
-		 * " & Value: "); System.out.println(mentry.getValue()); }
-		 */
 		return map;
 	}
 	

@@ -120,9 +120,6 @@ public class IndexWriter {
 				}
 			}// FieldNames forLoop
 
-			// System.out.println("File - "+d.getField(FieldNames.CATEGORY)[0]+" / "+
-			// d.getField(FieldNames.FILEID)[0]);
-
 		} catch (Exception e) {
 			e.printStackTrace();
 			throw new IndexerException();
@@ -138,11 +135,11 @@ public class IndexWriter {
 	 */
 	public void close() throws IndexerException {
 		writeIndex();
-		System.out.println("Term Size : " + termIndex.size());
+		/*System.out.println("Term Size : " + termIndex.size());
 		System.out.println("Cate Size : " + categoryIndex.size());
 		System.out.println("Auth Size : " + authorIndex.size());
 		System.out.println("Plac Size : " + placeIndex.size());
-		System.out.println("File Size : " + fileIDLookup.size());
+		System.out.println("File Size : " + fileIDLookup.size());*/
 	}
 		
 
@@ -242,6 +239,4 @@ public class IndexWriter {
 			throw new IndexerException();
 		}
 	}
-
-
 }

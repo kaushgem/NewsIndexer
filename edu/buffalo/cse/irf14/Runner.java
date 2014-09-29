@@ -28,56 +28,52 @@ public class Runner {
 
 	/**
 	 * @param args
-	 * @throws InterruptedException 
-	 * @throws IOException 
+	 * @throws InterruptedException
+	 * @throws IOException
 	 */
-	public static void main(String[] args) throws InterruptedException, IOException {
-		
-		String ipDir = "C:\\Users\\Sathish\\Dropbox\\UB\\Fall\\535 - IR\\news_training\\training";//args[0];
-		String indexDir = "";
-		//more? idk!
-		
+	public static void main(String[] args) throws InterruptedException,
+			IOException {
+
+		String ipDir = args[0];
+		String indexDir = args[1];
+		// more? idk!
+
 		File ipDirectory = new File(ipDir);
 		String[] catDirectories = ipDirectory.list();
-		
+
 		String[] files;
 		File dir;
-		 
+
 		Document d = null;
 		IndexWriter writer = new IndexWriter(indexDir);
-		
+
 		Date startTime = new Date();
-		
 		System.out.println(startTime);
-		
+
 		try {
 			for (String cat : catDirectories) {
-				dir = new File(ipDir+ File.separator+ cat);
+				dir = new File(ipDir + File.separator + cat);
 				files = dir.list();
-				
+
 				if (files == null)
 					continue;
-				
+
 				for (String f : files) {
 					try {
-						d = Parser.parse(dir.getAbsolutePath() + File.separator +f);
-						// Date fileTime = new Date();
-						// System.out.println(fileTime);
+						d = Parser.parse(dir.getAbsolutePath() + File.separator + f);
 						writer.addDocument(d);
 					} catch (ParserException e) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
-					} 
+					}
 				}
 			}
-			
+
 			writer.close();
-			Date endTime = new Date();
-			System.out.println(startTime);
-			System.out.println(endTime);
-			System.out.println("Terminated TotalTime = "+ endTime.compareTo(startTime));
-			  
 			
+			Date endTime = new Date();
+			System.out.println(endTime);
+
 		} catch (IndexerException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

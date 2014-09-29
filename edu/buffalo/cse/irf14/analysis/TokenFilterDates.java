@@ -9,10 +9,8 @@ public class TokenFilterDates extends TokenFilter {
 		// TODO Auto-generated constructor stub
 	}
 
-	@SuppressWarnings("unused")
 	@Override
 	public boolean increment() throws TokenizerException {
-
 		return false;
 		/*
 		if (!tStream.hasNext())

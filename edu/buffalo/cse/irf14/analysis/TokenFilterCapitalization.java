@@ -1,6 +1,7 @@
 package edu.buffalo.cse.irf14.analysis;
 
 
+
 public class TokenFilterCapitalization extends TokenFilter {
 
 	public TokenFilterCapitalization(TokenStream stream) {
@@ -10,9 +11,24 @@ public class TokenFilterCapitalization extends TokenFilter {
 
 	@Override
 	public boolean increment() throws TokenizerException {
-		// TODO Auto-generated method stub
 
-		return false;
+		try {
+			if (!tStream.hasNext())
+				return false;
+			Token token = tStream.next();
+			String str = token.getTermText();
+			if(str == null || str.isEmpty())
+				return true;
+			
+			if(str.equals(str.toUpperCase()))
+				return true;
+			
+			str = str.toLowerCase();
+			token.setTermText(str);
+		} catch (Exception e) {
+			throw new TokenizerException();
+		}
+		return true;
 	}
 
 	@Override
