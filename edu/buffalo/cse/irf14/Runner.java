@@ -71,6 +71,11 @@ public class Runner {
 
 			writer.close();
 			
+			/*IndexReader r = new IndexReader(indexDir, IndexType.TERM);
+			ArrayList<String> l = (ArrayList<String>) r.getTopK(10);
+			for(String s : l)
+				System.out.println(s);*/
+			
 			Date endTime = new Date();
 			System.out.println(endTime);
 

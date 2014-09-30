@@ -12,6 +12,7 @@ public class TokenFilterDates extends TokenFilter {
 	@Override
 	public boolean increment() throws TokenizerException {
 		return false;
+		
 		/*
 		if (!tStream.hasNext())
 			return false;
@@ -64,7 +65,7 @@ public class TokenFilterDates extends TokenFilter {
 			}
 		}
 		return true;
-		*/
+		 */
 	}
 
 	private int getMonth(String str) {

@@ -146,4 +146,21 @@ public class TokenStream implements Iterator<Token> {
 
 	}
 
+	public Token getNextWithoutChangingPtr() {
+		if(tokens.size() > currentIndex){
+			return tokens.get(currentIndex);
+		}
+		return null;
+	}
+	
+	public Token getPreviousWithoutChangingPtr() {
+		if((currentIndex - 2) >=0) {
+			return tokens.get(currentIndex-2);
+		}
+		return null;
+	}
+
+
+
+
 }

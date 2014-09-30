@@ -41,7 +41,6 @@ public class IndexWriter {
 	public static HashMap<String, HashMap<String, Integer>> placeIndex;
 
 	// get top K
-	// get top K
 	public static TrieNode root = new TrieNode(null, '?');
 
 	public IndexWriter(String indexDir) {
@@ -202,7 +201,7 @@ public class IndexWriter {
 			indexToFile(placeIndexFilepath, placeIndex);
 			
 			String fileIDLookupFilepath = this.indexDirectory + File.separator
-					+ "fileidlookup" + ".txt";
+					+ "FILEID" + ".txt";
 			lookupToFile(fileIDLookupFilepath, fileIDLookup);
 		} catch (Exception e) {
 			e.printStackTrace();

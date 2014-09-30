@@ -197,29 +197,9 @@ public class IndexReader {
 		if (containter.isEmpty()) {
 			return null;
 		}
-		for (Entry<String, Integer> entry : containter.entrySet()) {
-			System.out.println(entry.getKey() + " " + entry.getValue());
-		}
-
+		//for (Entry<String, Integer> entry : containter.entrySet()) 
+		//	System.out.println(entry.getKey() + " " + entry.getValue());
 		return containter;
-
-		/*
-		 * for(String term: terms) { Map<String,Integer> map =getPostings(
-		 * term); allPostings.add( (map instanceof HashMap) ? (HashMap) map :
-		 * new HashMap<String, Integer>(map)); } HashMap<String,Integer> hashMap
-		 * = null; if(allPostings!=null && allPostings.size()>0) {
-		 * Collections.sort(allPostings,new HashSizeComparator()); hashMap=
-		 * allPostings.get(0); allPostings.remove(0);
-		 * for(Iterator<Map.Entry<String, Integer>> it =
-		 * hashMap.entrySet().iterator(); it.hasNext(); ) { Map.Entry<String,
-		 * Integer> entry = it.next(); for(HashMap<String,Integer>
-		 * otherqueryHash :allPostings ) { if(
-		 * otherqueryHash.get(entry.getKey()) == null) { it.remove();
-		 * 
-		 * } } } }
-		 * 
-		 * return hashMap;
-		 */
 	}
 
 	private void readIndex() throws IndexerException {
@@ -237,15 +217,16 @@ public class IndexReader {
 					+ IndexType.PLACE.toString() + ".txt";
 			IndexWriter.placeIndex = fileToIndex(placeIndexFilepath);
 			String fileIDLookupFilepath = this.indexDirectory + File.separator
-					+ "fileidlookup" + ".txt";
+					+ "FILEID" + ".txt";
 			IndexWriter.fileIDLookup = fileToLookup(fileIDLookupFilepath);
-			
+
+			/*
 			System.out.println("Term Size : " + IndexWriter.termIndex.size());
 			System.out.println("Cate Size : " + IndexWriter.categoryIndex.size());
 			System.out.println("Auth Size : " + IndexWriter.authorIndex.size());
 			System.out.println("Plac Size : " + IndexWriter.placeIndex.size());
 			System.out.println("File Size : " + IndexWriter.fileIDLookup.size());
-			
+			 */
 		} catch (Exception e) {
 			e.printStackTrace();
 			throw new IndexerException();
@@ -262,7 +243,7 @@ public class IndexReader {
 			FileInputStream fin = new FileInputStream(path);
 			ObjectInputStream oin = new ObjectInputStream(fin);
 			map = (HashMap<String, HashMap<String, Integer>>) oin.readObject();
-			System.out.println("a " + map.size());
+			//System.out.println("a " + map.size());
 			oin.close();
 			fin.close();
 		} catch (Exception e) {
@@ -271,7 +252,7 @@ public class IndexReader {
 		}
 		return map;
 	}
-	
+
 	@SuppressWarnings("unchecked")
 	public static HashMap<Integer, String> fileToLookup(
 			String path) throws IndexerException {
@@ -282,7 +263,7 @@ public class IndexReader {
 			FileInputStream fin = new FileInputStream(path);
 			ObjectInputStream oin = new ObjectInputStream(fin);
 			map = (HashMap<Integer, String>) oin.readObject();
-			System.out.println("a " + map.size());
+			//System.out.println("a " + map.size());
 			oin.close();
 			fin.close();
 		} catch (Exception e) {
