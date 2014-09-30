@@ -200,6 +200,7 @@ public class IndexReader {
 		//for (Entry<String, Integer> entry : containter.entrySet()) 
 		//	System.out.println(entry.getKey() + " " + entry.getValue());
 		return containter;
+
 	}
 
 	private void readIndex() throws IndexerException {

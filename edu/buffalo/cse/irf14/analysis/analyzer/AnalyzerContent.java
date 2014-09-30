@@ -28,14 +28,14 @@ public class AnalyzerContent implements Analyzer {
 		TokenFilter tokenFilterObj;
 		try{
 			TokenFilterType[] filterOrder = {
+					TokenFilterType.CAPITALIZATION,
 					TokenFilterType.SYMBOL,
 					TokenFilterType.SPECIALCHARS,
 					TokenFilterType.STOPWORD,
 					TokenFilterType.DATE,
 					TokenFilterType.NUMERIC,
 					TokenFilterType.ACCENT,
-					TokenFilterType.STEMMER,
-					TokenFilterType.CAPITALIZATION };
+					TokenFilterType.STEMMER};
 			for (TokenFilterType tokenFilType : filterOrder) {
 				tokenFilterObj = factory.getFilterByType(tokenFilType, tStream);
 				while (tokenFilterObj.increment()) {}
