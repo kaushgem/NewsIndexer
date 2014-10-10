@@ -17,7 +17,16 @@ public abstract class TokenFilter implements Analyzer {
 	 * TokenStream
 	 * @param stream : The given TokenStream instance
 	 */
+	
+	TokenStream tStream;
 	public TokenFilter(TokenStream stream) {
 		//TODO : YOU MUST IMPLEMENT THIS METHOD
+		tStream = stream;
+	}
+	
+	
+	public TokenStream getStream() {
+		return tStream;
+		
 	}
 }

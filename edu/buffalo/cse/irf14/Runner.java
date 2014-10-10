@@ -4,6 +4,8 @@
 package edu.buffalo.cse.irf14;
 
 import java.io.File;
+import java.io.IOException;
+import java.util.Date;
 
 import edu.buffalo.cse.irf14.document.Document;
 import edu.buffalo.cse.irf14.document.Parser;
@@ -26,47 +28,60 @@ public class Runner {
 
 	/**
 	 * @param args
+	 * @throws InterruptedException
+	 * @throws IOException
 	 */
-	public static void main(String[] args) {
+	public static void main(String[] args) throws InterruptedException,
+			IOException {
+
 		String ipDir = args[0];
 		String indexDir = args[1];
-		//more? idk!
-		
+		// more? idk!
+
 		File ipDirectory = new File(ipDir);
 		String[] catDirectories = ipDirectory.list();
-		
+
 		String[] files;
 		File dir;
-		
+
 		Document d = null;
 		IndexWriter writer = new IndexWriter(indexDir);
-		
+
+		Date startTime = new Date();
+		System.out.println(startTime);
+
 		try {
 			for (String cat : catDirectories) {
-				dir = new File(ipDir+ File.separator+ cat);
+				dir = new File(ipDir + File.separator + cat);
 				files = dir.list();
-				
+
 				if (files == null)
 					continue;
-				
+
 				for (String f : files) {
 					try {
-						d = Parser.parse(dir.getAbsolutePath() + File.separator +f);
+						d = Parser.parse(dir.getAbsolutePath() + File.separator + f);
 						writer.addDocument(d);
 					} catch (ParserException e) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
-					} 
-					
+					}
 				}
-				
 			}
-			
+
 			writer.close();
+			
+			/*IndexReader r = new IndexReader(indexDir, IndexType.TERM);
+			ArrayList<String> l = (ArrayList<String>) r.getTopK(10);
+			for(String s : l)
+				System.out.println(s);*/
+			
+			Date endTime = new Date();
+			System.out.println(endTime);
+
 		} catch (IndexerException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
-
 }

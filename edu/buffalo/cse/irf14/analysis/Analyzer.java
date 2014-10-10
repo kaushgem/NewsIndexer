@@ -18,11 +18,13 @@ public interface Analyzer {
 	 * all its processing on the current {@link Token} and proceed to next 
 	 * @throws TokenizerException : If any exception occurs during the operation
 	 */
-	public abstract void increment() throws TokenizerException;
+	public abstract boolean increment() throws TokenizerException;
 	
 	/**
 	 * Return the underlying {@link TokenStream} instance
 	 * @return The underlying stream
 	 */
+	
 	public abstract TokenStream getStream();
+	
 }

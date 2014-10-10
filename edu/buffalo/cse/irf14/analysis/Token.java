@@ -16,18 +16,31 @@ public class Token {
 	private String termText;
 	//The char array backing termText
 	private char[] termBuffer;
-	
+
+
+	/* constructor
+	 * 
+	 */
+
+	public Token(String text)
+	{
+		setTermText( text);
+
+	}
+
 	/**
 	 * Method to set the termText to given text.
 	 * This is a sample implementation and you CAN change this
 	 * to suit your class definition and data structure needs.
 	 * @param text
 	 */
+
+
 	protected void setTermText(String text) {
 		termText = text;
 		termBuffer = (termText != null) ? termText.toCharArray() : null;
 	}
-	
+
 	/**
 	 * Getter for termText
 	 * This is a sample implementation and you CAN change this
@@ -37,7 +50,7 @@ public class Token {
 	protected String getTermText() {
 		return termText;
 	}
-	
+
 	/**
 	 * Method to set the termBuffer to the given buffer.
 	 * This is a sample implementation and you CAN change this
@@ -48,7 +61,7 @@ public class Token {
 		termBuffer = buffer;
 		termText = new String(buffer);
 	}
-	
+
 	/**
 	 * Getter for the field termBuffer
 	 * @return The termBuffer
@@ -56,7 +69,7 @@ public class Token {
 	protected char[] getTermBuffer() {
 		return termBuffer;
 	}
-	
+
 	/**
 	 * Method to merge this token with the given array of Tokens
 	 * You are free to update termText and termBuffer as you please
@@ -66,9 +79,20 @@ public class Token {
 	 * @param tokens The token array to be merged
 	 */
 	protected void merge(Token...tokens) {
-		//TODO : YOU MUST IMPLEMENT THIS METHOD
+
+		if(null != tokens)
+		{
+			for(Token t:tokens)
+			{
+				if(t !=null && t.getTermText()!=null && !t.getTermText().isEmpty())
+				{
+					termText += (termText !=null)?" " + t.getTermText() :t.getTermText() ;
+				}
+			}
+			termBuffer = (termText != null) ? termText.toCharArray() : null;
+		}
 	}
-	
+
 	/**
 	 * Returns the string representation of this token. It must adhere to the
 	 * following rules:
@@ -84,6 +108,7 @@ public class Token {
 	@Override
 	public String toString() {
 		//TODO: YOU MUST IMPLEMENT THIS METHOD
-		return null;
+
+		return termText;
 	}
 }
