@@ -9,6 +9,8 @@ import java.util.UUID;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import edu.buffalo.cse.util.Utility;
+
 /**
  * @author nikhillo
  * Static parser that converts raw text to Query objects
@@ -159,7 +161,7 @@ public class QueryParser {
 		String[] tokens = userQuery.split("[AND|OR|NOT]");
 		for(String word:tokens) 
 		{
-			String queryWithDefaultOperator = String.join(defaultOperator.toString(), word.split(" "));
+			String queryWithDefaultOperator = Utility.join( word.split(" "),defaultOperator.toString());
 			userQuery = userQuery.replace(word, queryWithDefaultOperator);
 		}
 
