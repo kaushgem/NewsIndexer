@@ -74,7 +74,7 @@ public class QueryParser {
 
 	private static String AddNotOperator(String userQuery) {
 
-		String extractwordWitheRegex = "[\\(\\w\\:\\)]+";
+		String extractwordWitheRegex = "[\\w\\:]+";
 		Pattern p = Pattern.compile(extractwordWitheRegex);
 		Matcher m = p.matcher(userQuery);
 		while(m.find()) {
@@ -157,7 +157,8 @@ public class QueryParser {
 
 	private static String AddDefaultIndex(String userQuery) {
 
-		userQuery = AddIndex(userQuery,"Term");
+		userQuery = AddIndex(userQuery, "Term");
+
 		return userQuery;
 	}
 
@@ -177,7 +178,7 @@ public class QueryParser {
 				{
 					System.out.println("m.group(0): "+m.group(0));
 
-					userQuery = userQuery.replace(Pattern.quote(m.group(0)), Index+":"+m.group(0));
+					userQuery = userQuery.replace(m.group(0), Index+":"+m.group(0));
 
 				}
 			}
