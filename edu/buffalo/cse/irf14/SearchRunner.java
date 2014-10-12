@@ -1,5 +1,6 @@
 package edu.buffalo.cse.irf14;
 
+import edu.buffalo.cse.irf14.query.*;
 import java.io.File;
 import java.io.PrintStream;
 import java.util.List;
@@ -13,7 +14,7 @@ import java.util.Map;
  */
 public class SearchRunner {
 	public enum ScoringModel {TFIDF, OKAPI};
-	
+
 	/**
 	 * Default (and only public) constuctor
 	 * @param indexDir : The directory where the index resides
@@ -25,7 +26,7 @@ public class SearchRunner {
 			char mode, PrintStream stream) {
 		//TODO: IMPLEMENT THIS METHOD
 	}
-	
+
 	/**
 	 * Method to execute given query in the Q mode
 	 * @param userQuery : Query to be parsed and executed
@@ -33,8 +34,11 @@ public class SearchRunner {
 	 */
 	public void query(String userQuery, ScoringModel model) {
 		//TODO: IMPLEMENT THIS METHOD
+
+
+
 	}
-	
+
 	/**
 	 * Method to execute queries in E mode
 	 * @param queryFile : The file from which queries are to be read and executed
@@ -42,14 +46,14 @@ public class SearchRunner {
 	public void query(File queryFile) {
 		//TODO: IMPLEMENT THIS METHOD
 	}
-	
+
 	/**
 	 * General cleanup method
 	 */
 	public void close() {
 		//TODO : IMPLEMENT THIS METHOD
 	}
-	
+
 	/**
 	 * Method to indicate if wildcard queries are supported
 	 * @return true if supported, false otherwise
@@ -58,7 +62,7 @@ public class SearchRunner {
 		//TODO: CHANGE THIS TO TRUE ONLY IF WILDCARD BONUS ATTEMPTED
 		return false;
 	}
-	
+
 	/**
 	 * Method to get substituted query terms for a given term with wildcards
 	 * @return A Map containing the original query term as key and list of
@@ -67,9 +71,9 @@ public class SearchRunner {
 	public Map<String, List<String>> getQueryTerms() {
 		//TODO:IMPLEMENT THIS METHOD IFF WILDCARD BONUS ATTEMPTED
 		return null;
-		
+
 	}
-	
+
 	/**
 	 * Method to indicate if speel correct queries are supported
 	 * @return true if supported, false otherwise
@@ -78,7 +82,7 @@ public class SearchRunner {
 		//TODO: CHANGE THIS TO TRUE ONLY IF SPELLCHECK BONUS ATTEMPTED
 		return false;
 	}
-	
+
 	/**
 	 * Method to get ordered "full query" substitutions for a given misspelt query
 	 * @return : Ordered list of full corrections (null if none present) for the given query
