@@ -87,7 +87,7 @@ public class QueryParser {
 				
 				negativeTerm = "<"+ negativeTerm + ">";
 				System.out.println("(m.group(0): "+m.group(0));
-				userQuery = userQuery.replaceFirst(Pattern.quote(m.group(0)),negativeTerm);
+				userQuery = userQuery.replaceFirst(Pattern.quote(m.group(0)),Matcher.quoteReplacement(negativeTerm));
 
 
 			}
@@ -268,7 +268,7 @@ public class QueryParser {
 
 			System.out.println("searchTerms:"+searchTerms);		
 			userQuery = userQuery.replaceFirst(indexType+":", "");
-			userQuery = userQuery.replaceFirst(Pattern.quote(m.group(2)), searchTerms);
+			userQuery = userQuery.replaceFirst(Pattern.quote(m.group(2)), Matcher.quoteReplacement(searchTerms));
 			System.out.println("userQuery:"+userQuery);
 			//m = p.matcher(userQuery);
 		}
