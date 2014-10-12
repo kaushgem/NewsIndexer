@@ -9,6 +9,7 @@ import java.util.UUID;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import edu.buffalo.cse.irf14.index.IndexType;
 import edu.buffalo.cse.util.Utility;
 
 /**
@@ -33,7 +34,7 @@ public class QueryParser {
 		String formattedQuery = GetFormatedQueryString(userQuery,defaultOper);
 		Query query = new Query(formattedQuery,null,null,null,formattedQuery);
 		return query;
-		
+
 	}
 
 	private static boolean ValidateQuery(String userQuery )
@@ -68,11 +69,11 @@ public class QueryParser {
 
 		return userQuery;
 	}
-	
-	
+
+
 
 	private static String AddNotOperator(String userQuery) {
-		
+
 		String extractwordWitheRegex = "[\\(\\w\\:\\)]+";
 		Pattern p = Pattern.compile(extractwordWitheRegex);
 		Matcher m = p.matcher(userQuery);
@@ -83,10 +84,12 @@ public class QueryParser {
 				userQuery = userQuery.replaceFirst(m.group(0),"AND");
 				m.find();
 				String negativeTerm = m.group(0);
+				
 				negativeTerm = "<"+ negativeTerm + ">";
-				userQuery = userQuery.replaceFirst(m.group(0),negativeTerm);
-				
-				
+				System.out.println("(m.group(0): "+m.group(0));
+				userQuery = userQuery.replaceFirst(Pattern.quote(m.group(0)),negativeTerm);
+
+
 			}
 		}
 		return userQuery;
@@ -153,27 +156,32 @@ public class QueryParser {
 	}
 
 	private static String AddDefaultIndex(String userQuery) {
+
+		userQuery = AddIndex(userQuery,"Term");
+		return userQuery;
+	}
+
+	private static String AddIndex(String userQuery, String Index) {
 		String[] tokens = userQuery.split("AND|OR|NOT");
 		String extractwordWitheRegex = "[\\w\\:]+";
 		Pattern p = Pattern.compile(extractwordWitheRegex);
 		for(String words:tokens)
 		{
-			
-			System.out.println(words);
+
+
 			Matcher m = p.matcher(words);
 			while(m.find()) {
-				
-				System.out.println(m.group(0));
-				
+
+
 				if(!m.group(0).contains(":"))
 				{
-					
-					userQuery = userQuery.replace(m.group(0), "Term:"+m.group(0));
-					
+					System.out.println("m.group(0): "+m.group(0));
+
+					userQuery = userQuery.replace(Pattern.quote(m.group(0)), Index+":"+m.group(0));
+
 				}
 			}
-			System.out.println("******");
-			
+
 		}
 
 		return userQuery;
@@ -236,27 +244,36 @@ public class QueryParser {
 		while(m.find()) {
 
 			String searchTerms = m.group(2); // movies AND crime
+			System.out.println("searchTerms:"+searchTerms);		
 			String indexType = m.group(1);
+			System.out.println("indexType:"+indexType);		
+			searchTerms = AddIndex(searchTerms,  indexType);
 
-
-			String QueryTermExtractorRegex = "\\s(?!AND|OR|NOT)(\\w+)";
+			/*	String QueryTermExtractorRegex = "\\s(?!AND|OR|NOT)[\\w\\:]+ ";
 			Pattern p2 =  Pattern.compile(QueryTermExtractorRegex);
 			Matcher m2 = p2.matcher(searchTerms);
+
+
+			String[] tokens = userQuery.split("AND|OR|NOT");
 
 			while(m2.find())
 			{ 
 				String queryterm = m2.group(0);
 				searchTerms = searchTerms.replace(searchTerms, indexType+":"+queryterm);
+
 				System.out.println("queryterm: "+queryterm);
 				System.out.println("searchTerms: "+searchTerms);
-				
-			}
+			}*/
 
-
-			userQuery = userQuery.replaceFirst(m.group(0), "(" + searchTerms+")");
+			System.out.println("searchTerms:"+searchTerms);		
+			userQuery = userQuery.replaceFirst(indexType+":", "");
+			userQuery = userQuery.replaceFirst(Pattern.quote(m.group(2)), searchTerms);
+			System.out.println("userQuery:"+userQuery);
 			//m = p.matcher(userQuery);
 		}
 
+
+		System.out.println("userQuery:"+userQuery);
 		return userQuery;
 
 
