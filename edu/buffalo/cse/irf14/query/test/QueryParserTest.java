@@ -111,7 +111,7 @@ public class QueryParserTest {
 	}
 	
 	@Test
-	public void queryWithUserDefinedIndex() {
+	public void queryWithNOT() {
 		
 		String userQuery = "Author:rushdie NOT jihad";
 		String rep = "{ Author:rushdie AND <Term:jihad> }";

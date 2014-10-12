@@ -30,8 +30,10 @@ public class QueryParser {
 		if(!ValidateQuery(userQuery))
 			return null;
 
-
-		return null;
+		String formattedQuery = GetFormatedQueryString(userQuery,defaultOper);
+		Query query = new Query(formattedQuery,null,null,null,formattedQuery);
+		return query;
+		
 	}
 
 	private static boolean ValidateQuery(String userQuery )
@@ -58,11 +60,35 @@ public class QueryParser {
 		userQuery = AddParanthesis(userQuery);
 		userQuery = AddDefaultOperators(userQuery,defaultOper);
 		userQuery = AddDefaultIndex(userQuery);
+		userQuery = AddNotOperator(userQuery);
 		userQuery = ReplaceParanthesisWithSquareBrackets(userQuery);
 		userQuery = EncloseWithCurlyBrackets(userQuery);
 		userQuery = ReplaceHashValuesWithQuotedString(userQuery,quotedSearchTerms);
 
 
+		return userQuery;
+	}
+	
+	
+
+	private static String AddNotOperator(String userQuery) {
+		
+		String extractwordWitheRegex = "[\\(\\w\\:\\)]+";
+		Pattern p = Pattern.compile(extractwordWitheRegex);
+		Matcher m = p.matcher(userQuery);
+		while(m.find()) {
+			//System.out.println(m.group(0));
+			if(m.group(0).equals("NOT"))
+			{
+				userQuery = userQuery.replaceFirst(m.group(0),"AND");
+				m.find();
+				String negativeTerm = m.group(0);
+				negativeTerm = "<"+ negativeTerm + ">";
+				userQuery = userQuery.replaceFirst(m.group(0),negativeTerm);
+				
+				
+			}
+		}
 		return userQuery;
 	}
 
@@ -106,7 +132,7 @@ public class QueryParser {
 		while(m.find()) {
 
 			String quotedSearchTem = m.group(0);
-			String guid = UUID.randomUUID().toString();
+			String guid = UUID.randomUUID().toString().replace("-", "");
 			quotedSearchTerms.put(guid, quotedSearchTem);
 			//userQuery = userQuery.replaceFirst(RegexQuotesString, guid);
 
@@ -117,17 +143,38 @@ public class QueryParser {
 	}
 
 	private static String EncloseWithCurlyBrackets(String userQuery) {
-		userQuery = "{"+userQuery+"}";
-		return null;
+		userQuery = "{ "+userQuery+" }";
+		return userQuery;
 	}
 
 	private static String ReplaceParanthesisWithSquareBrackets(String userQuery) {
-		// TODO Auto-generated method stub
-		return null;
+		userQuery = userQuery.replace("(", "[ ").replace(")"," ]");
+		return userQuery;
 	}
 
 	private static String AddDefaultIndex(String userQuery) {
-		// TODO Auto-generated method stub
+		String[] tokens = userQuery.split("AND|OR|NOT");
+		String extractwordWitheRegex = "[\\w\\:]+";
+		Pattern p = Pattern.compile(extractwordWitheRegex);
+		for(String words:tokens)
+		{
+			
+			System.out.println(words);
+			Matcher m = p.matcher(words);
+			while(m.find()) {
+				
+				System.out.println(m.group(0));
+				
+				if(!m.group(0).contains(":"))
+				{
+					
+					userQuery = userQuery.replace(m.group(0), "Term:"+m.group(0));
+					
+				}
+			}
+			System.out.println("******");
+			
+		}
 
 		return userQuery;
 	}
@@ -136,14 +183,16 @@ public class QueryParser {
 	{
 		// AND prisoners detainees rebels
 		// will be converted to AND (prisoners detainees rebels)
-		String[] tokens = userQuery.split("[AND|OR|NOT]");
+		String[] tokens = userQuery.split("AND|OR|NOT");
 		if(tokens.length >1)
 		{
 			for(String word:tokens) 
 			{
+				word = word.trim();
 				if(word.split(" ").length >1
 						&& !word.contains("(")
 						&& !word.contains(")")
+						&& !(word.replace(" ", "").isEmpty())
 						)
 				{
 					String paranthesisEnclosedWords = "("+ word + ")";
@@ -161,7 +210,8 @@ public class QueryParser {
 		String[] tokens = userQuery.split("[AND|OR|NOT]");
 		for(String word:tokens) 
 		{
-			String queryWithDefaultOperator = Utility.join( word.split(" "),defaultOperator.toString());
+			word = word.trim();
+			String queryWithDefaultOperator = Utility.join( word.split(" ")," " + defaultOperator.toString()+ " ");
 			userQuery = userQuery.replace(word, queryWithDefaultOperator);
 		}
 
@@ -195,9 +245,11 @@ public class QueryParser {
 
 			while(m2.find())
 			{ 
-				String queryterm = m2.group(1);
+				String queryterm = m2.group(0);
 				searchTerms = searchTerms.replace(searchTerms, indexType+":"+queryterm);
-				//m2 = p2.matcher(searchTerms);
+				System.out.println("queryterm: "+queryterm);
+				System.out.println("searchTerms: "+searchTerms);
+				
 			}
 
 
