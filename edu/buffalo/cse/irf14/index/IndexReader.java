@@ -10,6 +10,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import javax.swing.text.html.HTMLDocument.Iterator;
+
 import edu.buffalo.cse.util.TrieNode;
 
 /**
@@ -22,13 +24,12 @@ public class IndexReader {
 	 * @param indexDir
 	 *            : The root directory from which the index is to be read. This
 	 *            will be exactly the same directory as passed on IndexWriter.
-	 *            In case you make subdirectories etc., you will have to handle
+	 *            In case you make sub directories etc., you will have to handle
 	 *            it accordingly.
 	 * @param type
 	 *            The {@link IndexType} to read from
 	 */
 
-	HashMap<String, HashMap<String, Integer>> invertedIndex = null;
 	IndexType type = null;
 	String indexDirectory = null;
 
@@ -93,28 +94,53 @@ public class IndexReader {
 	 * @return A Map containing the corresponding fileid as the key and the
 	 *         number of occurrences as values if the given term was found, null
 	 *         otherwise.
+	 * @throws IndexerException 
 	 */
 	public Map<String, Integer> getPostings(String term) {
-		HashMap<String, Integer> indexPostings = new HashMap<String, Integer>();
+		
+		HashMap<String, Integer> indexPostings = null;
 
-		switch (type) {
-		case TERM:
-			indexPostings = IndexWriter.termIndex.get(term);
-			break;
-		case CATEGORY:
-			indexPostings = IndexWriter.categoryIndex.get(term);
-			break;
-		case AUTHOR:
-			indexPostings = IndexWriter.authorIndex.get(term);
-			break;
-		case PLACE:
-			indexPostings = IndexWriter.placeIndex.get(term);
-			break;
-		default:
-			break;
+		if(null!=term)
+		{
+			switch (type) {
+			case TERM:
+				//indexPostings = IndexWriter.termIndex.get(term);
+				if(null!=IndexWriter.termIndex.get(term))
+					indexPostings = generatePostings(IndexWriter.termIndex.get(term).getTermFreqPositionIndexDTO());
+				break;
+			case CATEGORY:
+				if(null!=IndexWriter.categoryIndex.get(term))
+					indexPostings = generatePostings(IndexWriter.categoryIndex.get(term).getTermFreqPositionIndexDTO());
+				break;
+			case AUTHOR:
+				if(null!=IndexWriter.authorIndex.get(term))
+					indexPostings = generatePostings(IndexWriter.authorIndex.get(term).getTermFreqPositionIndexDTO());
+				break;
+			case PLACE:
+				if(null!=IndexWriter.placeIndex.get(term))
+					indexPostings = generatePostings(IndexWriter.placeIndex.get(term).getTermFreqPositionIndexDTO());
+				break;
+			default:
+				break;
+			}
+		}
+
+		return indexPostings;
+	}
+
+
+	private HashMap<String, Integer> generatePostings(HashMap<Integer, TermFreqPositionIndexDTO> postings) {
+
+		HashMap<String, Integer> indexPostings = new HashMap<String, Integer>();
+		for (Entry<Integer, TermFreqPositionIndexDTO> etr : postings.entrySet()) {
+			String docID = IndexWriter.fileIDLookup.get(etr.getKey());
+			int termFreq = etr.getValue().getTermFreq();
+			indexPostings.put(docID, termFreq);
 		}
 		return indexPostings;
 	}
+
+
 
 	/**
 	 * Method to get the top k terms from the index in terms of the total number
@@ -161,6 +187,7 @@ public class IndexReader {
 	 *         number of occurrences as the value, the number of occurrences
 	 *         would be the sum of occurrences for each participating term.
 	 *         return null if the given term list returns no results BONUS ONLY
+	 * @throws IndexerException 
 	 */
 	public Map<String, Integer> query(String... terms) {
 		// TODO : BONUS ONLY
@@ -200,8 +227,9 @@ public class IndexReader {
 		//for (Entry<String, Integer> entry : containter.entrySet()) 
 		//	System.out.println(entry.getKey() + " " + entry.getValue());
 		return containter;
-
 	}
+
+
 
 	private void readIndex() throws IndexerException {
 		try {
@@ -235,15 +263,15 @@ public class IndexReader {
 	}
 
 	@SuppressWarnings("unchecked")
-	private static HashMap<String, HashMap<String, Integer>> fileToIndex(
+	private static HashMap<String, IDFPostingDTO> fileToIndex(
 			String path) throws IndexerException {
 
-		HashMap<String, HashMap<String, Integer>> map = null;
+		HashMap<String, IDFPostingDTO> map = null;
 
 		try {
 			FileInputStream fin = new FileInputStream(path);
 			ObjectInputStream oin = new ObjectInputStream(fin);
-			map = (HashMap<String, HashMap<String, Integer>>) oin.readObject();
+			map = (HashMap<String, IDFPostingDTO>) oin.readObject();
 			//System.out.println("a " + map.size());
 			oin.close();
 			fin.close();
