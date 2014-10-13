@@ -3,20 +3,20 @@ package edu.buffalo.cse.irf14.index;
 import java.util.HashMap;
 
 public class IDFPostingDTO {
-	private int idf;
+	private float idf;
 	private HashMap<Integer, TermFreqPositionIndexDTO> termFreqPositionIndexDTO;
 	
 	
 	/**
 	 * @return the idf
 	 */
-	public int getIdf() {
+	public float getIdf() {
 		return idf;
 	}
 	/**
 	 * @param idf the idf to set
 	 */
-	public void setIdf(int idf) {
+	public void setIdf(float idf) {
 		this.idf = idf;
 	}
 	/**
