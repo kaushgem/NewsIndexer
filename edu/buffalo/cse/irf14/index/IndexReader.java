@@ -10,8 +10,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import javax.swing.text.html.HTMLDocument.Iterator;
-
 import edu.buffalo.cse.util.TrieNode;
 
 /**
@@ -36,7 +34,7 @@ public class IndexReader {
 	public IndexReader(String indexDir, IndexType type) {
 		this.type = type;
 		this.indexDirectory = indexDir;
-		boolean isInmemory = IndexWriter.fileIDLookup.size() > 0;
+		boolean isInmemory = IndexWriter.docIDLookup.size() > 0;
 		//isInmemory = false;
 		if (!isInmemory) {
 			try {
@@ -81,7 +79,7 @@ public class IndexReader {
 	 * @return The total number of terms
 	 */
 	public int getTotalValueTerms() {
-		return IndexWriter.fileIDLookup.size();
+		return IndexWriter.docIDLookup.size();
 	}
 
 	/**
@@ -106,35 +104,36 @@ public class IndexReader {
 			case TERM:
 				//indexPostings = IndexWriter.termIndex.get(term);
 				if(null!=IndexWriter.termIndex.get(term))
-					indexPostings = generatePostings(IndexWriter.termIndex.get(term).getTermFreqPositionIndexDTO());
+					indexPostings = generatePostings(IndexWriter.termIndex.get(term));//.getTermFreqPositionIndexDTO());
 				break;
 			case CATEGORY:
 				if(null!=IndexWriter.categoryIndex.get(term))
-					indexPostings = generatePostings(IndexWriter.categoryIndex.get(term).getTermFreqPositionIndexDTO());
+					indexPostings = generatePostings(IndexWriter.categoryIndex.get(term));//.getTermFreqPositionIndexDTO());
 				break;
 			case AUTHOR:
 				if(null!=IndexWriter.authorIndex.get(term))
-					indexPostings = generatePostings(IndexWriter.authorIndex.get(term).getTermFreqPositionIndexDTO());
+					indexPostings = generatePostings(IndexWriter.authorIndex.get(term));//.getTermFreqPositionIndexDTO());
 				break;
 			case PLACE:
 				if(null!=IndexWriter.placeIndex.get(term))
-					indexPostings = generatePostings(IndexWriter.placeIndex.get(term).getTermFreqPositionIndexDTO());
+					indexPostings = generatePostings(IndexWriter.placeIndex.get(term));//.getTermFreqPositionIndexDTO());
 				break;
 			default:
 				break;
 			}
 		}
-
 		return indexPostings;
 	}
 
 
-	private HashMap<String, Integer> generatePostings(HashMap<Integer, TermFreqPositionIndexDTO> postings) {
+	private HashMap<String, Integer> generatePostings(HashMap<Integer, String> postings) {
 
 		HashMap<String, Integer> indexPostings = new HashMap<String, Integer>();
-		for (Entry<Integer, TermFreqPositionIndexDTO> etr : postings.entrySet()) {
-			String docID = IndexWriter.fileIDLookup.get(etr.getKey());
-			int termFreq = etr.getValue().getTermFreq();
+		
+		for (Entry<Integer, String> eItr : postings.entrySet()) {
+			String docID = IndexWriter.docIDLookup.get(eItr.getKey());
+			String[] str = eItr.getValue().split(":");
+			int termFreq = Integer.parseInt(str[0]);
 			indexPostings.put(docID, termFreq);
 		}
 		return indexPostings;
@@ -245,17 +244,17 @@ public class IndexReader {
 			String placeIndexFilepath = this.indexDirectory + File.separator
 					+ IndexType.PLACE.toString() + ".txt";
 			IndexWriter.placeIndex = fileToIndex(placeIndexFilepath);
-			String fileIDLookupFilepath = this.indexDirectory + File.separator
+			String docIDLookupFilepath = this.indexDirectory + File.separator
 					+ "FILEID" + ".txt";
-			IndexWriter.fileIDLookup = fileToLookup(fileIDLookupFilepath);
+			IndexWriter.docIDLookup = fileToLookup(docIDLookupFilepath);
 
-			/*
+			
 			System.out.println("Term Size : " + IndexWriter.termIndex.size());
 			System.out.println("Cate Size : " + IndexWriter.categoryIndex.size());
 			System.out.println("Auth Size : " + IndexWriter.authorIndex.size());
 			System.out.println("Plac Size : " + IndexWriter.placeIndex.size());
-			System.out.println("File Size : " + IndexWriter.fileIDLookup.size());
-			 */
+			System.out.println("File Size : " + IndexWriter.docIDLookup.size());
+			
 		} catch (Exception e) {
 			e.printStackTrace();
 			throw new IndexerException();
@@ -263,15 +262,15 @@ public class IndexReader {
 	}
 
 	@SuppressWarnings("unchecked")
-	private static HashMap<String, IDFPostingDTO> fileToIndex(
+	private static HashMap<String, HashMap<Integer, String>> fileToIndex(
 			String path) throws IndexerException {
 
-		HashMap<String, IDFPostingDTO> map = null;
+		HashMap<String, HashMap<Integer, String>> map = null;
 
 		try {
 			FileInputStream fin = new FileInputStream(path);
 			ObjectInputStream oin = new ObjectInputStream(fin);
-			map = (HashMap<String, IDFPostingDTO>) oin.readObject();
+			map = (HashMap<String, HashMap<Integer, String>>) oin.readObject();
 			//System.out.println("a " + map.size());
 			oin.close();
 			fin.close();

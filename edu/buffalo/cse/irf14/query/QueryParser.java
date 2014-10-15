@@ -9,7 +9,6 @@ import java.util.UUID;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import edu.buffalo.cse.irf14.index.IndexType;
 import edu.buffalo.cse.util.Utility;
 
 /**

@@ -6,7 +6,6 @@ package edu.buffalo.cse.irf14.index;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.ObjectOutputStream;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map.Entry;
 
@@ -34,16 +33,14 @@ public class IndexWriter {
 	String indexDirectory = null;
 
 	// LookUp
-	public static HashMap<Integer, String> fileIDLookup;
+	public static HashMap<Integer, String> docIDLookup;
 
-	//HashMap<word, IDFPostingDTO>
-	//IDFPostingDTO = {idf, HashMap<docID, TermFreqPositionIndexDTO>}
-	//TermFreqPositionIndexDTO = {freq, ArrayList<PositionIndex> }
-	public static HashMap<String, IDFPostingDTO> termIndex;
-	public static HashMap<String, IDFPostingDTO> categoryIndex;
-	public static HashMap<String, IDFPostingDTO> authorIndex;
-	public static HashMap<String, IDFPostingDTO> placeIndex;
+	public static HashMap<String, HashMap<Integer, String>> termIndex;
+	public static HashMap<String, HashMap<Integer, String>> categoryIndex;
+	public static HashMap<String, HashMap<Integer, String>> authorIndex;
+	public static HashMap<String, HashMap<Integer, String>> placeIndex;
 
+	public static HashMap<String, Float> idfMap;
 
 	// get top K
 	public static TrieNode root = new TrieNode(null, '?');
@@ -51,17 +48,19 @@ public class IndexWriter {
 	public IndexWriter(String indexDir) {
 		indexDirectory = indexDir;
 
-		if (fileIDLookup == null)
-			fileIDLookup = new HashMap<Integer, String>();
+		if (docIDLookup == null)
+			docIDLookup = new HashMap<Integer, String>();
 
 		if (termIndex == null)
-			termIndex = new HashMap<String, IDFPostingDTO>();
+			termIndex = new HashMap<String, HashMap<Integer, String>>();
 		if (categoryIndex == null)
-			categoryIndex = new HashMap<String, IDFPostingDTO>();
+			categoryIndex = new HashMap<String, HashMap<Integer, String>>();
 		if (authorIndex == null)
-			authorIndex = new HashMap<String, IDFPostingDTO>();
+			authorIndex = new HashMap<String, HashMap<Integer, String>>();
 		if (placeIndex == null)
-			placeIndex = new HashMap<String, IDFPostingDTO>();
+			placeIndex = new HashMap<String, HashMap<Integer, String>>();
+		if (idfMap == null)
+			idfMap = new HashMap<String, Float>();
 	}
 
 	/**
@@ -85,8 +84,9 @@ public class IndexWriter {
 		try {
 			// FileID Lookup
 			String fileID = d.getField(FieldNames.FILEID)[0];
-			int fileIDLookupIndex = fileIDLookup.size() + 1; 
-			fileIDLookup.put(fileIDLookupIndex, fileID);
+			int docIDLookupIndex = docIDLookup.size() + 1; 
+			docIDLookup.put(docIDLookupIndex, fileID);
+//			System.out.println(docIDLookupIndex+" :: "+fileID);
 
 			// Iterate FieldNames
 			for (FieldNames field : FieldNames.values()) {
@@ -104,20 +104,16 @@ public class IndexWriter {
 							case AUTHORORG:
 							case NEWSDATE:
 							case CONTENT:
-								insertToIndex(tStream, fileIDLookupIndex, termIndex);
-								calculateIDF(termIndex);
+								insertToIndex(tStream, docIDLookupIndex, termIndex);
 								break;
 							case CATEGORY:
-								insertToIndex(tStream, fileIDLookupIndex, categoryIndex);
-								calculateIDF(categoryIndex);
+								insertToIndex(tStream, docIDLookupIndex, categoryIndex);
 								break;
 							case AUTHOR:
-								insertToIndex(tStream, fileIDLookupIndex, authorIndex);
-								calculateIDF(authorIndex);
+								insertToIndex(tStream, docIDLookupIndex, authorIndex);
 								break;
 							case PLACE:
-								insertToIndex(tStream, fileIDLookupIndex, placeIndex);
-								calculateIDF(placeIndex);
+								insertToIndex(tStream, docIDLookupIndex, placeIndex);
 								break;
 							default:
 								break;
@@ -126,12 +122,13 @@ public class IndexWriter {
 					}// stringArray forLoop
 				}
 			}// FieldNames forLoop
-
 		} catch (Exception e) {
 			e.printStackTrace();
 			throw new IndexerException();
 		}
 	}
+
+
 
 	/**
 	 * Method that indicates that all open resources must be closed and cleaned
@@ -141,37 +138,27 @@ public class IndexWriter {
 	 *             : In case any error occurs
 	 */
 	public void close() throws IndexerException {
-		//writeIndex();
-		/*System.out.println("Term Size : " + termIndex.size());
-		System.out.println("Cate Size : " + categoryIndex.size());
-		System.out.println("Auth Size : " + authorIndex.size());
-		System.out.println("Plac Size : " + placeIndex.size());
-		System.out.println("File Size : " + fileIDLookup.size());*/
+		calculateIDF(termIndex);
+		calculateIDF(categoryIndex);
+		calculateIDF(authorIndex);
+		calculateIDF(placeIndex);
+		writeIndex();
+//		System.out.println("Term Size : " + termIndex.size());
+//		System.out.println("Cate Size : " + categoryIndex.size());
+//		System.out.println("Auth Size : " + authorIndex.size());
+//		System.out.println("Plac Size : " + placeIndex.size());
+//		System.out.println("Look Size : " + docIDLookup.size());
 	}
 
 
 
-
-
-	/*public HashMap<String, HashMap<String, Integer>> getInvertedIndex() {
-		if (invertedIndex == null) {
-			ComputeInvertedIndex();
-		}
-		return invertedIndex;
-	}
-
-	public void ComputeInvertedIndex() {
-		invertedIndex = new HashMap<String, HashMap<String, Integer>>();
-	}*/
-
-	public void insertToIndex(TokenStream tStream, int fileIDLookupIndex,
-			HashMap<String, IDFPostingDTO> indexMap)
+	public void insertToIndex(TokenStream tStream, int docIDLookupIndex,
+			HashMap<String, HashMap<Integer, String>> indexMap)
 					throws IndexerException {
 
-		IDFPostingDTO idfObj;
-		Integer posiIndex = new Integer(0);
+		int posiIndex = 1;
 
-		//HashMap<String, Integer> indexPostings = null;
+		HashMap<Integer, String> indexPostings = null;
 
 		try {
 			while (tStream.hasNext()) {
@@ -180,45 +167,30 @@ public class IndexWriter {
 					continue;
 				root.AddWord(token, 0);
 
-				// indexPostings HashMap check
-				idfObj = indexMap.get(token);
-
-				if (null == idfObj) {
-					idfObj = new IDFPostingDTO();
-					//idf     idfObj.setIdf(0);
-					HashMap<Integer, TermFreqPositionIndexDTO> map = new HashMap<Integer, TermFreqPositionIndexDTO>();
-					TermFreqPositionIndexDTO tfObj = new TermFreqPositionIndexDTO();
-					tfObj.setTermFreq(1);
-					//positional index
-					ArrayList<Integer> positionIndex = new ArrayList<Integer>();
-					positionIndex.add(posiIndex);
-					tfObj.positionIndex = positionIndex;
-					map.put(fileIDLookupIndex, tfObj);
-					idfObj.setTermFreqPositionIndexDTO(map);
-					indexMap.put(token, idfObj);
+				// indexPostings HashMap doesn't exist
+				indexPostings = indexMap.get(token);
+				if (indexPostings == null) {
+					indexPostings = new HashMap<Integer, String>();
+					indexPostings.put(docIDLookupIndex, 1  +":"+  posiIndex++);
+					indexMap.put(token, indexPostings);
 				}
-				else		 // indexPostings map already exists
-				{
-					TermFreqPositionIndexDTO tfObj = idfObj.getTermFreqPositionIndexDTO().get(fileIDLookupIndex);
-					if(null == tfObj){
-						//idf     idfObj.setIdf(0);
-						tfObj = new TermFreqPositionIndexDTO();
-						tfObj.setTermFreq(1);
-						// positional index
-						ArrayList<Integer> positionIndex = new ArrayList<Integer>();
-						positionIndex.add(posiIndex);
-						tfObj.positionIndex = positionIndex;
-						idfObj.getTermFreqPositionIndexDTO().put(fileIDLookupIndex, tfObj);
-					}
-					else
+				else		// indexPostings map already exists 
+				{ 			// docID doesn't exist
+					if (indexPostings.get(docIDLookupIndex) == null)
 					{
-						tfObj.positionIndex.add(++posiIndex);
-						tfObj.setTermFreq(tfObj.getTermFreq()+1);
-						idfObj.getTermFreqPositionIndexDTO().put(fileIDLookupIndex, tfObj);
+						indexPostings.put(docIDLookupIndex, 1  +":"+  posiIndex++);
+						posiIndex++;
+					}
+					else	// docID doesn't exist - update term frequency and positional index
+					{
+						String[] str = indexPostings.get(docIDLookupIndex).split(":");
+						Integer tf = Integer.parseInt(str[0]) +1;		// inc term freq
+
+						String tfposiIndex = tf.toString() +":"+ str[1] +","+ posiIndex++ ;		// append positional index
+
+						indexPostings.put(docIDLookupIndex, tfposiIndex);
 					}
 				}
-
-
 			}// while
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -228,21 +200,30 @@ public class IndexWriter {
 
 
 
-
-	public void calculateIDF(HashMap<String, IDFPostingDTO> indexMap) {
-
-		int noOfDocsTermOccurs = 0, totalDocs = 190;
+	public void calculateIDF(HashMap<String, HashMap<Integer, String>> indexMap)
+	{
+		int noOfDocsTermOccurs = 0, totalDocs = docIDLookup.size();
 		float idf = 0;
 
-		for(Entry<String, IDFPostingDTO> indexMapIte : indexMap.entrySet()){
-			noOfDocsTermOccurs = indexMapIte.getValue().getTermFreqPositionIndexDTO().size();
+		for(Entry<String, HashMap<Integer, String>> itr : indexMap.entrySet())
+		{
+			noOfDocsTermOccurs = itr.getValue().size();
 			idf = (float)(Math.log(totalDocs/(noOfDocsTermOccurs+1)) + 1.0);
-			indexMapIte.getValue().setIdf(idf);
-			System.out.println(indexMapIte.getKey()+" : "+idf);
+
+			idfMap.put(itr.getKey(), idf);
+
+//			System.out.println(idf +" ---- \t\t "+noOfDocsTermOccurs+" \t\t" + itr.getKey());
+
+//			if(itr.getKey().equalsIgnoreCase("march"))
+//			{
+//				System.out.println("_________________________________");
+//				System.out.println(itr.getKey()+" : "+idf +"// "+noOfDocsTermOccurs+"/");
+//				//break;
+//			}
 		}
 	}
 
-	
+
 
 	public void writeIndex() throws IndexerException {
 		try {
@@ -259,9 +240,9 @@ public class IndexWriter {
 					+ IndexType.PLACE.toString() + ".txt";
 			indexToFile(placeIndexFilepath, placeIndex);
 
-			String fileIDLookupFilepath = this.indexDirectory + File.separator
+			String docIDLookupFilepath = this.indexDirectory + File.separator
 					+ "FILEID" + ".txt";
-			lookupToFile(fileIDLookupFilepath, fileIDLookup);
+			lookupToFile(docIDLookupFilepath, docIDLookup);
 		} catch (Exception e) {
 			e.printStackTrace();
 			throw new IndexerException();
@@ -269,7 +250,7 @@ public class IndexWriter {
 	}
 
 	public void indexToFile(String path,
-			HashMap<String, IDFPostingDTO> indexMap)
+			HashMap<String, HashMap<Integer, String>> indexMap)
 					throws IndexerException {
 		try {
 			FileOutputStream fout = new FileOutputStream(path);
