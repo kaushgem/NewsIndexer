@@ -22,9 +22,9 @@ public class QueryEvaluator {
 	public QueryEvaluator(ArrayList<QueryEntity> postfixExpression)
 	{
 		this.postfixExpression = postfixExpression;
-
 		stack = new Stack<ArrayList<Integer>>();
 	}
+
 
 
 
@@ -47,6 +47,10 @@ public class QueryEvaluator {
 				case MINUS:
 				{
 					MINUSOperation(qe); break;
+				}
+				default:
+				{
+					break;
 				}
 				}
 			}
