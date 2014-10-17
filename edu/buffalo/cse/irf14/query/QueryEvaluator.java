@@ -7,6 +7,9 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Stack;
 
+import edu.buffalo.cse.irf14.index.IndexReader;
+import edu.buffalo.cse.irf14.index.IndexType;
+
 /**
  * @author Sathish
  *
@@ -14,66 +17,122 @@ import java.util.Stack;
 public class QueryEvaluator {
 
 	ArrayList<QueryEntity> postfixExpression;
-	Stack<HashMap<Integer,String>> stack ;
+	Stack<ArrayList<Integer>> stack ;
 
 	public QueryEvaluator(ArrayList<QueryEntity> postfixExpression)
 	{
 		this.postfixExpression = postfixExpression;
-		
-		stack = new Stack<HashMap<Integer,String>>();
+
+		stack = new Stack<ArrayList<Integer>>();
 	}
 
-	private void ANDOperation(QueryEntity topQE)
+
+
+	public ArrayList<Integer> evaluateQuery(IndexReader reader )
 	{
-		HashMap<Integer,String> rhs = stack.pop( );
-		HashMap<Integer,String> lhs =stack.pop( );
-
-		
-
-	}
-
-	private 
-
-	public HashMap<Integer,String> evaluateQuery()
-	{
-
-
-
 		for (QueryEntity qe:postfixExpression) {
 
 			if(qe.isOperator)
 			{
 				switch(qe.operator)
 				{
-
 				case OR:
 				{
-
-					break;
+					OROperation(qe); break;
 				}
-
 				case AND:
 				{
-					break;
+					ANDOperation(qe); break;
 				}
-
 				case MINUS:
 				{
-					break;
+					MINUSOperation(qe); break;
 				}
-
-
 				}
 			}
-
 			else
-				
 			{
-				//stack.push(qe);
+				// operand
+				stack.push(getDocIdarrayList(qe.term,getIndexType(qe.indexType),reader));
 			}
 		}
-		System.out.println(stack.pop());
+		return stack.pop();
+	}
 
+	private void ANDOperation(QueryEntity topQE)
+	{
+		ArrayList<Integer> rhs = stack.pop( );
+		ArrayList<Integer> lhs =stack.pop( );
+		rhs.retainAll(lhs);
+		stack.push(rhs);
+	}
+
+	private void OROperation(QueryEntity topQE)
+	{
+		ArrayList<Integer> rhs = stack.pop( );
+		ArrayList<Integer> lhs =stack.pop( );
+		rhs.addAll(lhs);
+		stack.push(rhs);
+	}
+
+	private void MINUSOperation(QueryEntity topQE)
+	{
+		ArrayList<Integer> rhs = stack.pop( );
+		ArrayList<Integer> lhs =stack.pop( );
+		lhs.removeAll(rhs);
+		stack.push(rhs);
+	}
+
+
+	private ArrayList<Integer> getDocIdarrayList(String queryTerm, IndexType indexType, IndexReader reader)
+	{
+		ArrayList<Integer> docIDsList = new ArrayList<Integer>();
+		if(isPhraseQuery(queryTerm))
+		{
+			docIDsList = reader.getDocIDArrayListForPhraseQueries(indexType,queryTerm); // phrase query
+		}
+		else
+		{
+			docIDsList = reader.getDocIDArrayList(indexType,queryTerm); // normal query
+		}
+		return docIDsList;
+	}
+
+	private boolean isPhraseQuery(String query)
+	{
+		return (query!= null 
+				&& !query.isEmpty()
+				&& query.startsWith("\"")
+				&& query.endsWith("\"")
+				);
+
+
+
+	}
+
+	private IndexType getIndexType(String indexTypeStr)
+	{
+		IndexType indexType = IndexType.TERM;
+		switch(indexTypeStr)
+		{
+		case "Category":
+		{
+			indexType = IndexType.CATEGORY;
+			break;
+		}
+		case "Author":
+		{
+			indexType = IndexType.AUTHOR;
+			break;
+		}
+
+		case "Place":
+		{
+			indexType = IndexType.PLACE;
+			break;
+		}
+		}
+		return indexType;
 
 	}
 

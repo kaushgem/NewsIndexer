@@ -317,7 +317,7 @@ public class IndexReader {
 	 * @param term
 	 * @return Map<Integer, String> ...  Map<DocID, TermFreq:PositionalIndex>
 	 */
-	public ArrayList<Integer> getDocIDHashmap(IndexType type, String term) {
+	public ArrayList<Integer> getDocIDArrayList(IndexType type, String term) {
 
 		ArrayList<Integer> docIDList = null;
 
@@ -346,6 +346,12 @@ public class IndexReader {
 		}
 		return docIDList;
 	}
+	
+	public ArrayList<Integer> getDocIDArrayListForPhraseQueries(IndexType type, String term) {
+		
+		return null;
+	}
+
 
 
 	private ArrayList<Integer> generateDocIDArray(HashMap<Integer, String> postings) {
