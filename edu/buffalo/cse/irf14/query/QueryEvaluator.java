@@ -117,25 +117,21 @@ public class QueryEvaluator {
 	private IndexType getIndexType(String indexTypeStr)
 	{
 		IndexType indexType = IndexType.TERM;
-		switch(indexTypeStr)
-		{
-		case "Category":
+		
+		if( indexTypeStr.equalsIgnoreCase("Category"))
 		{
 			indexType = IndexType.CATEGORY;
-			break;
 		}
-		case "Author":
+		else if( indexTypeStr.equalsIgnoreCase("Author"))
 		{
 			indexType = IndexType.AUTHOR;
-			break;
 		}
 
-		case "Place":
+		else if (indexTypeStr.equalsIgnoreCase("Place"))
 		{
 			indexType = IndexType.PLACE;
-			break;
 		}
-		}
+		
 		return indexType;
 
 	}
