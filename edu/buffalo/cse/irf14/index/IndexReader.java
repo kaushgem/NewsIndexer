@@ -15,6 +15,11 @@ import edu.buffalo.cse.util.TrieNode;
 /**
  * @author nikhillo Class that emulates reading data back from a written index
  */
+
+/**
+ * @author kaush
+ *
+ */
 public class IndexReader {
 	/**
 	 * Default constructor
@@ -44,6 +49,9 @@ public class IndexReader {
 			}
 		}
 	}
+	
+	
+	public IndexReader() {}
 
 	/**
 	 * Get total number of terms from the "key" dictionary associated with this
@@ -102,7 +110,6 @@ public class IndexReader {
 		{
 			switch (type) {
 			case TERM:
-				//indexPostings = IndexWriter.termIndex.get(term);
 				if(null!=IndexWriter.termIndex.get(term))
 					indexPostings = generatePostings(IndexWriter.termIndex.get(term));//.getTermFreqPositionIndexDTO());
 				break;
@@ -139,7 +146,40 @@ public class IndexReader {
 		return indexPostings;
 	}
 
+	
+	/**
+	 * @param term 
+	 * @param type
+	 * @return Map<Integer, String> ...  Map<DocID, TermFreq:PositionalIndex>
+	 */
+	public Map<Integer, String> getDocIDHashmap(String term, IndexType type) {
+		
+		HashMap<Integer, String> docIDHashmap = null;
 
+		if(null!=term)
+		{
+			switch (type) {
+			case TERM:
+				docIDHashmap = IndexWriter.termIndex.get(term);
+				break;
+			case CATEGORY:
+				docIDHashmap = IndexWriter.categoryIndex.get(term);
+				break;
+			case AUTHOR:
+				docIDHashmap = IndexWriter.authorIndex.get(term);
+				break;
+			case PLACE:
+				docIDHashmap = IndexWriter.placeIndex.get(term);
+				break;
+			default:
+				break;
+			}
+		}
+		return docIDHashmap;
+	}
+
+	
+	
 
 	/**
 	 * Method to get the top k terms from the index in terms of the total number

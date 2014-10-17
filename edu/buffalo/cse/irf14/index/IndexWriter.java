@@ -208,7 +208,8 @@ public class IndexWriter {
 		for(Entry<String, HashMap<Integer, String>> itr : indexMap.entrySet())
 		{
 			noOfDocsTermOccurs = itr.getValue().size();
-			idf = (float)(Math.log(totalDocs/(noOfDocsTermOccurs+1)) + 1.0);
+			idf = (float)(Math.log(totalDocs/noOfDocsTermOccurs));
+			//idf = (float)(Math.log(totalDocs/(noOfDocsTermOccurs+1)) + 1.0);
 
 			idfMap.put(itr.getKey(), idf);
 
