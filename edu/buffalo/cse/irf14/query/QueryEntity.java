@@ -18,13 +18,16 @@ public class QueryEntity {
 	 * 
 	 */
 	
-	public IndexType indexType;
+	public String indexType;
 	public String term;
 	public Operator operator;
 	public boolean isOperator ;
 	
 	public QueryEntity() {
+		
 		// TODO Auto-generated constructor stub
+	
+		
 	}
 	
 	
