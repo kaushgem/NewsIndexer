@@ -9,7 +9,6 @@ import java.util.UUID;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import edu.buffalo.cse.irf14.index.IndexType;
 import edu.buffalo.cse.util.Utility;
 
 /**
@@ -84,7 +83,6 @@ public class QueryParser {
 				userQuery = userQuery.replaceFirst(m.group(0),"AND");
 				m.find();
 				String negativeTerm = m.group(0);
-				
 				negativeTerm = "<"+ negativeTerm + ">";
 				System.out.println("(m.group(0): "+m.group(0));
 				userQuery = userQuery.replaceFirst(Pattern.quote(m.group(0)),Matcher.quoteReplacement(negativeTerm));
@@ -168,18 +166,13 @@ public class QueryParser {
 		Pattern p = Pattern.compile(extractwordWitheRegex);
 		for(String words:tokens)
 		{
-
-
 			Matcher m = p.matcher(words);
 			while(m.find()) {
-
-
+				
 				if(!m.group(0).contains(":"))
 				{
 					System.out.println("m.group(0): "+m.group(0));
-
 					userQuery = userQuery.replace(m.group(0), Index+":"+m.group(0));
-
 				}
 			}
 
@@ -249,23 +242,6 @@ public class QueryParser {
 			String indexType = m.group(1);
 			System.out.println("indexType:"+indexType);		
 			searchTerms = AddIndex(searchTerms,  indexType);
-
-			/*	String QueryTermExtractorRegex = "\\s(?!AND|OR|NOT)[\\w\\:]+ ";
-			Pattern p2 =  Pattern.compile(QueryTermExtractorRegex);
-			Matcher m2 = p2.matcher(searchTerms);
-
-
-			String[] tokens = userQuery.split("AND|OR|NOT");
-
-			while(m2.find())
-			{ 
-				String queryterm = m2.group(0);
-				searchTerms = searchTerms.replace(searchTerms, indexType+":"+queryterm);
-
-				System.out.println("queryterm: "+queryterm);
-				System.out.println("searchTerms: "+searchTerms);
-			}*/
-
 			System.out.println("searchTerms:"+searchTerms);		
 			userQuery = userQuery.replaceFirst(indexType+":", "");
 			userQuery = userQuery.replaceFirst(Pattern.quote(m.group(2)), Matcher.quoteReplacement(searchTerms));
@@ -291,4 +267,7 @@ public class QueryParser {
 
 		return defaultOper;
 	}
+	
+	
+	
 }
