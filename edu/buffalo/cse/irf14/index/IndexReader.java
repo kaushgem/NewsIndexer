@@ -49,8 +49,8 @@ public class IndexReader {
 			}
 		}
 	}
-	
-	
+
+
 	public IndexReader() {}
 
 	/**
@@ -103,7 +103,7 @@ public class IndexReader {
 	 * @throws IndexerException 
 	 */
 	public Map<String, Integer> getPostings(String term) {
-		
+
 		HashMap<String, Integer> indexPostings = null;
 
 		if(null!=term)
@@ -136,7 +136,7 @@ public class IndexReader {
 	private HashMap<String, Integer> generatePostings(HashMap<Integer, String> postings) {
 
 		HashMap<String, Integer> indexPostings = new HashMap<String, Integer>();
-		
+
 		for (Entry<Integer, String> eItr : postings.entrySet()) {
 			String docID = IndexWriter.docIDLookup.get(eItr.getKey());
 			String[] str = eItr.getValue().split(":");
@@ -146,52 +146,8 @@ public class IndexReader {
 		return indexPostings;
 	}
 
-	
-	/**
-	 * @param type 
-	 * @param term
-	 * @return Map<Integer, String> ...  Map<DocID, TermFreq:PositionalIndex>
-	 */
-	public ArrayList<Integer> getDocIDHashmap(IndexType type, String term) {
-		
-		ArrayList<Integer> docIDList = null;
 
-		if(null!=term)
-		{
-			switch (type) {
-			case TERM:
-				if(null!=IndexWriter.termIndex.get(term))
-					docIDList = generateDocIDArray(IndexWriter.termIndex.get(term));
-				break;
-			case CATEGORY:
-				if(null!=IndexWriter.categoryIndex.get(term))
-					docIDList = generateDocIDArray(IndexWriter.categoryIndex.get(term));
-				break;
-			case AUTHOR:
-				if(null!=IndexWriter.authorIndex.get(term))
-					docIDList = generateDocIDArray(IndexWriter.authorIndex.get(term));
-				break;
-			case PLACE:
-				if(null!=IndexWriter.placeIndex.get(term))
-					docIDList = generateDocIDArray(IndexWriter.placeIndex.get(term));
-				break;
-			default:
-				break;
-			}
-		}
-		return docIDList;
-	}
 
-	
-	private ArrayList<Integer> generateDocIDArray(HashMap<Integer, String> postings) {
-
-		ArrayList<Integer> arrLst = new ArrayList<Integer>();
-		
-		for (Entry<Integer, String> eItr : postings.entrySet()) {
-			arrLst.add(eItr.getKey());
-		}
-		return arrLst;
-	}
 
 	/**
 	 * Method to get the top k terms from the index in terms of the total number
@@ -228,6 +184,8 @@ public class IndexReader {
 		return topKwords;
 	}
 
+
+
 	/**
 	 * Method to implement a simple boolean AND query on the given index
 	 * 
@@ -241,7 +199,6 @@ public class IndexReader {
 	 * @throws IndexerException 
 	 */
 	public Map<String, Integer> query(String... terms) {
-		// TODO : BONUS ONLY
 
 		List<Map<String, Integer>> hashMaps = new ArrayList<Map<String, Integer>>();
 		for (String term : terms) {
@@ -300,13 +257,13 @@ public class IndexReader {
 					+ "FILEID" + ".txt";
 			IndexWriter.docIDLookup = fileToLookup(docIDLookupFilepath);
 
-			
+
 			System.out.println("Term Size : " + IndexWriter.termIndex.size());
 			System.out.println("Cate Size : " + IndexWriter.categoryIndex.size());
 			System.out.println("Auth Size : " + IndexWriter.authorIndex.size());
 			System.out.println("Plac Size : " + IndexWriter.placeIndex.size());
 			System.out.println("File Size : " + IndexWriter.docIDLookup.size());
-			
+
 		} catch (Exception e) {
 			e.printStackTrace();
 			throw new IndexerException();
@@ -352,5 +309,185 @@ public class IndexReader {
 		}
 		return map;
 	}
+
+
+
+	/**
+	 * @param type 
+	 * @param term
+	 * @return Map<Integer, String> ...  Map<DocID, TermFreq:PositionalIndex>
+	 */
+	public ArrayList<Integer> getDocIDHashmap(IndexType type, String term) {
+
+		ArrayList<Integer> docIDList = null;
+
+		if(null!=term)
+		{
+			switch (type) {
+			case TERM:
+				if(null!=IndexWriter.termIndex.get(term))
+					docIDList = generateDocIDArray(IndexWriter.termIndex.get(term));
+				break;
+			case CATEGORY:
+				if(null!=IndexWriter.categoryIndex.get(term))
+					docIDList = generateDocIDArray(IndexWriter.categoryIndex.get(term));
+				break;
+			case AUTHOR:
+				if(null!=IndexWriter.authorIndex.get(term))
+					docIDList = generateDocIDArray(IndexWriter.authorIndex.get(term));
+				break;
+			case PLACE:
+				if(null!=IndexWriter.placeIndex.get(term))
+					docIDList = generateDocIDArray(IndexWriter.placeIndex.get(term));
+				break;
+			default:
+				break;
+			}
+		}
+		return docIDList;
+	}
+
+
+	private ArrayList<Integer> generateDocIDArray(HashMap<Integer, String> postings) {
+
+		ArrayList<Integer> arrLst = new ArrayList<Integer>();
+
+		for (Entry<Integer, String> eItr : postings.entrySet()) {
+			arrLst.add(eItr.getKey());
+		}
+		return arrLst;
+	}
+
+
+
+	////////////////////////////////////////////////////////
+
+
+//	public ArrayList<Integer> docIDSearch(IndexType type, String query){
+//
+//		ArrayList<Integer> docIDList = null;
+//
+//		if(null!=term)
+//		{
+//			switch (type) {
+//			case TERM:
+//				if(null!=IndexWriter.termIndex.get(term))
+//					docIDList = generateFwdIndex(IndexWriter.termIndex.get(term));
+//				break;
+//			case CATEGORY:
+//				if(null!=IndexWriter.categoryIndex.get(term))
+//					docIDList = generateFwdIndex(IndexWriter.categoryIndex.get(term));
+//				break;
+//			case AUTHOR:
+//				if(null!=IndexWriter.authorIndex.get(term))
+//					docIDList = generateFwdIndex(IndexWriter.authorIndex.get(term));
+//				break;
+//			case PLACE:
+//				if(null!=IndexWriter.placeIndex.get(term))
+//					docIDList = generateFwdIndex(IndexWriter.placeIndex.get(term));
+//				break;
+//			default:
+//				break;
+//			}
+//		}
+//
+//	}
+//
+//
+//	private ArrayList<Integer> generateFwdIndex(HashMap<Integer, String> postings) {
+//
+//		ArrayList<Integer> arrLst = new ArrayList<Integer>();
+//
+//		for (Entry<Integer, String> eItr : postings.entrySet()) {
+//			arrLst.add(eItr.getKey());
+//		}
+//		return arrLst;
+//	}
+//
+
+
+	//	
+	//	{
+	//		String[] q = query.split(" ");
+	//		
+	//		for(String term:q)
+	//		{
+	//			if(null!=IndexWriter.authorIndex.get(term))
+	//				docIDList = generateDocIDArray(IndexWriter.authorIndex.get(term));
+	//			HashMap<Integer, String> map = new HashMap<Integer, String>();
+	//		}
+	//		
+	//		
+	//		return null;
+	//	}
+
+
+
+	// term, Indextype
+	public HashMap<Float, Integer> getRankedDocs(HashMap <String, IndexType> query){
+
+		HashMap<Float, Integer> rankedDocs = new HashMap<Float, Integer>();
+		HashMap<Integer, HashMap<String, Float>> fwdIndex = new HashMap<Integer, HashMap<String, Float>>();
+
+		for (Entry<String, IndexType> queryItr : query.entrySet()) {
+			String term = queryItr.getKey();
+			IndexType type = queryItr.getValue();
+
+			HashMap<String, HashMap<Integer, String>> indexMap = getIndexMap(type);
+			HashMap<Integer, String> postingsMap = null;
+
+			if(indexMap.get(term) != null){
+				postingsMap = indexMap.get(term);
+			}
+
+			for (Entry<Integer, String> mapItr : postingsMap.entrySet()) {
+
+				Integer docID = mapItr.getKey(); //term
+				String[] str = mapItr.getValue().split(":");
+				int tf = Integer.parseInt(str[0]);
+				float idf = IndexWriter.idfMap.get(term);
+				float weight = tf+idf;
+				
+				HashMap<String, Float> fwdIndexInner = null;
+				
+				if(fwdIndex.get(docID)==null)
+				{
+					fwdIndexInner = new HashMap<String, Float>();
+					fwdIndexInner.put(term, weight);
+				}
+				else
+				{
+					fwdIndexInner = fwdIndex.get(docID);
+					fwdIndexInner.put(term, weight);
+				}
+				
+				fwdIndex.put(docID, fwdIndexInner);
+			}
+		}
+
+
+		//Using fwdIndex calculate total score => rankedDocs
+		
+		return rankedDocs;
+	}
+
+
+	private HashMap<String, HashMap<Integer, String>> getIndexMap(IndexType type)
+	{
+		switch (type) {
+		case TERM:
+			return IndexWriter.termIndex;
+		case CATEGORY:
+			return IndexWriter.categoryIndex;
+		case AUTHOR:
+			return IndexWriter.authorIndex;
+		case PLACE:
+			return IndexWriter.placeIndex;
+		default:
+			return null;
+		}
+	}
+
+
 
 }
