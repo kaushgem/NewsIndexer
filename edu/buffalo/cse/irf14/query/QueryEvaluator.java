@@ -57,7 +57,7 @@ public class QueryEvaluator {
 			else
 			{
 				// operand
-				stack.push(getDocIdarrayList(qe.term,getIndexType(qe.indexType),reader));
+				stack.push(getDocIdarrayList(qe.term,qe.indexType,reader));
 			}
 		}
 		return stack.pop();
@@ -114,28 +114,6 @@ public class QueryEvaluator {
 
 	}
 
-	private IndexType getIndexType(String indexTypeStr)
-	{
-		IndexType indexType = IndexType.TERM;
-		
-		if( indexTypeStr.equalsIgnoreCase("Category"))
-		{
-			indexType = IndexType.CATEGORY;
-		}
-		else if( indexTypeStr.equalsIgnoreCase("Author"))
-		{
-			indexType = IndexType.AUTHOR;
-		}
-
-		else if (indexTypeStr.equalsIgnoreCase("Place"))
-		{
-			indexType = IndexType.PLACE;
-		}
-		
-		return indexType;
-
-	}
-
-
+	
 
 }

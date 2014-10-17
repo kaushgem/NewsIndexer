@@ -18,7 +18,7 @@ public class QueryEntity {
 	 * 
 	 */
 	
-	public String indexType;
+	public IndexType indexType;
 	public String term;
 	public Operator operator;
 	public boolean isOperator ;

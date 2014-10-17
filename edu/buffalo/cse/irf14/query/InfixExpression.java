@@ -1,6 +1,9 @@
 package edu.buffalo.cse.irf14.query;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+
+import edu.buffalo.cse.irf14.index.IndexType;
 
 public class InfixExpression {
 
@@ -48,7 +51,7 @@ public class InfixExpression {
 						String operand = s.replace("<", "").replace(">", "");
 						qE2.isOperator = false;
 						qE2.term = (operand.split(":").length ==2)? operand.split(":")[1]: "";
-						qE2.indexType = operand.split(":")[0];
+						qE2.indexType = getIndexType(operand.split(":")[0]);
 						infixList.add(qE2);
 					}
 					else if( s.equals("[") && s.equals("]") )
@@ -64,7 +67,7 @@ public class InfixExpression {
 						QueryEntity qE2 = new QueryEntity();
 						qE2.isOperator = false;
 						qE2.term = (s.split(":").length ==2)? s.split(":")[1]: "";
-						qE2.indexType = s.split(":")[0];
+						qE2.indexType = getIndexType(s.split(":")[0]);
 						infixList.add(qE2);
 					}
 				}
@@ -74,6 +77,44 @@ public class InfixExpression {
 		return infixList;
 
 	}
+	
+	public HashMap<String,String> getBagOfQueryWords()
+	{
+		HashMap<String,String> bagOfWords = new HashMap<String, String>();
+		
+		for(int i=0; i<infixList.size(); i++)
+		{
+			QueryEntity qe = infixList.get(i);
+			//if(qe.isOperator && qe.)
+			
+		}
+		return null;
+		
+	}
+	
+	private IndexType getIndexType(String indexTypeStr)
+	{
+		IndexType indexType = IndexType.TERM;
+		
+		if( indexTypeStr.equalsIgnoreCase("Category"))
+		{
+			indexType = IndexType.CATEGORY;
+		}
+		else if( indexTypeStr.equalsIgnoreCase("Author"))
+		{
+			indexType = IndexType.AUTHOR;
+		}
+
+		else if (indexTypeStr.equalsIgnoreCase("Place"))
+		{
+			indexType = IndexType.PLACE;
+		}
+		
+		return indexType;
+
+	}
+
+
 
 
 
