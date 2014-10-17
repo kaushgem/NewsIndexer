@@ -37,7 +37,10 @@ public class InfixExpression {
 					if(s.contains("<") || s.contains(">"))
 					{
 						qE.isOperator = true;
-						qE.operator = Operator.NOT; 
+						qE.operator = Operator.MINUS; 
+						
+						infixList.remove(infixList.size() - 1); // removing last item AND operator 
+						// A AND NOT B is changed to A MINUS B
 						infixList.add(qE);
 
 						QueryEntity qE2 = new QueryEntity();

@@ -15,6 +15,7 @@ public class PostfixExpression {
 		postFixList = new ArrayList<QueryEntity>();
 	}
 
+	// reference: http://people.cs.clemson.edu/~turner/courses/cs102/spring98/section2/assignments/asg4/InfixToPostfix.java
 	public ArrayList<QueryEntity> getPostfixExpression()
 	{
 		Stack operatorStack = new Stack();  
@@ -34,7 +35,6 @@ public class PostfixExpression {
 				else
 					operatorStack.push(qe);
 			}
-
 			else {  
 				postFixList.add(qe) ;
 			}
@@ -48,23 +48,15 @@ public class PostfixExpression {
 
 
 	private boolean islowerPrecedence(Operator op1, Operator op2) {
-
 		// verify if operator op1 is of lower precendence than operator op2
-
 		switch (op1) {
-
 		case OR:
 			return !(op2==Operator.OR ) ;
-
 		case AND:
-
 			return op2== Operator.NOT || op2== Operator.OPEN_PARANTHESIS;
-
 		case NOT:
 			return op2==Operator.OPEN_PARANTHESIS;
-
 		case OPEN_PARANTHESIS: return true;
-
 		default:  
 			return false;
 		}

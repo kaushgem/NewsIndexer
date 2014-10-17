@@ -424,7 +424,7 @@ public class IndexReader {
 
 
 	// term, Indextype
-	public HashMap<Float, Integer> getRankedDocs(HashMap <String, IndexType> query){
+	public HashMap<Float, Integer> getRankedDocs(HashMap <String, IndexType> query, ArrayList<Integer> docIDs){
 
 		HashMap<Float, Integer> rankedDocs = new HashMap<Float, Integer>();
 		HashMap<Integer, HashMap<String, Float>> fwdIndex = new HashMap<Integer, HashMap<String, Float>>();
@@ -442,11 +442,17 @@ public class IndexReader {
 
 			for (Entry<Integer, String> mapItr : postingsMap.entrySet()) {
 
-				Integer docID = mapItr.getKey(); //term
+				Integer docID = mapItr.getKey();
+				
+				if(!docIDs.contains(docID))
+				{
+					continue;
+				}
+				
 				String[] str = mapItr.getValue().split(":");
 				int tf = Integer.parseInt(str[0]);
 				float idf = IndexWriter.idfMap.get(term);
-				float weight = tf+idf;
+				float weight = tf+idf; //TODO:  change formula
 				
 				HashMap<String, Float> fwdIndexInner = null;
 				

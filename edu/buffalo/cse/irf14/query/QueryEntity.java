@@ -22,7 +22,7 @@ public class QueryEntity {
 	public String term;
 	public Operator operator;
 	public boolean isOperator ;
-	
+	public boolean isEvaluated;
 	public QueryEntity() {
 		
 		// TODO Auto-generated constructor stub
