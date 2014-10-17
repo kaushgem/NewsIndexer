@@ -148,38 +148,50 @@ public class IndexReader {
 
 	
 	/**
-	 * @param term 
-	 * @param type
+	 * @param type 
+	 * @param term
 	 * @return Map<Integer, String> ...  Map<DocID, TermFreq:PositionalIndex>
 	 */
-	public Map<Integer, String> getDocIDHashmap(String term, IndexType type) {
+	public ArrayList<Integer> getDocIDHashmap(IndexType type, String term) {
 		
-		HashMap<Integer, String> docIDHashmap = null;
+		ArrayList<Integer> docIDList = null;
 
 		if(null!=term)
 		{
 			switch (type) {
 			case TERM:
-				docIDHashmap = IndexWriter.termIndex.get(term);
+				if(null!=IndexWriter.termIndex.get(term))
+					docIDList = generateDocIDArray(IndexWriter.termIndex.get(term));
 				break;
 			case CATEGORY:
-				docIDHashmap = IndexWriter.categoryIndex.get(term);
+				if(null!=IndexWriter.categoryIndex.get(term))
+					docIDList = generateDocIDArray(IndexWriter.categoryIndex.get(term));
 				break;
 			case AUTHOR:
-				docIDHashmap = IndexWriter.authorIndex.get(term);
+				if(null!=IndexWriter.authorIndex.get(term))
+					docIDList = generateDocIDArray(IndexWriter.authorIndex.get(term));
 				break;
 			case PLACE:
-				docIDHashmap = IndexWriter.placeIndex.get(term);
+				if(null!=IndexWriter.placeIndex.get(term))
+					docIDList = generateDocIDArray(IndexWriter.placeIndex.get(term));
 				break;
 			default:
 				break;
 			}
 		}
-		return docIDHashmap;
+		return docIDList;
 	}
 
 	
-	
+	private ArrayList<Integer> generateDocIDArray(HashMap<Integer, String> postings) {
+
+		ArrayList<Integer> arrLst = new ArrayList<Integer>();
+		
+		for (Entry<Integer, String> eItr : postings.entrySet()) {
+			arrLst.add(eItr.getKey());
+		}
+		return arrLst;
+	}
 
 	/**
 	 * Method to get the top k terms from the index in terms of the total number
