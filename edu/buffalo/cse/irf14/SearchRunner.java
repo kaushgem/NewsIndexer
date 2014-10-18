@@ -8,6 +8,16 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import edu.buffalo.cse.irf14.analysis.Analyzer;
+import edu.buffalo.cse.irf14.analysis.AnalyzerFactory;
+import edu.buffalo.cse.irf14.analysis.TokenStream;
+import edu.buffalo.cse.irf14.analysis.Tokenizer;
+import edu.buffalo.cse.irf14.analysis.TokenizerException;
+import edu.buffalo.cse.irf14.analysis.analyzer.AnalyzerAuthor;
+import edu.buffalo.cse.irf14.analysis.analyzer.AnalyzerCategory;
+import edu.buffalo.cse.irf14.analysis.analyzer.AnalyzerContent;
+import edu.buffalo.cse.irf14.analysis.analyzer.AnalyzerPlace;
+import edu.buffalo.cse.irf14.document.FieldNames;
 import edu.buffalo.cse.irf14.index.IndexReader;
 import edu.buffalo.cse.irf14.index.IndexType;
 import edu.buffalo.cse.irf14.index.IndicesDTO;
@@ -59,9 +69,9 @@ public class SearchRunner {
 	 */
 	public void query(String userQuery, ScoringModel model) {
 
-		
+
 		HashMap<Integer,Float> rankedDocuments =getRankedDocuments(userQuery,model);
-		
+
 
 	}
 
@@ -77,19 +87,19 @@ public class SearchRunner {
 		if(lines.length >=2)
 		{
 			int queriesCount = Integer.parseInt(lines[0].split("=")[1]);
-			
+
 			for(int i=1; i < queriesCount; i++)
 			{
 				String queryID = lines[i].split(":")[0];
 				String query = lines[i].split(":")[1];
-				
+
 				HashMap<Integer,Float> rankedDocuments = getRankedDocuments(query,ScoringModel.TFIDF);
 				String result = getStringFromRankedDocuments(rankedDocuments,10);
 				resultSet.put(queryID, result);
 			}
 		}
 		writeToPrintStreamEvalMode(resultSet);
-		
+
 	}
 
 	/**
@@ -136,35 +146,116 @@ public class SearchRunner {
 		//TODO: IMPLEMENT THIS METHOD IFF SPELLCHECK EXECUTED
 		return null;
 	}
-	
+
 	private HashMap<Integer,Float> getRankedDocuments(String userQuery, ScoringModel model)
 	{
 		String defaultOperator = "OR";
 		// parse query
 		Query query = QueryParser.parse(userQuery, defaultOperator);
 		String formattedUserQuery =  query.toString();
-		
+
 		//convert to infix
 		InfixExpression infix = new InfixExpression(formattedUserQuery);
 		ArrayList<QueryEntity> infixArrayListEntity = infix.getInfixExpression();
+		infixArrayListEntity = getAnalysedQueryTerms(infixArrayListEntity);
 		
 		// convert to postfix
 		PostfixExpression postfixExpression = new  PostfixExpression(infixArrayListEntity);
 		ArrayList<QueryEntity> postfixArrayListEntity = postfixExpression.getPostfixExpression();
-		
+
 		// evaluate postfix
 		QueryEvaluator qEval = new QueryEvaluator(postfixArrayListEntity);
-		
+
 		ArrayList<Integer> docIDs = qEval.evaluateQuery(reader);
 		IndicesDTO indices = reader.getIndexDTO();
-		
+
 		// rank documents
 		Ranking ranker = RankingFactory.getRankingInstance(model, indices);
 		HashMap<String,IndexType> queryBagWords = infix.getBagOfQueryWords();
 		HashMap<Integer,Float> rankedDocuments = ranker.getRankedDocIDs(queryBagWords, docIDs);
 		return rankedDocuments;
 	}
+
+	private ArrayList<QueryEntity> getAnalysedQueryTerms(ArrayList<QueryEntity> queryExpression)
+	{
+		for(QueryEntity qe:queryExpression)
+		{
+			if(!qe.isOperator)
+			{
+				Analyzer analyzerObj = null;
+				Tokenizer tokenizer = new Tokenizer();
+				try {
+					TokenStream tStream = null;
+					String queryTerm = qe.term;
+					if(isPhraseQuery(queryTerm))
+					{
+						queryTerm = removeQuorations(queryTerm);
+						
+					}
+					tStream = tokenizer.consume(queryTerm);
+					
+					analyzerObj = getAnalyzerforIndexType(qe.indexType,tStream);
+					analyzerObj.increment();
+					qe.term =tStream.getTokensAsString();
+					
+				
+				} catch (TokenizerException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+		}
+		
+		return queryExpression;
+
+	}
 	
+	private boolean isPhraseQuery(String query)
+	{
+		return (query!=null
+				&& query.isEmpty()
+				&& query.startsWith("\"")
+				&& query.endsWith("\"")
+				);
+			
+			
+			
+	}
+	private String removeQuorations(String query)
+	{
+		return (query!=null)?query.replace("\"", ""):query;
+	}
+
+	private Analyzer getAnalyzerforIndexType(IndexType indexType, TokenStream tStream)
+	{
+		Analyzer analyzerObj = null;
+		switch(indexType)
+		{
+		case TERM:
+		{
+			analyzerObj = new AnalyzerContent(tStream);
+			break;
+		}
+		case CATEGORY:
+		{
+			analyzerObj = new AnalyzerCategory(tStream);
+			break;
+		}
+		case AUTHOR:
+		{
+			analyzerObj = new AnalyzerAuthor(tStream);
+			break;
+		}
+		case PLACE:
+		{
+			analyzerObj = new AnalyzerPlace(tStream);
+			break;
+		}
+
+		}
+
+		return analyzerObj;
+	}
 	private String getStringFromRankedDocuments(HashMap<Integer,Float> rankedDocuments, int limit)
 	{
 		IndicesDTO indices = reader.getIndexDTO();
@@ -183,7 +274,7 @@ public class SearchRunner {
 			queryResultArr[i]+=rank;
 			queryResult.append(rank);
 			i++;
-			
+
 			if(i>=limit)
 			{
 				break;
@@ -193,13 +284,13 @@ public class SearchRunner {
 		queryResult.append("}");
 		return queryResult.toString();
 	}
-	
+
 	private void writeToPrintStreamEvalMode(HashMap<String,String> resultSet)
 	{
 		StringBuilder evalModeOutput = new StringBuilder();
 		evalModeOutput.append("numResults=");
 		evalModeOutput.append(resultSet.size());
-		
+
 		for(Map.Entry<String, String> result:resultSet.entrySet())
 		{
 			String queryID = result.getKey();
@@ -208,11 +299,11 @@ public class SearchRunner {
 			evalModeOutput.append(queryResult);
 			evalModeOutput.append("\n");
 		}
-		
+
 		stream.append(evalModeOutput.toString());
-		
+
 	}
-	
-	
-	
+
+
+
 }
