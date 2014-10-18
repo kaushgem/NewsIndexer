@@ -5,7 +5,7 @@
 package edu.buffalo.cse.irf14.query;
 import edu.buffalo.cse.irf14.index.IndexType;
 
-
+ 
 
 
 /**

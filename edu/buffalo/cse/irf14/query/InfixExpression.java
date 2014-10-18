@@ -3,6 +3,7 @@ package edu.buffalo.cse.irf14.query;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import edu.buffalo.cse.irf14.DTO.QueryInfoDTO;
 import edu.buffalo.cse.irf14.index.IndexType;
 
 public class InfixExpression {
@@ -78,9 +79,9 @@ public class InfixExpression {
 
 	}
 	
-	public HashMap<String,IndexType> getBagOfQueryWords()
+	public ArrayList<QueryInfoDTO> getBagOfQueryWords()
 	{
-		HashMap<String,IndexType> bagOfWords = new HashMap<String, IndexType>();
+		ArrayList<QueryInfoDTO> bagOfWords = new ArrayList<QueryInfoDTO>();
 		
 		for(int i=0; i<infixList.size(); i++)
 		{
@@ -93,12 +94,33 @@ public class InfixExpression {
 			}
 			else if(!qe.isOperator)
 			{
-				bagOfWords.put(qe.term, qe.indexType);
+				QueryInfoDTO qI = retrieveIndexTypeTermCombinationPresent(qe.term,qe.indexType,bagOfWords);
+				if(null == qI )
+				{
+				bagOfWords.add(new QueryInfoDTO(qe.term, qe.indexType,1));
+				}
+				else
+				{
+					qI.setFreq(qI.getFreq()+1);
+				}
 			}
 			
 		}
 		return bagOfWords;
 		
+	}
+	
+	private QueryInfoDTO retrieveIndexTypeTermCombinationPresent(String term, IndexType indexType,ArrayList<QueryInfoDTO> qBag)
+	{
+		for(QueryInfoDTO qi: qBag)
+		{
+			if(qi.getQueryTerm().equals(term)
+				&& qi.getType() == indexType)
+				{
+					return qi;
+				}
+		}
+		return null;
 	}
 	
 	private IndexType getIndexType(String indexTypeStr)

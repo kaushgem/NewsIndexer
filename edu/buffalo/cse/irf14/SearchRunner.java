@@ -8,6 +8,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import edu.buffalo.cse.irf14.DTO.QueryInfoDTO;
 import edu.buffalo.cse.irf14.analysis.Analyzer;
 import edu.buffalo.cse.irf14.analysis.AnalyzerFactory;
 import edu.buffalo.cse.irf14.analysis.TokenStream;
@@ -171,7 +172,8 @@ public class SearchRunner {
 
 		// rank documents
 		Ranking ranker = RankingFactory.getRankingInstance(model, indices);
-		HashMap<String,IndexType> queryBagWords = infix.getBagOfQueryWords();
+		ArrayList<QueryInfoDTO> queryBagWords = infix.getBagOfQueryWords();
+		
 		HashMap<Integer,Float> rankedDocuments = ranker.getRankedDocIDs(queryBagWords, docIDs);
 		return rankedDocuments;
 	}

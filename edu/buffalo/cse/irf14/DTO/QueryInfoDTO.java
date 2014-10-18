@@ -14,6 +14,20 @@ public class QueryInfoDTO {
 	private IndexType type;
 	private int freq;
 	
+	public QueryInfoDTO ()
+	{
+		
+	}
+	
+	public QueryInfoDTO (String queryTerm,IndexType type ,int freq)
+	{
+		this.queryTerm = queryTerm;
+		this.type = type;
+		this.freq = freq;
+		
+	}
+	
+	
 	/**
 	 * @return the queryTerm
 	 */
