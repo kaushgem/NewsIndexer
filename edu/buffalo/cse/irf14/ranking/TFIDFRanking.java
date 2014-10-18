@@ -157,5 +157,58 @@ public class TFIDFRanking extends Ranking {
 //		return rankedDocs;
 //	}
 	
+////////////////////////////////////////////////////////
+
+//	public ArrayList<Integer> docIDSearch(IndexType type, String query){
+//		ArrayList<Integer> docIDList = null;
+//		if(null!=term)
+//		{
+//			switch (type) {
+//			case TERM:
+//				if(null!=indices.termIndex.get(term))
+//					docIDList = generateFwdIndex(indices.termIndex.get(term));
+//				break;
+//			case CATEGORY:
+//				if(null!=indices.categoryIndex.get(term))
+//					docIDList = generateFwdIndex(indices.categoryIndex.get(term));
+//				break;
+//			case AUTHOR:
+//				if(null!=indices.authorIndex.get(term))
+//					docIDList = generateFwdIndex(indices.authorIndex.get(term));
+//				break;
+//			case PLACE:
+//				if(null!=indices.placeIndex.get(term))
+//					docIDList = generateFwdIndex(indices.placeIndex.get(term));
+//				break;
+//			default:
+//				break;
+//			}
+//		}
+//
+//	}
+//
+//
+//	private ArrayList<Integer> generateFwdIndex(HashMap<Integer, String> postings) {
+//
+//		ArrayList<Integer> arrLst = new ArrayList<Integer>();
+//
+//		for (Entry<Integer, String> eItr : postings.entrySet()) {
+//			arrLst.add(eItr.getKey());
+//		}
+//		return arrLst;
+//	}
+
+//	{
+//		String[] q = query.split(" ");
+//		for(String term:q)
+//		{
+//			if(null!=indices.authorIndex.get(term))
+//				docIDList = generateDocIDArray(indices.authorIndex.get(term));
+//			HashMap<Integer, String> map = new HashMap<Integer, String>();
+//		}
+//		return null;
+//	}
+
+
 	
 }
