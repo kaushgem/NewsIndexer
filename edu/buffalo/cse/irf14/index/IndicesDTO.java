@@ -1,6 +1,7 @@
 package edu.buffalo.cse.irf14.index;
 
 import java.util.HashMap;
+import java.util.Map.Entry;
 
 import edu.buffalo.cse.util.TrieNode;
 
@@ -13,6 +14,7 @@ public class IndicesDTO {
 	public  HashMap<Integer, Integer> docLength;
 	public float averageDocLength; 
 	public  TrieNode root ;
+	
 	public IndicesDTO()
 	{
 		this.termIndex = new HashMap<String, HashMap<Integer,String>>();
@@ -23,5 +25,18 @@ public class IndicesDTO {
 		root= new TrieNode(null, '?');
 	}
 	
-
+	private void calculateAverageDocLength()
+	{
+		int noOfDocs = docLength.size();
+		long totalLength = 0;
+		for(Entry<Integer, Integer> e : docLength.entrySet()) {
+			totalLength += e.getKey();
+		}
+		averageDocLength = totalLength / noOfDocs;
+	}
+	
+	public float getAverageDocLength(){
+		calculateAverageDocLength();
+		return averageDocLength;
+	}
 }

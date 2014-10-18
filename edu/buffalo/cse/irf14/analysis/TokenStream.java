@@ -123,6 +123,19 @@ public class TokenStream implements Iterator<Token> {
 		return tokens.size();
 	}
 
+	public int getSizeWithoutNull() {
+		int size = 0;
+		while(tokens.iterator().hasNext())
+		{
+			String token = tokens.iterator().next().toString();
+			if (token == null || token.isEmpty())
+				continue;
+			else
+				size++;
+		}
+		return size;
+	}
+	
 	public int getIndex() {
 		return currentIndex;
 	}
@@ -150,7 +163,6 @@ public class TokenStream implements Iterator<Token> {
 
 	public String getTokensAsString()
 	{
-		String str = "";
 		StringBuilder sb = new StringBuilder();
 		for(Token t:tokens)
 		{
@@ -158,8 +170,7 @@ public class TokenStream implements Iterator<Token> {
 			sb.append(" ");
 		}
 		
-		return str = sb.toString().trim();
-		
+		return sb.toString().trim();
 	}
 
 }

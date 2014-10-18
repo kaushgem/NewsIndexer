@@ -59,7 +59,7 @@ public class IndexWriter {
 		try {
 			// FileID Lookup
 			String fileID = d.getField(FieldNames.FILEID)[0];
-			int docIDLookupIndex = indices.docIDLookup.size() + 1; 
+			int docIDLookupIndex = indices.docIDLookup.size() + 1;
 			indices.docIDLookup.put(docIDLookupIndex, fileID);
 //			System.out.println(docIDLookupIndex+" :: "+fileID);
 
@@ -79,6 +79,7 @@ public class IndexWriter {
 							case AUTHORORG:
 							case NEWSDATE:
 							case CONTENT:
+								indices.docLength.put(docIDLookupIndex, tStream.getSizeWithoutNull());
 								insertToIndex(tStream, docIDLookupIndex, indices.termIndex);
 								break;
 							case CATEGORY:
@@ -217,5 +218,11 @@ public class IndexWriter {
 			e.printStackTrace();
 			throw new IndexerException();
 		}
+	}
+	
+	
+	private void calculateDocLength()
+	{
+		
 	}
 }

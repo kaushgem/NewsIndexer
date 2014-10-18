@@ -95,7 +95,6 @@ public class TFIDFRanking extends Ranking {
 
 
 	
-	
 
 	
 
