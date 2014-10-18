@@ -36,9 +36,22 @@ public class IndexReader {
 	IndexType type = null;
 	String indexDirectory = null;
 
+	// Constructors
+	
+	public IndexReader() {}
+	
+	public IndexReader(String indexDir) {
+		this.indexDirectory = indexDir;
+		checkInMemory();
+	}
+	
 	public IndexReader(String indexDir, IndexType type) {
 		this.type = type;
 		this.indexDirectory = indexDir;
+		checkInMemory();
+	}
+	
+	private void checkInMemory(){
 		boolean isInmemory = IndexWriter.docIDLookup.size() > 0;
 		//isInmemory = false;
 		if (!isInmemory) {
@@ -49,10 +62,8 @@ public class IndexReader {
 			}
 		}
 	}
-
-
-	public IndexReader() {}
-
+		
+	
 	/**
 	 * Get total number of terms from the "key" dictionary associated with this
 	 * index. A postings list is always created against the "key" dictionary
@@ -429,37 +440,43 @@ public class IndexReader {
 
 
 
-	// term, Indextype
+	// term, IndexType
+	
 	public HashMap<Float, Integer> getRankedDocs(HashMap <String, IndexType> query, ArrayList<Integer> docIDs){
 
 		HashMap<Float, Integer> rankedDocs = new HashMap<Float, Integer>();
 		HashMap<Integer, HashMap<String, Float>> fwdIndex = new HashMap<Integer, HashMap<String, Float>>();
 
-		for (Entry<String, IndexType> queryItr : query.entrySet()) {
-			String term = queryItr.getKey();
-			IndexType type = queryItr.getValue();
+		
+		// Iterate for queryTerm in the Query
+		
+		for (Entry<String, IndexType> queryTerm : query.entrySet()) {
+			String term = queryTerm.getKey();
+			IndexType type = queryTerm.getValue();
 
+			// Get the IndexMap corresponding to the type
 			HashMap<String, HashMap<Integer, String>> indexMap = getIndexMap(type);
+			
 			HashMap<Integer, String> postingsMap = null;
-
 			if(indexMap.get(term) != null){
 				postingsMap = indexMap.get(term);
 			}
+			
+			// Calculate IDF
+			int totalDocs = IndexWriter.docIDLookup.size();
+			int noOfDocsTermOccurs = postingsMap.size();
+			float idf = (float)(Math.log(totalDocs/noOfDocsTermOccurs));
 
 			for (Entry<Integer, String> mapItr : postingsMap.entrySet()) {
 
 				Integer docID = mapItr.getKey();
 				
-				if(!docIDs.contains(docID))
-				{
-					continue;
-				}
+				// Check for only the DocIDs received after Query evaluation
+				if(!docIDs.contains(docID)) { continue; }
 				
 				String[] str = mapItr.getValue().split(":");
 				int tf = Integer.parseInt(str[0]);
-				float idf = IndexWriter.idfMap.get(term);
 				float weight = tf+idf; //TODO:  change formula
-				
 				HashMap<String, Float> fwdIndexInner = null;
 				
 				if(fwdIndex.get(docID)==null)
@@ -476,7 +493,6 @@ public class IndexReader {
 				fwdIndex.put(docID, fwdIndexInner);
 			}
 		}
-
 
 		//Using fwdIndex calculate total score => rankedDocs
 		
@@ -499,7 +515,5 @@ public class IndexReader {
 			return null;
 		}
 	}
-
-
 
 }
