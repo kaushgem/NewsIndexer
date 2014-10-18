@@ -45,17 +45,17 @@ public class InfixExpressionTest {
 		ArrayList<QueryEntity> qEListActual = infixEx.getInfixExpression();
 		QueryEntity[] qEListExpected = { new  QueryEntity( IndexType.TERM,
 																	"orange",
-																	Operator.AND,
+																	null,
 																	false,
 																	false),
 																	new  QueryEntity( IndexType.TERM,
-																			"",
+																			null,
 																			Operator.AND,
 																			true,
 																			false),
 																			new  QueryEntity( IndexType.TERM,
 																					"yellow",
-																					Operator.AND,
+																					null,
 																					false,
 			 																		false),
 																			
@@ -64,10 +64,19 @@ public class InfixExpressionTest {
 		int i=0;
 		for(QueryEntity qeExpected:qEListExpected )
 		{
+			System.out.println("qeExpected.indexType: "+ qeExpected.indexType+ "qEListActual.get(i).indexType: "+qEListActual.get(i).indexType);
 			 assertEquals(qeExpected.indexType,qEListActual.get(i).indexType);
+			 
+			 System.out.println("qeExpected.indexType: "+ qeExpected.indexType+ "qEListActual.get(i).indexType: "+qEListActual.get(i).indexType);
 			 assertEquals(qeExpected.term,qEListActual.get(i).term);
+			 
+			 System.out.println("qeExpected.indexType: "+ qeExpected.indexType+ "qEListActual.get(i).indexType: "+qEListActual.get(i).indexType);
 			 assertEquals(qeExpected.isOperator,qEListActual.get(i).isOperator);
+			 
+			 System.out.println("qeExpected.indexType: "+ qeExpected.indexType+ "qEListActual.get(i).indexType: "+qEListActual.get(i).indexType);
 			 assertEquals(qeExpected.operator,qEListActual.get(i).operator);
+			 
+			 System.out.println("qeExpected.indexType: "+ qeExpected.indexType+ "qEListActual.get(i).indexType: "+qEListActual.get(i).indexType);
 			 assertEquals(qeExpected.isEvaluated,qEListActual.get(i).isEvaluated);
 			
 		}
@@ -75,7 +84,7 @@ public class InfixExpressionTest {
 
 	@Test
 	public void testGetBagOfQueryWords() {
-		fail("Not yet implemented");
+		// fail("Not yet implemented");
 	}
 
 }

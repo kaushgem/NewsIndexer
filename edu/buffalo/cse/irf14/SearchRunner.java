@@ -68,11 +68,16 @@ public class SearchRunner {
 	 * @param userQuery : Query to be parsed and executed
 	 * @param model : Scoring Model to use for ranking results
 	 */
-	public void query(String userQuery, ScoringModel model) {
+	public boolean  query(String userQuery, ScoringModel model) {
 
-
+		// TODO: WARNINGGGGGGGGGGGGGGGGGGGGGGGGGGG
+		// Change the returntype........... to void
+		
+		
+		
+		// WARNINGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGG
 		HashMap<Integer,Float> rankedDocuments =getRankedDocuments(userQuery,model);
-
+		return false;
 
 	}
 
@@ -159,7 +164,7 @@ public class SearchRunner {
 		InfixExpression infix = new InfixExpression(formattedUserQuery);
 		ArrayList<QueryEntity> infixArrayListEntity = infix.getInfixExpression();
 		infixArrayListEntity = getAnalysedQueryTerms(infixArrayListEntity);
-		
+
 		// convert to postfix
 		PostfixExpression postfixExpression = new  PostfixExpression(infixArrayListEntity);
 		ArrayList<QueryEntity> postfixArrayListEntity = postfixExpression.getPostfixExpression();
@@ -173,8 +178,8 @@ public class SearchRunner {
 		// rank documents
 		Ranking ranker = RankingFactory.getRankingInstance(model, indices);
 		ArrayList<QueryInfoDTO> queryBagWords = infix.getBagOfQueryWords();
-		
-		HashMap<Integer,Float> rankedDocuments = ranker.getRankedDocIDs(queryBagWords, docIDs);
+
+		HashMap<Integer,Float> rankedDocuments = (HashMap<Integer, Float>) ranker.getRankedDocIDs(queryBagWords, docIDs);
 		return rankedDocuments;
 	}
 
@@ -192,26 +197,26 @@ public class SearchRunner {
 					if(isPhraseQuery(queryTerm))
 					{
 						queryTerm = removeQuorations(queryTerm);
-						
+
 					}
 					tStream = tokenizer.consume(queryTerm);
-					
+
 					analyzerObj = getAnalyzerforIndexType(qe.indexType,tStream);
 					analyzerObj.increment();
 					qe.term =tStream.getTokensAsString();
-					
-				
+
+
 				} catch (TokenizerException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
 			}
 		}
-		
+
 		return queryExpression;
 
 	}
-	
+
 	private boolean isPhraseQuery(String query)
 	{
 		return (query!=null
@@ -219,9 +224,9 @@ public class SearchRunner {
 				&& query.startsWith("\"")
 				&& query.endsWith("\"")
 				);
-			
-			
-			
+
+
+
 	}
 	private String removeQuorations(String query)
 	{

@@ -14,7 +14,7 @@ public class InfixExpression {
 	public InfixExpression(String formattedUserQuery)
 	{
 		this.formattedUserQuery = formattedUserQuery;
-
+		infixList = new ArrayList<QueryEntity>();
 	}
 
 	public ArrayList<QueryEntity> getInfixExpression()
@@ -26,7 +26,7 @@ public class InfixExpression {
 		{
 			if(s!=null && !s.isEmpty())
 			{
-				//
+				
 				QueryEntity qE = new QueryEntity();
 				if(s.equals("AND")|| s.equals("OR"))
 				{
@@ -63,7 +63,7 @@ public class InfixExpression {
 						infixList.add(qE2);
 						
 					}
-					else 
+					else if( !s.equals("{") && !s.equals("}") )
 					{
 						QueryEntity qE2 = new QueryEntity();
 						qE2.isOperator = false;
