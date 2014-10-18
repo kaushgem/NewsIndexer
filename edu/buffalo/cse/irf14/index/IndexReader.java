@@ -317,6 +317,11 @@ public class IndexReader {
 		}
 		return map;
 	}
+	
+	public IndicesDTO getIndexDTO()
+	{
+		return this.indices;
+	}
 
 
 
