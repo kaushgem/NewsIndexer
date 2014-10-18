@@ -10,6 +10,8 @@ public class IndicesDTO {
 	public  HashMap<String, HashMap<Integer, String>> authorIndex;
 	public  HashMap<String, HashMap<Integer, String>> placeIndex;
 	public  HashMap<Integer, String> docIDLookup;
+	public  HashMap<Integer, Integer> docLength;
+	public float averageDocLength; 
 	public  TrieNode root ;
 	public IndicesDTO()
 	{
