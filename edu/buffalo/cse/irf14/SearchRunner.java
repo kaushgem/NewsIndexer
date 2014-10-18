@@ -1,6 +1,7 @@
 package edu.buffalo.cse.irf14;
 
 import java.io.File;
+import java.io.IOException;
 import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -18,6 +19,7 @@ import edu.buffalo.cse.irf14.query.QueryEvaluator;
 import edu.buffalo.cse.irf14.query.QueryParser;
 import edu.buffalo.cse.irf14.ranking.Ranking;
 import edu.buffalo.cse.irf14.ranking.RankingFactory;
+import edu.buffalo.cse.util.Utility;
 
 /**
  * Main class to run the searcher.
@@ -31,6 +33,7 @@ public class SearchRunner {
 	String corpusDir; 
 	char mode; 
 	PrintStream stream;
+	IndexReader reader;
 	/**
 	 * Default (and only public) constuctor
 	 * @param indexDir : The directory where the index resides
@@ -45,7 +48,7 @@ public class SearchRunner {
 		this.corpusDir = corpusDir;
 		this.mode = mode;
 		this.stream = stream;
-
+		reader = new IndexReader(indexDir);
 
 	}
 
@@ -56,30 +59,37 @@ public class SearchRunner {
 	 */
 	public void query(String userQuery, ScoringModel model) {
 
-		Query query = QueryParser.parse(userQuery, "OR");
-		String formattedUserQuery =  query.toString();
-		InfixExpression infix = new InfixExpression(formattedUserQuery);
-		ArrayList<QueryEntity> infixArrayListEntity = infix.getInfixExpression();
-		PostfixExpression postfixExpression = new  PostfixExpression(infixArrayListEntity);
-		ArrayList<QueryEntity> postfixArrayListEntity = postfixExpression.getPostfixExpression();
-		QueryEvaluator qEval = new QueryEvaluator(postfixArrayListEntity);
-		IndexReader reader = new IndexReader(indexDir);
-		ArrayList<Integer> docIDs = qEval.evaluateQuery(reader);
-		IndicesDTO indices = reader.getIndexDTO();
-		Ranking ranker = RankingFactory.getRankingInstance(model, indices);
-		HashMap<String,IndexType> queryBagWords = infix.getBagOfQueryWords();
-		HashMap<Integer,Float> rankedDocuments = ranker.getRankedDocIDs(queryBagWords, docIDs);
 		
-
+		HashMap<Integer,Float> rankedDocuments =getRankedDocuments(userQuery,model);
+		
 
 	}
 
 	/**
 	 * Method to execute queries in E mode
 	 * @param queryFile : The file from which queries are to be read and executed
+	 * @throws IOException 
 	 */
-	public void query(File queryFile) {
-		//TODO: IMPLEMENT THIS METHOD
+	public void query(File queryFile) throws IOException {
+		String queriesStr = Utility.readStream(queryFile.getAbsolutePath());
+		String[] lines = queriesStr.split("\\r?\\n");
+		HashMap<String,String> resultSet = new HashMap<String, String>();
+		if(lines.length >=2)
+		{
+			int queriesCount = Integer.parseInt(lines[0].split("=")[1]);
+			
+			for(int i=1; i < queriesCount; i++)
+			{
+				String queryID = lines[i].split(":")[0];
+				String query = lines[i].split(":")[1];
+				
+				HashMap<Integer,Float> rankedDocuments = getRankedDocuments(query,ScoringModel.TFIDF);
+				String result = getStringFromRankedDocuments(rankedDocuments,10);
+				resultSet.put(queryID, result);
+			}
+		}
+		writeToPrintStreamEvalMode(resultSet);
+		
 	}
 
 	/**
@@ -127,6 +137,81 @@ public class SearchRunner {
 		return null;
 	}
 	
+	private HashMap<Integer,Float> getRankedDocuments(String userQuery, ScoringModel model)
+	{
+		String defaultOperator = "OR";
+		// parse query
+		Query query = QueryParser.parse(userQuery, defaultOperator);
+		String formattedUserQuery =  query.toString();
+		
+		//convert to infix
+		InfixExpression infix = new InfixExpression(formattedUserQuery);
+		ArrayList<QueryEntity> infixArrayListEntity = infix.getInfixExpression();
+		
+		// convert to postfix
+		PostfixExpression postfixExpression = new  PostfixExpression(infixArrayListEntity);
+		ArrayList<QueryEntity> postfixArrayListEntity = postfixExpression.getPostfixExpression();
+		
+		// evaluate postfix
+		QueryEvaluator qEval = new QueryEvaluator(postfixArrayListEntity);
+		
+		ArrayList<Integer> docIDs = qEval.evaluateQuery(reader);
+		IndicesDTO indices = reader.getIndexDTO();
+		
+		// rank documents
+		Ranking ranker = RankingFactory.getRankingInstance(model, indices);
+		HashMap<String,IndexType> queryBagWords = infix.getBagOfQueryWords();
+		HashMap<Integer,Float> rankedDocuments = ranker.getRankedDocIDs(queryBagWords, docIDs);
+		return rankedDocuments;
+	}
+	
+	private String getStringFromRankedDocuments(HashMap<Integer,Float> rankedDocuments, int limit)
+	{
+		IndicesDTO indices = reader.getIndexDTO();
+		StringBuilder queryResult = new StringBuilder();
+		limit = (limit <rankedDocuments.size())?limit:rankedDocuments.size();
+		String[] queryResultArr = new String[limit];
+		int i=0;
+		queryResult.append("{");
+		for(Map.Entry<Integer,Float> entry:rankedDocuments.entrySet())
+		{
+			int fileID = entry.getKey();
+			float rank = entry.getValue();
+			String FileName = indices.docIDLookup.get(fileID);
+			queryResultArr[i] = FileName;
+			queryResultArr[i]+="#";
+			queryResultArr[i]+=rank;
+			queryResult.append(rank);
+			i++;
+			
+			if(i>=limit)
+			{
+				break;
+			}
+		}
+		queryResult.append(Utility.join(queryResultArr, ", "));
+		queryResult.append("}");
+		return queryResult.toString();
+	}
+	
+	private void writeToPrintStreamEvalMode(HashMap<String,String> resultSet)
+	{
+		StringBuilder evalModeOutput = new StringBuilder();
+		evalModeOutput.append("numResults=");
+		evalModeOutput.append(resultSet.size());
+		
+		for(Map.Entry<String, String> result:resultSet.entrySet())
+		{
+			String queryID = result.getKey();
+			String queryResult = result.getValue();
+			evalModeOutput.append(queryID);
+			evalModeOutput.append(queryResult);
+			evalModeOutput.append("\n");
+		}
+		
+		stream.append(evalModeOutput.toString());
+		
+	}
 	
 	
 	
