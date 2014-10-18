@@ -25,9 +25,6 @@ public class QueryEvaluator {
 		stack = new Stack<ArrayList<Integer>>();
 	}
 
-
-
-
 	public ArrayList<Integer> evaluateQuery(IndexReader reader )
 	{
 		for (QueryEntity qe:postfixExpression) {
