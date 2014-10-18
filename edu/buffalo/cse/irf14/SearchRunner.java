@@ -76,7 +76,7 @@ public class SearchRunner {
 		
 		
 		// WARNINGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGG
-		HashMap<Integer,Float> rankedDocuments =getRankedDocuments(userQuery,model);
+		Map<Integer,Float> rankedDocuments =getRankedDocuments(userQuery,model);
 		return false;
 
 	}
@@ -99,7 +99,7 @@ public class SearchRunner {
 				String queryID = lines[i].split(":")[0];
 				String query = lines[i].split(":")[1];
 
-				HashMap<Integer,Float> rankedDocuments = getRankedDocuments(query,ScoringModel.TFIDF);
+				Map<Integer,Float> rankedDocuments = getRankedDocuments(query,ScoringModel.TFIDF);
 				String result = getStringFromRankedDocuments(rankedDocuments,10);
 				resultSet.put(queryID, result);
 			}
@@ -153,7 +153,7 @@ public class SearchRunner {
 		return null;
 	}
 
-	private HashMap<Integer,Float> getRankedDocuments(String userQuery, ScoringModel model)
+	private Map<Integer,Float> getRankedDocuments(String userQuery, ScoringModel model)
 	{
 		String defaultOperator = "OR";
 		// parse query
@@ -179,7 +179,7 @@ public class SearchRunner {
 		Ranking ranker = RankingFactory.getRankingInstance(model, indices);
 		ArrayList<QueryInfoDTO> queryBagWords = infix.getBagOfQueryWords();
 
-		HashMap<Integer,Float> rankedDocuments = (HashMap<Integer, Float>) ranker.getRankedDocIDs(queryBagWords, docIDs);
+		Map<Integer,Float> rankedDocuments = ranker.getRankedDocIDs(queryBagWords, docIDs);
 		return rankedDocuments;
 	}
 
@@ -263,7 +263,7 @@ public class SearchRunner {
 
 		return analyzerObj;
 	}
-	private String getStringFromRankedDocuments(HashMap<Integer,Float> rankedDocuments, int limit)
+	private String getStringFromRankedDocuments(Map<Integer,Float> rankedDocuments, int limit)
 	{
 		IndicesDTO indices = reader.getIndexDTO();
 		StringBuilder queryResult = new StringBuilder();
