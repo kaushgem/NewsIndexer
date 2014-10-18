@@ -30,6 +30,14 @@ public class QueryEntity {
 		
 	}
 	
+	public QueryEntity(IndexType indexType, String term, Operator operator, boolean isOperator,boolean isEvaluated) {
+		this.indexType = indexType;
+		this.term = term;
+		this.operator = operator;
+		this.isOperator = isOperator;
+		this.isEvaluated = isEvaluated;
+	}
+	
 	
 
 }
