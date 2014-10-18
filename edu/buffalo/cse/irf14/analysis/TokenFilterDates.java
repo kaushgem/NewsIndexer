@@ -1,6 +1,6 @@
 package edu.buffalo.cse.irf14.analysis;
 
-import java.util.*;
+import java.util.HashMap;
 
 public class TokenFilterDates extends TokenFilter {
 

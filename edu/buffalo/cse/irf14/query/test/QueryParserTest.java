@@ -3,8 +3,7 @@
  */
 package edu.buffalo.cse.irf14.query.test;
 
-import static org.junit.Assert.*;
-import junit.framework.Assert;
+import static org.junit.Assert.assertEquals;
 
 import org.junit.After;
 import org.junit.AfterClass;

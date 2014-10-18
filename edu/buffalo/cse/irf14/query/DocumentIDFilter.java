@@ -8,14 +8,20 @@ import java.util.HashMap;
 import java.util.Map.Entry;
 
 import edu.buffalo.cse.irf14.index.IndexType;
-import edu.buffalo.cse.irf14.index.IndexWriter;
+import edu.buffalo.cse.irf14.index.IndicesDTO;
+import edu.buffalo.cse.util.Utility;
 
 /**
- * @author kaush
+ * @author Kaushik
  *
  */
 public class DocumentIDFilter {
-
+	
+	IndicesDTO indices;
+	
+	public DocumentIDFilter(IndicesDTO indices) {
+		this.indices = indices;
+	}
 
 
 	/**
@@ -31,20 +37,20 @@ public class DocumentIDFilter {
 		{
 			switch (type) {
 			case TERM:
-				if(null!=IndexWriter.termIndex.get(term))
-					docIDList = generateDocIDArray(IndexWriter.termIndex.get(term));
+				if(null!=indices.termIndex.get(term))
+					docIDList = generateDocIDArray(indices.termIndex.get(term));
 				break;
 			case CATEGORY:
-				if(null!=IndexWriter.categoryIndex.get(term))
-					docIDList = generateDocIDArray(IndexWriter.categoryIndex.get(term));
+				if(null!=indices.categoryIndex.get(term))
+					docIDList = generateDocIDArray(indices.categoryIndex.get(term));
 				break;
 			case AUTHOR:
-				if(null!=IndexWriter.authorIndex.get(term))
-					docIDList = generateDocIDArray(IndexWriter.authorIndex.get(term));
+				if(null!=indices.authorIndex.get(term))
+					docIDList = generateDocIDArray(indices.authorIndex.get(term));
 				break;
 			case PLACE:
-				if(null!=IndexWriter.placeIndex.get(term))
-					docIDList = generateDocIDArray(IndexWriter.placeIndex.get(term));
+				if(null!=indices.placeIndex.get(term))
+					docIDList = generateDocIDArray(indices.placeIndex.get(term));
 				break;
 			default:
 				break;
@@ -69,20 +75,20 @@ public class DocumentIDFilter {
 	//		{
 	//			switch (type) {
 	//			case TERM:
-	//				if(null!=IndexWriter.termIndex.get(term))
-	//					docIDList = generateFwdIndex(IndexWriter.termIndex.get(term));
+	//				if(null!=indices.termIndex.get(term))
+	//					docIDList = generateFwdIndex(indices.termIndex.get(term));
 	//				break;
 	//			case CATEGORY:
-	//				if(null!=IndexWriter.categoryIndex.get(term))
-	//					docIDList = generateFwdIndex(IndexWriter.categoryIndex.get(term));
+	//				if(null!=indices.categoryIndex.get(term))
+	//					docIDList = generateFwdIndex(indices.categoryIndex.get(term));
 	//				break;
 	//			case AUTHOR:
-	//				if(null!=IndexWriter.authorIndex.get(term))
-	//					docIDList = generateFwdIndex(IndexWriter.authorIndex.get(term));
+	//				if(null!=indices.authorIndex.get(term))
+	//					docIDList = generateFwdIndex(indices.authorIndex.get(term));
 	//				break;
 	//			case PLACE:
-	//				if(null!=IndexWriter.placeIndex.get(term))
-	//					docIDList = generateFwdIndex(IndexWriter.placeIndex.get(term));
+	//				if(null!=indices.placeIndex.get(term))
+	//					docIDList = generateFwdIndex(indices.placeIndex.get(term));
 	//				break;
 	//			default:
 	//				break;
@@ -106,8 +112,8 @@ public class DocumentIDFilter {
 	//		String[] q = query.split(" ");
 	//		for(String term:q)
 	//		{
-	//			if(null!=IndexWriter.authorIndex.get(term))
-	//				docIDList = generateDocIDArray(IndexWriter.authorIndex.get(term));
+	//			if(null!=indices.authorIndex.get(term))
+	//				docIDList = generateDocIDArray(indices.authorIndex.get(term));
 	//			HashMap<Integer, String> map = new HashMap<Integer, String>();
 	//		}
 	//		return null;
@@ -115,8 +121,7 @@ public class DocumentIDFilter {
 
 
 
-	// term, IndexType
-
+	
 	public HashMap<Float, Integer> getRankedDocs(HashMap <String, IndexType> query, ArrayList<Integer> docIDs){
 
 		HashMap<Float, Integer> rankedDocs = new HashMap<Float, Integer>();
@@ -137,7 +142,7 @@ public class DocumentIDFilter {
 			}
 
 			// Calculate IDF
-			int totalDocs = IndexWriter.docIDLookup.size();
+			int totalDocs = indices.docIDLookup.size();
 			int noOfDocsTermOccurs = postingsMap.size();
 			float idf = (float)(Math.log(totalDocs/noOfDocsTermOccurs));
 
@@ -180,13 +185,13 @@ public class DocumentIDFilter {
 	{
 		switch (type) {
 		case TERM:
-			return IndexWriter.termIndex;
+			return indices.termIndex;
 		case CATEGORY:
-			return IndexWriter.categoryIndex;
+			return indices.categoryIndex;
 		case AUTHOR:
-			return IndexWriter.authorIndex;
+			return indices.authorIndex;
 		case PLACE:
-			return IndexWriter.placeIndex;
+			return indices.placeIndex;
 		default:
 			return null;
 		}
@@ -248,7 +253,18 @@ public class DocumentIDFilter {
 			HashMap<String, ArrayList<Integer>> fwdIndexInner = mapItr.getValue();
 			if(fwdIndexInner.size() != queryTerms.length) { continue; }
 			
-			String[] value = new String[2000];
+			// Calculate size of value string by taking maximum position
+			int maxPosition = 0;
+			for(Entry<String, ArrayList<Integer>> innerItr : fwdIndexInner.entrySet())
+			{
+				ArrayList<Integer> positionalIndex = innerItr.getValue();
+				int lastPosition = positionalIndex.get(positionalIndex.size()-1);
+				if(maxPosition<lastPosition) maxPosition = lastPosition;
+			}
+			
+			String[] value = new String[maxPosition];
+			for(String str:value)
+				str = "$";
 			
 			for(Entry<String, ArrayList<Integer>> innerItr : fwdIndexInner.entrySet())
 			{
@@ -261,12 +277,12 @@ public class DocumentIDFilter {
 				}
 			}
 			
-			if(value.toString().contains(query))
+			String str = Utility.join(value, " ");
+			if(str.contains(query))
 				filteredDocIDs.add(mapItr.getKey());
 		}
-		
 		return filteredDocIDs;
 	}
-
-
+	
+	
 }
