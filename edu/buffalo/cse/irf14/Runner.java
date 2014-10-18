@@ -28,7 +28,7 @@ public class Runner {
 	public Runner() {
 		// TODO Auto-generated constructor stub
 	}
-
+	
 	/**
 	 * @param args
 	 * @throws InterruptedException
@@ -75,12 +75,6 @@ public class Runner {
 			}
 
 			writer.close();
-			
-//			IndexReader r = new IndexReader(indexDir, IndexType.TERM);
-//			ArrayList<String> l = (ArrayList<String>) r.getTopK(10);
-//			for(String s : l)
-//				System.out.println(s);
-			
 			System.out.println(startTime);
 			Date endTime = new Date();
 			System.out.println(endTime);

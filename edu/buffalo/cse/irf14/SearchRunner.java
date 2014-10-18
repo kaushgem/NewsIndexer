@@ -1,11 +1,16 @@
 package edu.buffalo.cse.irf14;
 
 import edu.buffalo.cse.irf14.index.IndexReader;
+import edu.buffalo.cse.irf14.index.IndexType;
+import edu.buffalo.cse.irf14.index.IndicesDTO;
 import edu.buffalo.cse.irf14.query.*;
+import edu.buffalo.cse.irf14.ranking.Ranking;
+import edu.buffalo.cse.irf14.ranking.RankingFactory;
 
 import java.io.File;
 import java.io.PrintStream;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -55,9 +60,11 @@ public class SearchRunner {
 		QueryEvaluator qEval = new QueryEvaluator(postfixArrayListEntity);
 		IndexReader reader = new IndexReader(indexDir);
 		ArrayList<Integer> docIDs = qEval.evaluateQuery(reader);
+		IndicesDTO indices = reader.getIndexDTO();
+		Ranking ranker = RankingFactory.getRankingInstance(model, indices);
+		HashMap<String,IndexType> queryBagWords = infix.getBagOfQueryWords();
+		HashMap<Integer,Float> rankedDocuments = ranker.getRankedDocIDs(queryBagWords, docIDs);
 		
-
-
 
 
 	}
@@ -114,4 +121,8 @@ public class SearchRunner {
 		//TODO: IMPLEMENT THIS METHOD IFF SPELLCHECK EXECUTED
 		return null;
 	}
+	
+	
+	
+	
 }

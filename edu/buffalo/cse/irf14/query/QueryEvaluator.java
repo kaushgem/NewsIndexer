@@ -93,11 +93,11 @@ public class QueryEvaluator {
 		ArrayList<Integer> docIDsList = new ArrayList<Integer>();
 		if(isPhraseQuery(queryTerm))
 		{
-			docIDsList = reader.getDocIDArrayListForPhraseQueries(indexType,queryTerm); // phrase query
+		//	docIDsList = reader.getDocIDArrayListForPhraseQueries(indexType,queryTerm); // phrase query
 		}
 		else
 		{
-			docIDsList = reader.getDocIDArrayList(indexType,queryTerm); // normal query
+		//	docIDsList = reader.getDocIDArrayList(indexType,queryTerm); // normal query
 		}
 		return docIDsList;
 	}
