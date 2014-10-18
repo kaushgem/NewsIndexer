@@ -12,7 +12,7 @@ import edu.buffalo.cse.irf14.index.IndexWriter;
 
 /**
  * @author kaush
- *
+ * 
  */
 public class DocumentIDFilter {
 	
