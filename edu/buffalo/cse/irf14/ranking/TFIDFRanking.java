@@ -9,6 +9,7 @@ import java.util.Map.Entry;
 
 import edu.buffalo.cse.irf14.index.IndexType;
 import edu.buffalo.cse.irf14.index.IndicesDTO;
+import edu.buffalo.cse.util.RankCalc;
 
 /**
  * @author Sathish
@@ -21,6 +22,23 @@ public class TFIDFRanking extends Ranking {
 		this.indices =  indices;
 	}
 
+	
+	private HashMap<String, HashMap<Integer, String>> getIndexMap(IndexType type)
+	{
+		switch (type) {
+		case TERM:
+			return indices.termIndex;
+		case CATEGORY:
+			return indices.categoryIndex;
+		case AUTHOR:
+			return indices.authorIndex;
+		case PLACE:
+			return indices.placeIndex;
+		default:
+			return null;
+		}
+	}
+	
 	
 	/* (non-Javadoc)
 	 * @see edu.buffalo.cse.irf14.ranking.Ranking#getRankedDocIDs(java.util.HashMap, java.util.ArrayList)
@@ -49,7 +67,7 @@ public class TFIDFRanking extends Ranking {
 			// Calculate IDF
 			int totalDocs = indices.docIDLookup.size();
 			int noOfDocsTermOccurs = postingsMap.size();
-			float idf = (float)(Math.log(totalDocs/noOfDocsTermOccurs));
+			float idf = RankCalc.calculateIDF(totalDocs, noOfDocsTermOccurs);
 
 			for (Entry<Integer, String> mapItr : postingsMap.entrySet()) {
 
@@ -60,16 +78,14 @@ public class TFIDFRanking extends Ranking {
 
 				String[] str = mapItr.getValue().split(":");
 				int tf = Integer.parseInt(str[0]);
-				float weight = tf+idf; //TODO:  change formula
+				float score = RankCalc.calculateTFIDF(tf, idf);
 
-				if(rankedDocIDs.get(docID)==null)
-				{
-					rankedDocIDs.put(docID, weight);
+				if(rankedDocIDs.get(docID)==null){
+					rankedDocIDs.put(docID, score);
 				}
-				else
-				{
-					weight += rankedDocIDs.get(docID);
-					rankedDocIDs.put(docID, weight);
+				else{
+					score += rankedDocIDs.get(docID);
+					rankedDocIDs.put(docID, score);
 				}
 			}
 		}
@@ -78,21 +94,7 @@ public class TFIDFRanking extends Ranking {
 	}
 
 
-	private HashMap<String, HashMap<Integer, String>> getIndexMap(IndexType type)
-	{
-		switch (type) {
-		case TERM:
-			return indices.termIndex;
-		case CATEGORY:
-			return indices.categoryIndex;
-		case AUTHOR:
-			return indices.authorIndex;
-		case PLACE:
-			return indices.placeIndex;
-		default:
-			return null;
-		}
-	}
+	
 	
 
 	
@@ -132,7 +134,7 @@ public class TFIDFRanking extends Ranking {
 //
 //				String[] str = mapItr.getValue().split(":");
 //				int tf = Integer.parseInt(str[0]);
-//				float weight = tf+idf; //TODO:  change formula
+//				float weight = tf+idf; 
 //
 //				HashMap<String, Float> fwdIndexInner = null;
 //
