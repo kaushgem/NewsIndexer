@@ -5,6 +5,7 @@ package edu.buffalo.cse.irf14.ranking;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Map;
 import java.util.Map.Entry;
 
 import edu.buffalo.cse.irf14.DTO.QueryInfoDTO;
@@ -43,7 +44,7 @@ public class OKAPIRanking extends Ranking {
 	 * @see edu.buffalo.cse.irf14.ranking.Ranking#getRankedDocIDs(java.util.HashMap, java.util.ArrayList)
 	 */
 	@Override
-	public HashMap<Integer, Float> getRankedDocIDs(ArrayList<QueryInfoDTO> queryBagWords,
+	public Map<Integer, Float> getRankedDocIDs(ArrayList<QueryInfoDTO> queryBagWords,
 			ArrayList<Integer> matchingDocIDs) {
 
 
@@ -95,7 +96,7 @@ public class OKAPIRanking extends Ranking {
 				}
 			}
 		}
-		return rankedDocIDs;
+		return RankingHelper.sortUsingRank(rankedDocIDs);
 	}
 
 }
