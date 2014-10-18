@@ -5,7 +5,7 @@ package edu.buffalo.cse.irf14.ranking;
 
 import java.util.*;
 
-import edu.buffalo.cse.irf14.index.IndexesDTO;
+import edu.buffalo.cse.irf14.index.IndicesDTO;
 
 /**
  * @author Sathish
@@ -13,6 +13,6 @@ import edu.buffalo.cse.irf14.index.IndexesDTO;
  */
 public abstract class Ranking
 {
-	public IndexesDTO indexes;
+	public IndicesDTO indexes;
 	public abstract HashMap<Integer,Float> getRankedDocIDs(HashMap<String,String> queryBagWords, ArrayList<Integer> matchingDocIDs);
 }

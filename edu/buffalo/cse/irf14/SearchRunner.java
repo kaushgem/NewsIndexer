@@ -1,8 +1,11 @@
 package edu.buffalo.cse.irf14;
 
+import edu.buffalo.cse.irf14.index.IndexReader;
 import edu.buffalo.cse.irf14.query.*;
+
 import java.io.File;
 import java.io.PrintStream;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -14,7 +17,10 @@ import java.util.Map;
  */
 public class SearchRunner {
 	public enum ScoringModel {TFIDF, OKAPI};
-
+	String indexDir; 
+	String corpusDir; 
+	char mode; 
+	PrintStream stream;
 	/**
 	 * Default (and only public) constuctor
 	 * @param indexDir : The directory where the index resides
@@ -24,7 +30,13 @@ public class SearchRunner {
 	 */
 	public SearchRunner(String indexDir, String corpusDir, 
 			char mode, PrintStream stream) {
-		//TODO: IMPLEMENT THIS METHOD
+
+		this.indexDir = indexDir;
+		this.corpusDir = corpusDir;
+		this.mode = mode;
+		this.stream = stream;
+
+
 	}
 
 	/**
@@ -33,7 +45,18 @@ public class SearchRunner {
 	 * @param model : Scoring Model to use for ranking results
 	 */
 	public void query(String userQuery, ScoringModel model) {
-		//TODO: IMPLEMENT THIS METHOD
+
+		Query query = QueryParser.parse(userQuery, "OR");
+		String formattedUserQuery =  query.toString();
+		InfixExpression infix = new InfixExpression(formattedUserQuery);
+		ArrayList<QueryEntity> infixArrayListEntity = infix.getInfixExpression();
+		PostfixExpression postfixExpression = new  PostfixExpression(infixArrayListEntity);
+		ArrayList<QueryEntity> postfixArrayListEntity = postfixExpression.getPostfixExpression();
+		QueryEvaluator qEval = new QueryEvaluator(postfixArrayListEntity);
+		IndexReader reader = new IndexReader(indexDir);
+		ArrayList<Integer> docIDs = qEval.evaluateQuery(reader);
+		
+
 
 
 

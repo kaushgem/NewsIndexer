@@ -35,31 +35,28 @@ public class IndexReader {
 
 	IndexType type = null;
 	String indexDirectory = null;
-
+	IndicesDTO indices = null;
 	// Constructors
 
 	public IndexReader() {}
 
 	public IndexReader(String indexDir) {
 		this.indexDirectory = indexDir;
-		checkInMemory();
+		loadIndexFromfile();
 	}
 
 	public IndexReader(String indexDir, IndexType type) {
 		this.type = type;
 		this.indexDirectory = indexDir;
-		checkInMemory();
+		loadIndexFromfile();
 	}
 
-	private void checkInMemory(){
-		boolean isInmemory = IndexWriter.docIDLookup.size() > 0;
-		//isInmemory = false;
-		if (!isInmemory) {
+	private void loadIndexFromfile(){
 			try {
 				readIndex();
 			} catch (Exception e) {
 				e.printStackTrace();
-			}
+			
 		}
 	}
 
@@ -74,16 +71,16 @@ public class IndexReader {
 		int size = 0;
 		switch (type) {
 		case TERM:
-			size = IndexWriter.termIndex.size();
+			size = indices.termIndex.size();
 			break;
 		case CATEGORY:
-			size = IndexWriter.categoryIndex.size();
+			size = indices.categoryIndex.size();
 			break;
 		case AUTHOR:
-			size = IndexWriter.authorIndex.size();
+			size = indices.authorIndex.size();
 			break;
 		case PLACE:
-			size = IndexWriter.placeIndex.size();
+			size = indices.placeIndex.size();
 			break;
 		default:
 			break;
@@ -98,7 +95,7 @@ public class IndexReader {
 	 * @return The total number of terms
 	 */
 	public int getTotalValueTerms() {
-		return IndexWriter.docIDLookup.size();
+		return indices.docIDLookup.size();
 	}
 
 	/**
@@ -121,20 +118,20 @@ public class IndexReader {
 		{
 			switch (type) {
 			case TERM:
-				if(null!=IndexWriter.termIndex.get(term))
-					indexPostings = generatePostings(IndexWriter.termIndex.get(term));//.getTermFreqPositionIndexDTO());
+				if(null!=indices.termIndex.get(term))
+					indexPostings = generatePostings(indices.termIndex.get(term));//.getTermFreqPositionIndexDTO());
 				break;
 			case CATEGORY:
-				if(null!=IndexWriter.categoryIndex.get(term))
-					indexPostings = generatePostings(IndexWriter.categoryIndex.get(term));//.getTermFreqPositionIndexDTO());
+				if(null!=indices.categoryIndex.get(term))
+					indexPostings = generatePostings(indices.categoryIndex.get(term));//.getTermFreqPositionIndexDTO());
 				break;
 			case AUTHOR:
-				if(null!=IndexWriter.authorIndex.get(term))
-					indexPostings = generatePostings(IndexWriter.authorIndex.get(term));//.getTermFreqPositionIndexDTO());
+				if(null!=indices.authorIndex.get(term))
+					indexPostings = generatePostings(indices.authorIndex.get(term));//.getTermFreqPositionIndexDTO());
 				break;
 			case PLACE:
-				if(null!=IndexWriter.placeIndex.get(term))
-					indexPostings = generatePostings(IndexWriter.placeIndex.get(term));//.getTermFreqPositionIndexDTO());
+				if(null!=indices.placeIndex.get(term))
+					indexPostings = generatePostings(indices.placeIndex.get(term));//.getTermFreqPositionIndexDTO());
 				break;
 			default:
 				break;
@@ -149,7 +146,7 @@ public class IndexReader {
 		HashMap<String, Integer> indexPostings = new HashMap<String, Integer>();
 
 		for (Entry<Integer, String> eItr : postings.entrySet()) {
-			String docID = IndexWriter.docIDLookup.get(eItr.getKey());
+			String docID = indices.docIDLookup.get(eItr.getKey());
 			String[] str = eItr.getValue().split(":");
 			int termFreq = Integer.parseInt(str[0]);
 			indexPostings.put(docID, termFreq);
@@ -180,10 +177,10 @@ public class IndexReader {
 		int total_word_count = 0;
 
 		for (int p = 0; p < k; p++) {
-			topk_nodes.add(IndexWriter.root);
+			topk_nodes.add(indices.root);
 		}
 
-		IndexWriter.root.GetTopCounts(topk_nodes, distinct_word_count,
+		indices.root.GetTopCounts(topk_nodes, distinct_word_count,
 				total_word_count);
 		Collections.sort(topk_nodes);
 
@@ -254,26 +251,26 @@ public class IndexReader {
 		try {
 			String termIndexFilepath = this.indexDirectory + File.separator
 					+ IndexType.TERM.toString() + ".txt";
-			IndexWriter.termIndex = fileToIndex(termIndexFilepath);
+			indices.termIndex = fileToIndex(termIndexFilepath);
 			String categoryIndexFilepath = this.indexDirectory + File.separator
 					+ IndexType.CATEGORY.toString() + ".txt";
-			IndexWriter.categoryIndex = fileToIndex(categoryIndexFilepath);
+			indices.categoryIndex = fileToIndex(categoryIndexFilepath);
 			String authorIndexFilepath = this.indexDirectory + File.separator
 					+ IndexType.AUTHOR.toString() + ".txt";
-			IndexWriter.authorIndex = fileToIndex(authorIndexFilepath);
+			indices.authorIndex = fileToIndex(authorIndexFilepath);
 			String placeIndexFilepath = this.indexDirectory + File.separator
 					+ IndexType.PLACE.toString() + ".txt";
-			IndexWriter.placeIndex = fileToIndex(placeIndexFilepath);
+			indices.placeIndex = fileToIndex(placeIndexFilepath);
 			String docIDLookupFilepath = this.indexDirectory + File.separator
 					+ "FILEID" + ".txt";
-			IndexWriter.docIDLookup = fileToLookup(docIDLookupFilepath);
+			indices.docIDLookup = fileToLookup(docIDLookupFilepath);
 
 
-			System.out.println("Term Size : " + IndexWriter.termIndex.size());
-			System.out.println("Cate Size : " + IndexWriter.categoryIndex.size());
-			System.out.println("Auth Size : " + IndexWriter.authorIndex.size());
-			System.out.println("Plac Size : " + IndexWriter.placeIndex.size());
-			System.out.println("File Size : " + IndexWriter.docIDLookup.size());
+			System.out.println("Term Size : " + indices.termIndex.size());
+			System.out.println("Cate Size : " + indices.categoryIndex.size());
+			System.out.println("Auth Size : " + indices.authorIndex.size());
+			System.out.println("Plac Size : " + indices.placeIndex.size());
+			System.out.println("File Size : " + indices.docIDLookup.size());
 
 		} catch (Exception e) {
 			e.printStackTrace();
