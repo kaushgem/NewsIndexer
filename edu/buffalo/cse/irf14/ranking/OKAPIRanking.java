@@ -15,12 +15,8 @@ import edu.buffalo.cse.irf14.index.IndicesDTO;
  */
 public class OKAPIRanking extends Ranking {
 
-	/**
-	 * 
-	 */
-	public OKAPIRanking(IndicesDTO indexes) {
-
-		this.indexes =  indexes;
+	public OKAPIRanking(IndicesDTO indices) {
+		this.indices = indices;
 	}
 
 	/* (non-Javadoc)
@@ -32,6 +28,5 @@ public class OKAPIRanking extends Ranking {
 		// TODO Auto-generated method stub
 		return null;
 	}
-
 	
 }

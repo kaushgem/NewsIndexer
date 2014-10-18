@@ -4,7 +4,6 @@
 package edu.buffalo.cse.irf14.query;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Stack;
 
 import edu.buffalo.cse.irf14.index.IndexReader;

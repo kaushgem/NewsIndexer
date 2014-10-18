@@ -1,18 +1,23 @@
 package edu.buffalo.cse.irf14;
 
-import edu.buffalo.cse.irf14.index.IndexReader;
-import edu.buffalo.cse.irf14.index.IndexType;
-import edu.buffalo.cse.irf14.index.IndicesDTO;
-import edu.buffalo.cse.irf14.query.*;
-import edu.buffalo.cse.irf14.ranking.Ranking;
-import edu.buffalo.cse.irf14.ranking.RankingFactory;
-
 import java.io.File;
 import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import edu.buffalo.cse.irf14.index.IndexReader;
+import edu.buffalo.cse.irf14.index.IndexType;
+import edu.buffalo.cse.irf14.index.IndicesDTO;
+import edu.buffalo.cse.irf14.query.InfixExpression;
+import edu.buffalo.cse.irf14.query.PostfixExpression;
+import edu.buffalo.cse.irf14.query.Query;
+import edu.buffalo.cse.irf14.query.QueryEntity;
+import edu.buffalo.cse.irf14.query.QueryEvaluator;
+import edu.buffalo.cse.irf14.query.QueryParser;
+import edu.buffalo.cse.irf14.ranking.Ranking;
+import edu.buffalo.cse.irf14.ranking.RankingFactory;
 
 /**
  * Main class to run the searcher.
