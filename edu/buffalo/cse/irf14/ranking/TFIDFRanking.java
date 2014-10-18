@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map.Entry;
 
+import edu.buffalo.cse.irf14.DTO.QueryInfoDTO;
 import edu.buffalo.cse.irf14.index.IndexType;
 import edu.buffalo.cse.irf14.index.IndicesDTO;
 import edu.buffalo.cse.util.RankCalc;
@@ -45,17 +46,19 @@ public class TFIDFRanking extends Ranking {
 	 */
 	@Override
 	public HashMap<Integer, Float> getRankedDocIDs(
-			HashMap<String, IndexType> queryBagWords,
+			ArrayList<QueryInfoDTO> queryBagWords,
 			ArrayList<Integer> matchingDocIDs) {
 
 		HashMap<Integer, Float> rankedDocIDs = new HashMap<Integer, Float>();
 
 		// Iterate for queryTerm in the Query
 
-		for (Entry<String, IndexType> queryTerm : queryBagWords.entrySet()) {
-			String term = queryTerm.getKey();
-			IndexType type = queryTerm.getValue();
-
+		while(queryBagWords.iterator().hasNext())
+		{
+			QueryInfoDTO queryDTOObj = queryBagWords.iterator().next();
+			String term = queryDTOObj.getQueryTerm();
+			IndexType type = queryDTOObj.getType();
+			
 			// Get the IndexMap corresponding to the type
 			HashMap<String, HashMap<Integer, String>> indexMap = getIndexMap(type);
 
