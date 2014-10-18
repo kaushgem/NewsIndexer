@@ -74,22 +74,7 @@ public class TokenStream implements Iterator<Token> {
 		}
 	}
 
-	public List<Token> GetBeforeTokens(int width) {
-		int startingIndex = (currentIndex - width) <= 0 ? 0 : currentIndex
-				- width;
-		List surroundingTokens = new ArrayList(tokens.subList(startingIndex,
-				currentIndex));
-		return surroundingTokens;
-	}
-
-	public List<Token> GetAfterTokens(int width) {
-		int endingIndex = (currentIndex + width) >= tokens.size() - 1 ? tokens
-				.size() - 1 : currentIndex + width;
-		List surroundingTokens = new ArrayList(tokens.subList(currentIndex,
-				endingIndex));
-		return surroundingTokens;
-	}
-
+	
 	/**
 	 * Method to reset the stream to bring the iterator back to the beginning of
 	 * the stream. Unless the stream has no tokens, hasNext() after calling
@@ -163,6 +148,18 @@ public class TokenStream implements Iterator<Token> {
 	}
 
 
-
+	public String getTokensAsString()
+	{
+		String str = "";
+		StringBuilder sb = new StringBuilder();
+		for(Token t:tokens)
+		{
+			sb.append(t.toString());
+			sb.append(" ");
+		}
+		
+		return str = sb.toString().trim();
+		
+	}
 
 }
