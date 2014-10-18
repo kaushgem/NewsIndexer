@@ -16,7 +16,7 @@ public class InfixExpression {
 
 	}
 
-	public ArrayList<QueryEntity> InfixExpress()
+	public ArrayList<QueryEntity> getInfixExpression()
 	{
 
 		String[] strArray = formattedUserQuery.split(" ");
@@ -78,17 +78,26 @@ public class InfixExpression {
 
 	}
 	
-	public HashMap<String,String> getBagOfQueryWords()
+	public HashMap<String,IndexType> getBagOfQueryWords()
 	{
-		HashMap<String,String> bagOfWords = new HashMap<String, String>();
+		HashMap<String,IndexType> bagOfWords = new HashMap<String, IndexType>();
 		
 		for(int i=0; i<infixList.size(); i++)
 		{
 			QueryEntity qe = infixList.get(i);
-			//if(qe.isOperator && qe.)
+			
+			if(qe.isOperator && qe.operator == Operator.NOT)
+			{
+				i=i+2;
+				
+			}
+			else if(!qe.isOperator)
+			{
+				bagOfWords.put(qe.term, qe.indexType);
+			}
 			
 		}
-		return null;
+		return bagOfWords;
 		
 	}
 	

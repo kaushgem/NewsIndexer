@@ -6,7 +6,7 @@ package edu.buffalo.cse.irf14.ranking;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-import edu.buffalo.cse.irf14.index.IndexesDTO;
+import edu.buffalo.cse.irf14.index.IndicesDTO;
 
 /**
  * @author Sathish
@@ -17,7 +17,7 @@ public class TFIDFRanking extends Ranking {
 	/**
 	 * 
 	 */
-	public TFIDFRanking(IndexesDTO indexes) {
+	public TFIDFRanking(IndicesDTO indexes) {
 		this.indexes =  indexes;
 	}
 
