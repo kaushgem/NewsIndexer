@@ -17,18 +17,16 @@ public class SearchRunnerTest {
 	@BeforeClass
 	public static void setUpBeforeClass() throws Exception {
 		
-		String indexDir = "/Users/kaush/Coding/Dataset/IR/files";
-		String corpusDir = "";
+		String indexDir = "C:\\Users\\Sathish\\Dropbox\\UB\\Fall\\535 - IR\\index";
+		String corpusDir = "C:\\Users\\Sathish\\Dropbox\\UB\\Fall\\535 - IR\\news_training\\training";
 		char mode = 'E';
 		PrintStream stream = System.out;
 		
 		SearchRunner search = new SearchRunner(indexDir,  corpusDir, mode,  stream);
-		
 
-
-		String q = "week OR week OR week";// regulatory";
-		//q = "lubricating AND marine AND petrochemical";  //CoFAB
-		q = "NATO AND NATO";
+		String q = "Category:oil AND place:Dubai AND ( price OR cost )";// regulatory";
+		q = "lubricating AND marine AND petrochemical";  //CoFAB
+		// q = "NATO AND NATO";
 		File f = new File("/Users/kaush/Coding/Dataset/IR/q.txt");
 		//search.query(f);
 		search.query(q,ScoringModel.TFIDF);

@@ -3,12 +3,17 @@ package edu.buffalo.cse.irf14;
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.UUID;
 
 import edu.buffalo.cse.irf14.DTO.QueryInfoDTO;
 import edu.buffalo.cse.irf14.analysis.Analyzer;
@@ -25,7 +30,10 @@ import edu.buffalo.cse.irf14.document.Parser;
 import edu.buffalo.cse.irf14.document.ParserException;
 import edu.buffalo.cse.irf14.index.IndexReader;
 import edu.buffalo.cse.irf14.index.IndexType;
+import edu.buffalo.cse.irf14.index.IndexWriter;
+import edu.buffalo.cse.irf14.index.IndexerException;
 import edu.buffalo.cse.irf14.index.IndicesDTO;
+import edu.buffalo.cse.irf14.query.DocumentIDFilter;
 import edu.buffalo.cse.irf14.query.InfixExpression;
 import edu.buffalo.cse.irf14.query.PostfixExpression;
 import edu.buffalo.cse.irf14.query.Query;
@@ -36,7 +44,7 @@ import edu.buffalo.cse.irf14.query.QueryParser;
 import edu.buffalo.cse.irf14.ranking.Ranking;
 import edu.buffalo.cse.irf14.ranking.RankingFactory;
 import edu.buffalo.cse.util.Utility;
-
+import static java.nio.file.StandardCopyOption.*;
 /**
  * Main class to run the searcher.
  * As before implement all TODO methods unless marked for bonus
@@ -50,6 +58,9 @@ public class SearchRunner {
 	char mode; 
 	PrintStream stream;
 	IndexReader reader;
+	IndicesDTO indices;
+	ArrayList<QueryInfoDTO> queryBagWords;
+	String flattenedCorpusDir;
 	/**
 	 * Default (and only public) constuctor
 	 * @param indexDir : The directory where the index resides
@@ -64,38 +75,120 @@ public class SearchRunner {
 		this.corpusDir = corpusDir;
 		this.mode = mode;
 		this.stream = stream;
+		this.flattenedCorpusDir = corpusDir+ File.separator+"75d6e08f656e45febb167d2564a14548";
+		// WriteToIndex();
 		reader = new IndexReader(indexDir);
+		this.indices = reader.getIndexDTO();
 
 	}
 
+
+	private void WriteToIndex()
+	{
+		File ipDirectory = new File(corpusDir);
+		String[] catDirectories = ipDirectory.list();
+
+		String[] files;
+		File dir;
+		Utility.createEmptyDir(this.flattenedCorpusDir);
+		Document d = null;
+		IndexWriter writer = new IndexWriter(indexDir);
+
+		Date startTime = new Date();
+		System.out.println(startTime);
+
+		try {
+			for (String cat : catDirectories) {
+				dir = new File(corpusDir + File.separator + cat);
+				files = dir.list();
+
+				if (files == null)
+					continue;
+
+				for (String f : files) {
+					try {
+						String filePath = dir.getAbsolutePath() + File.separator + f;
+						try {
+							d = Parser.parse(filePath);
+							Path source = Paths.get(filePath);
+							Path destination = Paths.get(this.flattenedCorpusDir+File.separator + f);
+							Files.copy(source,destination,StandardCopyOption.REPLACE_EXISTING);
+						} catch (IOException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
+						writer.addDocument(d);
+					} catch (ParserException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+				}
+			}
+
+			writer.close();
+
+		} catch (IndexerException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	
+	
 	/**
 	 * Method to execute given query in the Q mode
 	 * @param userQuery : Query to be parsed and executed
 	 * @param model : Scoring Model to use for ranking results
 	 */
-	public boolean  query(String userQuery, ScoringModel model) {
+	public void  query(String userQuery, ScoringModel model) {
 
-		// TODO: WARNINGGGGGGGGGGGGGGGGGGGGGGGGGGG
-		// Change the returntype........... to void
 		
-		
-		// WARNINGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGG
-		QueryModeOutput qmo = new QueryModeOutput();
-		Date start = new Date();
-		System.out.println("**Start "+model +" Time: "+start);
-		
+		long start_time = System.nanoTime();
+
+
 		Map<Integer,Float> rankedDocuments = getRankedDocuments(userQuery,model);
-		
-		Date end = new Date();
-		System.out.println("**End "+model +" Time: "+end);
-		System.out.println(rankedDocuments.toString());
-		
-		return false;
+
+		long end_time = System.nanoTime();
+		double difference = (end_time - start_time)/1e6;
+
+		try {
+			stream.println("Query: "+userQuery);
+			stream.println("Time taken: "+ difference+ "msec");
+			//System.out.println("Query: "+userQuery);
+			//System.out.println("Time taken: "+ difference+ "msec");
+			ArrayList<QueryModeOutput> qmList = getQueryModeOutput(rankedDocuments);
+			printResultsQmode(qmList);
+
+		} catch (ParserException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	
 
 	}
-	
-	public ArrayList<QueryModeOutput> getQueryModeOutput(Map<Integer,Float> rankedDocuments, IndicesDTO indices) throws ParserException, IOException
+
+	private void printResultsQmode(ArrayList<QueryModeOutput> qmList)
 	{
+		for(QueryModeOutput qm:qmList)
+		{
+			System.out.println("Result Rank: " +qm.resultRank);
+			System.out.println("Result Title: " +qm.resultTitle);
+			System.out.println("Result Relavancy: " +qm.resultRelevancy);
+			System.out.println("Context: " +qm.snippet);
+
+		//	System.out.println("Result Rank: " +qm.resultRank);
+		//	System.out.println("Result Title: " +qm.resultTitle);
+		//	System.out.println("Result Relavancy: " +qm.resultRelevancy);
+		//	System.out.println("Context: " +qm.snippet);
+		}
+	}
+
+
+	public ArrayList<QueryModeOutput> getQueryModeOutput( Map<Integer,Float> rankedDocuments) 
+			throws ParserException, IOException
+			{
 		ArrayList<QueryModeOutput> queryModeList = new ArrayList<QueryModeOutput>();
 		int i = 0;
 		for(Entry<Integer,Float> entry : rankedDocuments.entrySet())
@@ -104,13 +197,61 @@ public class SearchRunner {
 			int fileID = entry.getKey();
 			float rank = entry.getValue();
 			String FileName = indices.docIDLookup.get(fileID);
-			Document d = Parser.parse(corpusDir + File.separator + FileName);
+			Document d = Parser.parse(this.flattenedCorpusDir + File.separator + FileName);
 			qmo.resultTitle = d.getField(FieldNames.TITLE)[0];
 			qmo.resultRelevancy = rank;
 			qmo.resultRank = ++i;
-			//qmo.snippet =   
+
+			qmo.snippet =   findSnippet(fileID,indices);
+			queryModeList.add(qmo);
 		}
+
 		return queryModeList;
+			}
+
+	// reference http://stackoverflow.com/questions/16387989/get-words-around-a-position-in-a-string
+	private String findSnippet( int fileID,  IndicesDTO indices) throws IOException
+	{
+
+
+		String snippet = null;
+		for(QueryInfoDTO queryWord: queryBagWords )
+		{
+			if(queryWord.getType() == IndexType.CATEGORY)
+			{
+				continue;
+			}
+
+			DocumentIDFilter docIDFilter = new DocumentIDFilter(indices);
+			ArrayList<Integer> matchingDocIds = docIDFilter.getDocIDArrayList(queryWord.getType(), queryWord.getQueryTerm());
+			if(matchingDocIds.contains(fileID))
+			{
+				String keyWord = queryWord.getQueryTerm();
+				String documentContent = Utility.readStream(this.flattenedCorpusDir + File.separator+indices.docIDLookup.get(fileID));
+				String[] sp = documentContent.split(" +"); // "+" for multiple spaces
+				for (int i = 2; i < sp.length; i++) {
+					if (sp[i].contains(keyWord)) {
+						// have to check for ArrayIndexOutOfBoundsException
+						String surr = (i-2 > 0 ? sp[i-2]+" " : "") +
+								(i-1 > 0 ? sp[i-1]+" " : "") +
+								sp[i] +
+								(i+1 < sp.length ? " "+sp[i+1] : "") +
+								(i+2 < sp.length ? " "+sp[i+2] : "");
+						snippet +="..."+surr;
+					}
+				}
+				if(snippet!=null)
+				{
+					snippet= snippet.replace(keyWord, "<B>"+keyWord + "</B>");
+				}
+
+				if(snippet!=null && snippet.length() >150)
+				{
+					break;
+				}
+			}
+		}
+		return snippet;
 	}
 	/**
 	 * Method to execute queries in E mode
@@ -196,14 +337,14 @@ public class SearchRunner {
 		String formattedUserQuery =  query.toString();
 		System.out.println("Formatted user query");
 		System.out.println(formattedUserQuery);
-		
+
 		//convert to infix
 		InfixExpression infix = new InfixExpression(formattedUserQuery);
 		ArrayList<QueryEntity> infixArrayListEntity = infix.getInfixExpression();
 		printFix(infixArrayListEntity);
 		infixArrayListEntity = getAnalysedQueryTerms(infixArrayListEntity);
 		printFix(infixArrayListEntity);
-		
+
 		// convert to postfix
 		System.out.println("Converting to postfix");
 		PostfixExpression postfixExpression = new  PostfixExpression(infixArrayListEntity);
@@ -215,17 +356,17 @@ public class SearchRunner {
 		ArrayList<Integer> docIDs = qEval.evaluateQuery(reader.getIndexDTO());
 		IndicesDTO indices = reader.getIndexDTO();
 
-//		System.out.println("out");
-//		System.out.println(docIDs.toString());
-		
+		//		System.out.println("out");
+		//		System.out.println(docIDs.toString());
+
 		// rank documents
 		Ranking ranker = RankingFactory.getRankingInstance(model, indices);
-		ArrayList<QueryInfoDTO> queryBagWords = infix.getBagOfQueryWords();
+		queryBagWords = infix.getBagOfQueryWords();
 
 		Map<Integer,Float> rankedDocuments = ranker.getRankedDocIDs(queryBagWords, docIDs);
 		return rankedDocuments;
 	}
-	
+
 	private void printFix(ArrayList<QueryEntity> postfixArrayListEntity )
 	{
 		for(QueryEntity qe: postfixArrayListEntity)
@@ -240,7 +381,7 @@ public class SearchRunner {
 			}
 		}
 		System.out.println("***************");
-		
+
 	}
 
 	private ArrayList<QueryEntity> getAnalysedQueryTerms(ArrayList<QueryEntity> queryExpression)
@@ -371,5 +512,5 @@ public class SearchRunner {
 		System.out.println("out "+evalModeOutput.toString());
 		stream.append(evalModeOutput.toString());
 	}
-	
+
 }

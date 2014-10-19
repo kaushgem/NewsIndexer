@@ -201,6 +201,7 @@ public class Parser {
 			 */
 
 		} catch (Exception e) {
+			e.printStackTrace();
 			throw new ParserException();
 		}
 
