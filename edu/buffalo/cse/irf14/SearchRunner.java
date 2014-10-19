@@ -79,12 +79,12 @@ public class SearchRunner {
 		// WARNINGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGG
 		
 		Date start = new Date();
-		System.out.println("\n\n Start"+model +"Time: "+start);
+		System.out.println("\n\nStart "+model +" Time: "+start);
 		
 		Map<Integer,Float> rankedDocuments =getRankedDocuments(userQuery,model);
 		
 		Date end = new Date();
-		System.out.println("\n\n Start"+model +"Time: "+end);
+		System.out.println("\n\nEnd "+model +" Time: "+end);
 		System.out.println(rankedDocuments.toString());
 		
 		return false;
@@ -97,7 +97,7 @@ public class SearchRunner {
 	 * @throws IOException 
 	 */
 	public void query(File queryFile) throws IOException {
-		String queriesStr = Utility.readStream(queryFile.getAbsolutePath());
+		String queriesStr = Utility.readStreamFileObj(queryFile);
 		String[] lines = queriesStr.split("\\r?\\n");
 		HashMap<String,String> resultSet = new HashMap<String, String>();
 		if(lines.length >=2)
@@ -114,6 +114,7 @@ public class SearchRunner {
 				resultSet.put(queryID, result);
 			}
 		}
+		System.out.println(resultSet);
 		writeToPrintStreamEvalMode(resultSet);
 
 	}
@@ -185,6 +186,8 @@ public class SearchRunner {
 		ArrayList<Integer> docIDs = qEval.evaluateQuery(reader.getIndexDTO());
 		IndicesDTO indices = reader.getIndexDTO();
 
+		System.out.println(docIDs.toString());
+		
 		// rank documents
 		Ranking ranker = RankingFactory.getRankingInstance(model, indices);
 		ArrayList<QueryInfoDTO> queryBagWords = infix.getBagOfQueryWords();
