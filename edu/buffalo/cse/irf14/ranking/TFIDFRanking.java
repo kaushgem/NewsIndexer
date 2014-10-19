@@ -24,7 +24,7 @@ public class TFIDFRanking extends Ranking {
 		this.indices =  indices;
 	}
 
-	
+
 	private HashMap<String, HashMap<Integer, String>> getIndexMap(IndexType type)
 	{
 		switch (type) {
@@ -40,8 +40,8 @@ public class TFIDFRanking extends Ranking {
 			return null;
 		}
 	}
-	
-	
+
+
 	/* (non-Javadoc)
 	 * @see edu.buffalo.cse.irf14.ranking.Ranking#getRankedDocIDs(java.util.HashMap, java.util.ArrayList)
 	 */
@@ -51,6 +51,7 @@ public class TFIDFRanking extends Ranking {
 			ArrayList<Integer> matchingDocIDs) {
 
 		HashMap<Integer, Float> rankedDocIDs = new HashMap<Integer, Float>();
+		float maxWeight = 0;
 
 		// Iterate for queryTerm in the Query
 
@@ -58,9 +59,9 @@ public class TFIDFRanking extends Ranking {
 		{
 			String term = queryDTOObj.getQueryTerm();
 			IndexType type = queryDTOObj.getType();
-			
+
 			System.out.println(term);
-			
+
 			// Get the IndexMap corresponding to the type
 			HashMap<String, HashMap<Integer, String>> indexMap = getIndexMap(type);
 
@@ -85,8 +86,11 @@ public class TFIDFRanking extends Ranking {
 				int tf = Integer.parseInt(str[0]);
 				float score = RankCalc.calculateTFIDF(tf, idf);
 
-				System.out.println(score);
-				
+				// Normalization using doc length
+				int docLen = indices.docLength.get(docID);
+				score = (float) (score/Math.log10(docLen));
+				//System.out.println("Weight = "+docID+":"+score);
+
 				if(rankedDocIDs.get(docID)==null){
 					rankedDocIDs.put(docID, score);
 				}
@@ -94,18 +98,30 @@ public class TFIDFRanking extends Ranking {
 					score += rankedDocIDs.get(docID);
 					rankedDocIDs.put(docID, score);
 				}
+				if(maxWeight < score)
+					maxWeight = score;
+				//System.out.println("Score = "+docID+":"+score);
 			}
+		}
+
+		// Normalization:
+		maxWeight++;
+		for(Entry<Integer, Float> wt:rankedDocIDs.entrySet())
+		{
+			//System.out.println(wt.getValue());
+			wt.setValue(wt.getValue()/maxWeight);
+			//System.out.println(wt.getValue());
 		}
 
 		return RankingHelper.sortUsingRank(rankedDocIDs);
 	}
 
 
-	
+}
 
-	
 
-	// term, IndexType
+
+// term, IndexType
 
 //	public HashMap<Float, Integer> getRankedDocs(HashMap <String, IndexType> query, ArrayList<Integer> docIDs){
 //
@@ -164,7 +180,7 @@ public class TFIDFRanking extends Ranking {
 //
 //		return rankedDocs;
 //	}
-	
+
 ////////////////////////////////////////////////////////
 
 //	public ArrayList<Integer> docIDSearch(IndexType type, String query){
@@ -218,5 +234,5 @@ public class TFIDFRanking extends Ranking {
 //	}
 
 
-	
-}
+
+

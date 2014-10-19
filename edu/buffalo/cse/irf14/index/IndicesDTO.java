@@ -31,8 +31,12 @@ public class IndicesDTO {
 		int noOfDocs = docLength.size();
 		long totalLength = 0;
 		for(Entry<Integer, Integer> e : docLength.entrySet()) {
-			totalLength += e.getKey();
+			totalLength += e.getValue();
+			//if(totalLength<1000)
+			//System.out.println(totalLength);
 		}
+		//System.out.println("H"+ docLength);
+		//System.out.println("$$ total "+totalLength+" no "+noOfDocs);
 		averageDocLength = totalLength / noOfDocs;
 	}
 	

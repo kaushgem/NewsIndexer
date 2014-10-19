@@ -47,8 +47,8 @@ public class OKAPIRanking extends Ranking {
 	public Map<Integer, Float> getRankedDocIDs(ArrayList<QueryInfoDTO> queryBagWords,
 			ArrayList<Integer> matchingDocIDs) {
 
-
 		HashMap<Integer, Float> rankedDocIDs = new HashMap<Integer, Float>();
+		float maxWeight = 0;
 
 		// Iterate for queryTerm in the queryBagWords
 
@@ -85,7 +85,8 @@ public class OKAPIRanking extends Ranking {
 				float aveDocLen = indices.getAverageDocLength();
 				float score = RankCalc.calculateOkapi(tf, idf, docLen, aveDocLen, tfQ);
 
-				System.out.println(score);
+				//score = score/aveDocLen;
+				//System.out.println("Weight = "+docID+":"+score);
 				
 				if(rankedDocIDs.get(docID)==null){
 					rankedDocIDs.put(docID, score);
@@ -94,12 +95,30 @@ public class OKAPIRanking extends Ranking {
 					score += rankedDocIDs.get(docID);
 					rankedDocIDs.put(docID, score);
 				}
+				
+				if(maxWeight < score)
+					maxWeight = score;
+				
+				System.out.println("Score = "+docID+":"+score);
 			}
 		}
+		
+		// Normalization:
+		maxWeight++;
+		for(Entry<Integer, Float> wt:rankedDocIDs.entrySet())
+		{
+			//System.out.println(wt.getValue());
+			wt.setValue(wt.getValue()/maxWeight);
+			//System.out.println(wt.getValue());
+		}
+		
 		return RankingHelper.sortUsingRank(rankedDocIDs);
 	}
 
 }
+
+
+
 
 //
 //

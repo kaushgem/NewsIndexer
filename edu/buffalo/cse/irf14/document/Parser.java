@@ -35,6 +35,7 @@ public class Parser {
 
 		try {
 
+			System.out.println(filepath);
 			article = Utility.readStream(filepath);
 
 			File fileObj = new File(filepath);

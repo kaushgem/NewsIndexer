@@ -3,17 +3,11 @@ package edu.buffalo.cse.irf14;
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintStream;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.UUID;
 
 import edu.buffalo.cse.irf14.DTO.QueryInfoDTO;
 import edu.buffalo.cse.irf14.analysis.Analyzer;
@@ -30,8 +24,6 @@ import edu.buffalo.cse.irf14.document.Parser;
 import edu.buffalo.cse.irf14.document.ParserException;
 import edu.buffalo.cse.irf14.index.IndexReader;
 import edu.buffalo.cse.irf14.index.IndexType;
-import edu.buffalo.cse.irf14.index.IndexWriter;
-import edu.buffalo.cse.irf14.index.IndexerException;
 import edu.buffalo.cse.irf14.index.IndicesDTO;
 import edu.buffalo.cse.irf14.query.DocumentIDFilter;
 import edu.buffalo.cse.irf14.query.InfixExpression;
@@ -44,7 +36,6 @@ import edu.buffalo.cse.irf14.query.QueryParser;
 import edu.buffalo.cse.irf14.ranking.Ranking;
 import edu.buffalo.cse.irf14.ranking.RankingFactory;
 import edu.buffalo.cse.util.Utility;
-import static java.nio.file.StandardCopyOption.*;
 /**
  * Main class to run the searcher.
  * As before implement all TODO methods unless marked for bonus
@@ -83,55 +74,55 @@ public class SearchRunner {
 	}
 
 
-	private void WriteToIndex()
-	{
-		File ipDirectory = new File(corpusDir);
-		String[] catDirectories = ipDirectory.list();
-
-		String[] files;
-		File dir;
-		Utility.createEmptyDir(this.flattenedCorpusDir);
-		Document d = null;
-		IndexWriter writer = new IndexWriter(indexDir);
-
-		Date startTime = new Date();
-		System.out.println(startTime);
-
-		try {
-			for (String cat : catDirectories) {
-				dir = new File(corpusDir + File.separator + cat);
-				files = dir.list();
-
-				if (files == null)
-					continue;
-
-				for (String f : files) {
-					try {
-						String filePath = dir.getAbsolutePath() + File.separator + f;
-						try {
-							d = Parser.parse(filePath);
-							Path source = Paths.get(filePath);
-							Path destination = Paths.get(this.flattenedCorpusDir+File.separator + f);
-							Files.copy(source,destination,StandardCopyOption.REPLACE_EXISTING);
-						} catch (IOException e) {
-							// TODO Auto-generated catch block
-							e.printStackTrace();
-						}
-						writer.addDocument(d);
-					} catch (ParserException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
-				}
-			}
-
-			writer.close();
-
-		} catch (IndexerException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-	}
+//	private void WriteToIndex()
+//	{
+//		File ipDirectory = new File(corpusDir);
+//		String[] catDirectories = ipDirectory.list();
+//
+//		String[] files;
+//		File dir;
+//		Utility.createEmptyDir(this.flattenedCorpusDir);
+//		Document d = null;
+//		IndexWriter writer = new IndexWriter(indexDir);
+//
+//		Date startTime = new Date();
+//		System.out.println(startTime);
+//
+//		try {
+//			for (String cat : catDirectories) {
+//				dir = new File(corpusDir + File.separator + cat);
+//				files = dir.list();
+//
+//				if (files == null)
+//					continue;
+//
+//				for (String f : files) {
+//					try {
+//						String filePath = dir.getAbsolutePath() + File.separator + f;
+//						try {
+//							d = Parser.parse(filePath);
+//							Path source = Paths.get(filePath);
+//							Path destination = Paths.get(this.flattenedCorpusDir+File.separator + f);
+//							Files.copy(source,destination,StandardCopyOption.REPLACE_EXISTING);
+//						} catch (IOException e) {
+//							// TODO Auto-generated catch block
+//							e.printStackTrace();
+//						}
+//						writer.addDocument(d);
+//					} catch (ParserException e) {
+//						// TODO Auto-generated catch block
+//						e.printStackTrace();
+//					}
+//				}
+//			}
+//
+//			writer.close();
+//
+//		} catch (IndexerException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		}
+//	}
 	
 	
 	/**
@@ -197,12 +188,12 @@ public class SearchRunner {
 			int fileID = entry.getKey();
 			float rank = entry.getValue();
 			String FileName = indices.docIDLookup.get(fileID);
-			Document d = Parser.parse(this.flattenedCorpusDir + File.separator + FileName);
-			qmo.resultTitle = d.getField(FieldNames.TITLE)[0];
+			//Document d = Parser.parse(this.flattenedCorpusDir + File.separator + FileName);
+			//qmo.resultTitle = d.getField(FieldNames.TITLE)[0];
 			qmo.resultRelevancy = rank;
 			qmo.resultRank = ++i;
 
-			qmo.snippet =   findSnippet(fileID,indices);
+			//qmo.snippet =   findSnippet(fileID,indices);
 			queryModeList.add(qmo);
 		}
 
