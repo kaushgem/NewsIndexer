@@ -8,6 +8,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import edu.buffalo.cse.irf14.DTO.QueryInfoDTO;
 import edu.buffalo.cse.irf14.analysis.Analyzer;
@@ -18,6 +19,10 @@ import edu.buffalo.cse.irf14.analysis.analyzer.AnalyzerAuthor;
 import edu.buffalo.cse.irf14.analysis.analyzer.AnalyzerCategory;
 import edu.buffalo.cse.irf14.analysis.analyzer.AnalyzerContent;
 import edu.buffalo.cse.irf14.analysis.analyzer.AnalyzerPlace;
+import edu.buffalo.cse.irf14.document.Document;
+import edu.buffalo.cse.irf14.document.FieldNames;
+import edu.buffalo.cse.irf14.document.Parser;
+import edu.buffalo.cse.irf14.document.ParserException;
 import edu.buffalo.cse.irf14.index.IndexReader;
 import edu.buffalo.cse.irf14.index.IndexType;
 import edu.buffalo.cse.irf14.index.IndicesDTO;
@@ -26,6 +31,7 @@ import edu.buffalo.cse.irf14.query.PostfixExpression;
 import edu.buffalo.cse.irf14.query.Query;
 import edu.buffalo.cse.irf14.query.QueryEntity;
 import edu.buffalo.cse.irf14.query.QueryEvaluator;
+import edu.buffalo.cse.irf14.query.QueryModeOutput;
 import edu.buffalo.cse.irf14.query.QueryParser;
 import edu.buffalo.cse.irf14.ranking.Ranking;
 import edu.buffalo.cse.irf14.ranking.RankingFactory;
@@ -75,7 +81,7 @@ public class SearchRunner {
 		
 		
 		// WARNINGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGG
-		
+		QueryModeOutput qmo = new QueryModeOutput();
 		Date start = new Date();
 		System.out.println("\n\nStart "+model +" Time: "+start);
 		
@@ -88,7 +94,25 @@ public class SearchRunner {
 		return false;
 
 	}
-
+	
+	public ArrayList<QueryModeOutput> getQueryModeOutput(Map<Integer,Float> rankedDocuments, IndicesDTO indices) throws ParserException, IOException
+	{
+		ArrayList<QueryModeOutput> queryModeList = new ArrayList<QueryModeOutput>();
+		int i = 0;
+		for(Entry<Integer,Float> entry : rankedDocuments.entrySet())
+		{
+			QueryModeOutput qmo = new QueryModeOutput();
+			int fileID = entry.getKey();
+			float rank = entry.getValue();
+			String FileName = indices.docIDLookup.get(fileID);
+			Document d = Parser.parse(corpusDir + File.separator + FileName);
+			qmo.resultTitle = d.getField(FieldNames.TITLE)[0];
+			qmo.resultRelevancy = rank;
+			qmo.resultRank = ++i;
+			//qmo.snippet =   
+		}
+		return queryModeList;
+	}
 	/**
 	 * Method to execute queries in E mode
 	 * @param queryFile : The file from which queries are to be read and executed
@@ -112,7 +136,7 @@ public class SearchRunner {
 				resultSet.put(queryID, result);
 			}
 		}
-		System.out.println(resultSet);
+		//System.out.println(resultSet);
 		writeToPrintStreamEvalMode(resultSet);
 
 	}
