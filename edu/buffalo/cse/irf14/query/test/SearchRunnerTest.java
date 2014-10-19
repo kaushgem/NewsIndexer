@@ -22,21 +22,26 @@ public class SearchRunnerTest {
 		String indexDir = "/Users/kaush/Coding/Dataset/IR/files";
 		String corpusDir = "/Users/kaush/Coding/Dataset/IR/corpus";
 
-		
 		char mode = 'E';
 		PrintStream stream = System.out;
-		
 		SearchRunner search = new SearchRunner(indexDir,  corpusDir, mode,  stream);
 
-		String q = "week OR week OR week";// regulatory";
+		String q = "week";// regulatory";
 		q = "lubricating AND marine AND petrochemical";  //CoFAB
+		q = "adobe OR qwerqwer";
+		//q = "\"asdfasdf qwerqwer\"";
+		q = "lubricating";
+		q = "controlling interest";
+		q = "place:PARIS AND government";
+		//q = "Author:miller OR miller";
 		//q = "Category:oil AND place:Dubai AND ( price OR cost )";// regulatory";
+		//q = "adobe";
 		// q = "NATO AND NATO";
 
 		File f = new File("/Users/kaush/Coding/Dataset/IR/q.txt");
-		search.query(f);
-		//search.query(q,ScoringModel.TFIDF);
-		//search.query(q,ScoringModel.OKAPI);
+		//search.query(f);
+		search.query(q,ScoringModel.TFIDF);
+		search.query(q,ScoringModel.OKAPI);
 
 	}
 
