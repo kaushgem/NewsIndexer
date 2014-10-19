@@ -55,12 +55,12 @@ public class IndexReader {
 	}
 
 	private void loadIndexFromfile(){
-			try {
-				indices = new IndicesDTO();
-				readIndex();
-			} catch (Exception e) {
-				e.printStackTrace();
-			
+		try {
+			indices = new IndicesDTO();
+			readIndex();
+		} catch (Exception e) {
+			e.printStackTrace();
+
 		}
 	}
 
@@ -290,18 +290,18 @@ public class IndexReader {
 
 		try {
 			BufferedReader br = null;
-			
+
 			try {
 				br = new BufferedReader(new FileReader(path));
 				String line;
 				line = br.readLine();
 				while (line != null) {
-					
+
 					String[] hasher = line.split(Pattern.quote("#$%!@*("));
 					String key = hasher[0];
 					HashMap<Integer, String> posting = new HashMap<Integer, String>();
 					String[] postings = hasher[1].split(Pattern.quote("||"));		
-					
+
 					for(String postingStr:postings)
 					{
 						String[] freqPosIndex = postingStr.split(Pattern.quote("|"));
@@ -310,16 +310,18 @@ public class IndexReader {
 					map.put(key, posting);
 					line = br.readLine();
 				}
-				
+
 			} catch (FileNotFoundException e) {
 			} catch (IOException e) {
 			} finally {
-
-				br.close();
+				if(br!=null)
+				{
+					br.close();
+				}
 			}
-			
-			
-			
+
+
+
 		} catch (Exception e) {
 			e.printStackTrace();
 			throw new IndexerException();
@@ -335,29 +337,29 @@ public class IndexReader {
 
 		try {
 			BufferedReader br = null;
-			
+
 			try {
 				br = new BufferedReader(new FileReader(path));
 				String line;
 				line = br.readLine();
 				while (line != null) {
-					
+
 					String[] hasher = line.split(Pattern.quote("#$%!@*("));
 					String key = hasher[0];
 					String value = hasher[1];
 					map.put(Integer.parseInt(key), value);
 					line = br.readLine();
 				}
-				
+
 			} catch (FileNotFoundException e) {
 			} catch (IOException e) {
 			} finally {
-
+				if(br!=null)
 				br.close();
 			}
-			
-			
-			
+
+
+
 		} catch (Exception e) {
 			e.printStackTrace();
 			throw new IndexerException();
@@ -365,6 +367,44 @@ public class IndexReader {
 		return map;
 	}
 	
+	public static HashMap<Integer, Integer> fileToDocLength(
+			String path) throws IndexerException {
+
+		HashMap<Integer, Integer> map = new HashMap<Integer, Integer>();
+
+		try {
+			BufferedReader br = null;
+
+			try {
+				br = new BufferedReader(new FileReader(path));
+				String line;
+				line = br.readLine();
+				while (line != null) {
+
+					String[] hasher = line.split(":");
+					String key = hasher[0];
+					String value = hasher[1];
+					map.put(Integer.parseInt(key), Integer.parseInt(value));
+					line = br.readLine();
+				}
+
+			} catch (FileNotFoundException e) {
+			} catch (IOException e) {
+			} finally {
+				if(br!=null)
+				br.close();
+			}
+
+
+
+		} catch (Exception e) {
+			e.printStackTrace();
+			throw new IndexerException();
+		}
+		return map;
+	}
+
+
 	public IndicesDTO getIndexDTO()
 	{
 		return this.indices;
