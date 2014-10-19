@@ -78,5 +78,20 @@ public class Utility {
 	   return sb.toString();
 	}
 	
+	public static boolean createEmptyDir(String filepath)
+	{
+		File f = new File(filepath);
+		try{
+		    if(f.mkdir()) { 
+		        return true;
+		    } else {
+		        return false;
+		    }
+		} catch(Exception e){
+		    e.printStackTrace();
+		} 
+		return false;
+	}
+	
 	
 }

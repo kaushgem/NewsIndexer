@@ -64,7 +64,8 @@ public class Runner {
 
 				for (String f : files) {
 					try {
-						d = Parser.parse(dir.getAbsolutePath() + File.separator + f);
+						String filePath = dir.getAbsolutePath() + File.separator + f;
+						d = Parser.parse(filePath);
 						writer.addDocument(d);
 					} catch (ParserException e) {
 						// TODO Auto-generated catch block
