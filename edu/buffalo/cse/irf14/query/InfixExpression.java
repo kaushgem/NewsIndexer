@@ -55,7 +55,7 @@ public class InfixExpression {
 						qE2.indexType = getIndexType(operand.split(":")[0]);
 						infixList.add(qE2);
 					}
-					else if( s.equals("[") && s.equals("]") )
+					else if( s.equals("[") || s.equals("]") )
 					{
 						QueryEntity qE2 = new QueryEntity();
 						qE2.isOperator = true;
@@ -63,7 +63,7 @@ public class InfixExpression {
 						infixList.add(qE2);
 						
 					}
-					else if( !s.equals("{") && !s.equals("}") )
+					else if( !s.equals("{") && !s.equals("}") && !s.trim().isEmpty() )
 					{
 						QueryEntity qE2 = new QueryEntity();
 						qE2.isOperator = false;

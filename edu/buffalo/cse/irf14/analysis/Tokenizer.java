@@ -62,6 +62,7 @@ public class Tokenizer {
 			
 		}catch(Exception e)
 		{
+			e.printStackTrace();
 			throw new TokenizerException();
 		}
 		return tStream;

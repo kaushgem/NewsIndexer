@@ -18,6 +18,8 @@ public class PostfixExpression {
 	// reference: http://people.cs.clemson.edu/~turner/courses/cs102/spring98/section2/assignments/asg4/InfixToPostfix.java
 	public ArrayList<QueryEntity> getPostfixExpression()
 	{
+		try
+		{
 		Stack operatorStack = new Stack();  
 		for(QueryEntity qe:infixList)
 		{     
@@ -41,6 +43,11 @@ public class PostfixExpression {
 		}
 		while (!operatorStack.empty())
 			postFixList.add((QueryEntity)operatorStack.pop());
+		}
+		catch(Exception ex)
+		{
+			ex.printStackTrace();
+		}
 		return postFixList;
 	}
 

@@ -54,7 +54,10 @@ public class QueryEvaluator {
 			else
 			{
 				// operand
-				stack.push(getDocIdarrayList(qe.term,qe.indexType,indices));
+				ArrayList operandArrList = getDocIdarrayList(qe.term,qe.indexType,indices);
+				System.out.println("Operand: "+ qe.term);
+				System.out.println("Doc list Size: "+ operandArrList.size());
+				stack.push(operandArrList);
 			}
 		}
 		return stack.pop();

@@ -269,13 +269,13 @@ public class IndexReader {
 					+ "DOCLENGTH" + ".txt";
 			indices.docLength = fileToDocLength(docIDLengthFilepath);
 
-			System.out.println("Reader");
-			System.out.println("Term Size : " + indices.termIndex.size());
-			System.out.println("Cate Size : " + indices.categoryIndex.size());
-			System.out.println("Auth Size : " + indices.authorIndex.size());
-			System.out.println("Plac Size : " + indices.placeIndex.size());
-			System.out.println("Dcid Size : " + indices.docIDLookup.size());
-			System.out.println("dcLe Size : " + indices.docLength.size());
+//			System.out.println("Reader");
+//			System.out.println("Term Size : " + indices.termIndex.size());
+//			System.out.println("Cate Size : " + indices.categoryIndex.size());
+//			System.out.println("Auth Size : " + indices.authorIndex.size());
+//			System.out.println("Plac Size : " + indices.placeIndex.size());
+//			System.out.println("Dcid Size : " + indices.docIDLookup.size());
+//			System.out.println("dcLe Size : " + indices.docLength.size());
 
 		} catch (Exception e) {
 			e.printStackTrace();
