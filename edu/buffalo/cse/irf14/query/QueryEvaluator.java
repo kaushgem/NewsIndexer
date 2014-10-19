@@ -8,6 +8,7 @@ import java.util.Stack;
 
 import edu.buffalo.cse.irf14.index.IndexReader;
 import edu.buffalo.cse.irf14.index.IndexType;
+import edu.buffalo.cse.irf14.index.IndicesDTO;
 
 /**
  * @author Sathish
@@ -84,16 +85,17 @@ public class QueryEvaluator {
 	}
 
 
-	private ArrayList<Integer> getDocIdarrayList(String queryTerm, IndexType indexType, IndexReader reader)
+	private ArrayList<Integer> getDocIdarrayList(String queryTerm, IndexType indexType, IndicesDTO indices)
 	{
 		ArrayList<Integer> docIDsList = new ArrayList<Integer>();
+		DocumentIDFilter dc =new DocumentIDFilter(indices) ;
 		if(isPhraseQuery(queryTerm))
 		{
-		//	docIDsList = reader.getDocIDArrayListForPhraseQueries(indexType,queryTerm); // phrase query
+			docIDsList = dc.getDocIDArrayListForPhraseQueries(indexType,queryTerm); // phrase query
 		}
 		else
 		{
-		//	docIDsList = reader.getDocIDArrayList(indexType,queryTerm); // normal query
+			docIDsList = dc.getDocIDArrayList(indexType,queryTerm); // normal query
 		}
 		return docIDsList;
 	}
