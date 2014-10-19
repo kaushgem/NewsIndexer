@@ -54,11 +54,12 @@ public class TFIDFRanking extends Ranking {
 
 		// Iterate for queryTerm in the Query
 
-		while(queryBagWords.iterator().hasNext())
+		for (QueryInfoDTO queryDTOObj : queryBagWords)
 		{
-			QueryInfoDTO queryDTOObj = queryBagWords.iterator().next();
 			String term = queryDTOObj.getQueryTerm();
 			IndexType type = queryDTOObj.getType();
+			
+			System.out.println(term);
 			
 			// Get the IndexMap corresponding to the type
 			HashMap<String, HashMap<Integer, String>> indexMap = getIndexMap(type);
@@ -84,6 +85,8 @@ public class TFIDFRanking extends Ranking {
 				int tf = Integer.parseInt(str[0]);
 				float score = RankCalc.calculateTFIDF(tf, idf);
 
+				System.out.println(score);
+				
 				if(rankedDocIDs.get(docID)==null){
 					rankedDocIDs.put(docID, score);
 				}

@@ -52,9 +52,8 @@ public class OKAPIRanking extends Ranking {
 
 		// Iterate for queryTerm in the queryBagWords
 
-		while(queryBagWords.iterator().hasNext())
+		for(QueryInfoDTO queryDTOObj : queryBagWords)
 		{
-			QueryInfoDTO queryDTOObj = queryBagWords.iterator().next();
 			String term = queryDTOObj.getQueryTerm();
 			IndexType type = queryDTOObj.getType();
 			int tfQ = queryDTOObj.getFreq();

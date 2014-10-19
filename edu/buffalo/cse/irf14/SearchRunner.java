@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -76,7 +77,16 @@ public class SearchRunner {
 		
 		
 		// WARNINGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGG
+		
+		Date start = new Date();
+		System.out.println("\n\n Start"+model +"Time: "+start);
+		
 		Map<Integer,Float> rankedDocuments =getRankedDocuments(userQuery,model);
+		
+		Date end = new Date();
+		System.out.println("\n\n Start"+model +"Time: "+end);
+		System.out.println(rankedDocuments.toString());
+		
 		return false;
 
 	}
@@ -172,7 +182,7 @@ public class SearchRunner {
 		// evaluate postfix
 		QueryEvaluator qEval = new QueryEvaluator(postfixArrayListEntity);
 
-		ArrayList<Integer> docIDs = qEval.evaluateQuery(reader);
+		ArrayList<Integer> docIDs = qEval.evaluateQuery(reader.getIndexDTO());
 		IndicesDTO indices = reader.getIndexDTO();
 
 		// rank documents

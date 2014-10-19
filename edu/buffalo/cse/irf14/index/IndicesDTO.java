@@ -22,6 +22,7 @@ public class IndicesDTO {
 		this.authorIndex = new HashMap<String, HashMap<Integer,String>>();
 		this.placeIndex = new HashMap<String, HashMap<Integer,String>>();
 		this.docIDLookup = new HashMap<Integer, String>();
+		this.docLength = new HashMap<Integer, Integer>();
 		root= new TrieNode(null, '?');
 	}
 	

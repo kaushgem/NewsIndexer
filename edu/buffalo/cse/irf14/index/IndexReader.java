@@ -53,6 +53,7 @@ public class IndexReader {
 
 	private void loadIndexFromfile(){
 			try {
+				indices = new IndicesDTO();
 				readIndex();
 			} catch (Exception e) {
 				e.printStackTrace();

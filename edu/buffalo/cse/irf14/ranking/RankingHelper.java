@@ -18,8 +18,9 @@ public class RankingHelper {
 	public static Map<Integer, Float> sortUsingRank(HashMap<Integer, Float> rankedDocIDs)
 	{
 		SortMapUsingValueCompare sort =  new SortMapUsingValueCompare(rankedDocIDs);
-		TreeMap<Integer, Float> sortedRankedDocIDs = new TreeMap<Integer, Float>(sort);
+		Map<Integer, Float> sortedRankedDocIDs = new TreeMap<Integer, Float>(sort);
 		sortedRankedDocIDs.putAll(rankedDocIDs);
+
 		return sortedRankedDocIDs;
 	}
 }
