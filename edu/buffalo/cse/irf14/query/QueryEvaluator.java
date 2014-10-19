@@ -27,38 +27,45 @@ public class QueryEvaluator {
 
 	public ArrayList<Integer> evaluateQuery(IndicesDTO indices )
 	{
-		for (QueryEntity qe:postfixExpression) {
+		try
+		{
+			for (QueryEntity qe:postfixExpression) {
 
-			if(qe.isOperator)
-			{
-				switch(qe.operator)
+				if(qe.isOperator)
 				{
-				case OR:
+					switch(qe.operator)
+					{
+					case OR:
+					{
+						OROperation(qe); break;
+					}
+					case AND:
+					{
+						ANDOperation(qe); break;
+					}
+					case MINUS:
+					{
+						MINUSOperation(qe); break;
+					}
+					default:
+					{
+						break;
+					}
+					}
+				}
+				else
 				{
-					OROperation(qe); break;
+					// operand
+					ArrayList operandArrList = getDocIdarrayList(qe.term,qe.indexType,indices);
+					System.out.println("Index: "+ qe.indexType+ " Operand: "+ qe.term);
+					 System.out.println("Doc list Size: "+ ((operandArrList==null)?0: operandArrList.size()));
+					stack.push(operandArrList);
 				}
-				case AND:
-				{
-					ANDOperation(qe); break;
-				}
-				case MINUS:
-				{
-					MINUSOperation(qe); break;
-				}
-				default:
-				{
-					break;
-				}
-				}
-			}
-			else
-			{
-				// operand
-				ArrayList operandArrList = getDocIdarrayList(qe.term,qe.indexType,indices);
-				System.out.println("Operand: "+ qe.term);
-				System.out.println("Doc list Size: "+ operandArrList.size());
-				stack.push(operandArrList);
-			}
+
+			}}
+		catch(Exception ex)
+		{
+			ex.printStackTrace();
 		}
 		return stack.pop();
 	}
@@ -67,24 +74,64 @@ public class QueryEvaluator {
 	{
 		ArrayList<Integer> rhs = stack.pop( );
 		ArrayList<Integer> lhs =stack.pop( );
-		rhs.retainAll(lhs);
-		stack.push(rhs);
+		if(lhs!= null && rhs!= null)
+		{
+			rhs.retainAll(lhs);
+			stack.push(rhs);
+		}
+		else
+		{
+			stack.push(new ArrayList<Integer>());
+		}
 	}
 
 	private void OROperation(QueryEntity topQE)
 	{
 		ArrayList<Integer> rhs = stack.pop( );
 		ArrayList<Integer> lhs =stack.pop( );
-		rhs.addAll(lhs);
-		stack.push(rhs);
+		if(lhs== null && rhs== null)
+		{
+			stack.push(new ArrayList<Integer>());
+		}
+		else if(lhs!=null && rhs==null)
+		{
+			stack.push(lhs);
+		}
+		else if(rhs!=null && lhs==null)
+		{
+			stack.push(rhs);
+		}
+		else
+		{
+			rhs.addAll(lhs);
+			stack.push(rhs);
+		}
 	}
 
 	private void MINUSOperation(QueryEntity topQE)
 	{
 		ArrayList<Integer> rhs = stack.pop( );
 		ArrayList<Integer> lhs =stack.pop( );
-		lhs.removeAll(rhs);
-		stack.push(rhs);
+		
+		if(lhs== null && rhs== null)
+		{
+			stack.push(new ArrayList<Integer>());
+		}
+		else if(lhs!=null && rhs==null)
+		{
+			stack.push(lhs);
+		}
+		else if(rhs!=null && lhs==null)
+		{
+			stack.push(new ArrayList<Integer>());
+		}
+		else
+		{
+			lhs.removeAll(rhs);
+			stack.push(rhs);
+		}
+		
+		
 	}
 
 
@@ -113,6 +160,6 @@ public class QueryEvaluator {
 
 	}
 
-	
+
 
 }
