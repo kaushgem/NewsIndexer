@@ -66,7 +66,8 @@ public class TokenFilterCapitalization extends TokenFilter {
 			}
 			token.setTermText(str.toLowerCase());
 		} catch (Exception e) {
-			throw new TokenizerException();
+			 //throw new TokenizerException();
+			return false;
 		}
 		return true;
 	}

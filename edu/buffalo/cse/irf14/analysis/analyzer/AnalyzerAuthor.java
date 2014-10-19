@@ -40,7 +40,8 @@ public class AnalyzerAuthor implements Analyzer {
 				tStream.reset();
 			}
 		}catch(Exception e){
-			throw new TokenizerException();
+			return false;
+			// throw new TokenizerException();
 		}
 		//TokenFilter specialCharFilter = factory.getFilterByType(TokenFilterType.SPECIALCHARS, tStream);
 		//while (specialCharFilter.increment()) {}

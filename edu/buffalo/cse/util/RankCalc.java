@@ -37,9 +37,9 @@ public class RankCalc {
 			float aveDocLen,
 			int tfQ)
 	{
-		int k1 = 1;
-		int b = 2;
-		int k3 = 1;
+		float k1 = 1.25f;
+		float b = 0.75f;
+		float k3 = 1;
 
 		float eqnPart2 = ( (k1+1)*tf )  /  ( k1*( (1-b) + b*(docLen / aveDocLen) ) + tf);
 		float eqnPart3 = ( (k3+1)*tfQ )  /  ( k3+tfQ );

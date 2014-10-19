@@ -118,6 +118,8 @@ public class TFIDFRanking extends Ranking {
 			wt.setValue(wt.getValue()/maxWeight);
 			//System.out.println(wt.getValue());
 		}
+		
+		
 
 		return RankingHelper.sortUsingRank(rankedDocIDs);
 	}

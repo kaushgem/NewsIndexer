@@ -40,7 +40,8 @@ public class TokenFilterSpecialChars extends TokenFilter {
 			//System.out.println("layoff: "+ str);
 			token.setTermText(str);
 		} catch (Exception e) {
-			throw new TokenizerException();
+			return false;
+			//throw new TokenizerException();
 		}
 		return true;
 	}

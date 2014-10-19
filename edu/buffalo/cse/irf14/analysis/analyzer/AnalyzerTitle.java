@@ -40,7 +40,8 @@ public class AnalyzerTitle implements Analyzer {
 			}
 		}catch(Exception e){
 			e.printStackTrace();
-			throw new TokenizerException();
+			return false;
+			// throw new TokenizerException();
 		}
 		return false;
 	}

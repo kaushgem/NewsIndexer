@@ -57,8 +57,8 @@ public class QueryEvaluator {
 				{
 					// operand
 					ArrayList operandArrList = getDocIdarrayList(qe.term,qe.indexType,indices);
-					// System.out.println("Index: "+ qe.indexType+ " Operand: "+ qe.term);
-					//  System.out.println("Doc list Size: "+ ((operandArrList==null)?0: operandArrList.size()));
+					 // System.out.println("Index: "+ qe.indexType+ " Operand: "+ qe.term);
+					  // System.out.println("Doc list Size: "+ ((operandArrList==null)?0: operandArrList.size()));
 					stack.push(operandArrList);
 				}
 

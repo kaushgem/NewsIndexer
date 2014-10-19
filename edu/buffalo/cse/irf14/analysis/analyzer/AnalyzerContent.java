@@ -39,6 +39,7 @@ public class AnalyzerContent implements Analyzer {
 			for (TokenFilterType tokenFilType : filterOrder) {
 				tokenFilterObj = factory.getFilterByType(tokenFilType, tStream);
 				while (tokenFilterObj.increment()) {}
+				if(tStream!=null)
 				tStream.reset();
 				
 				//System.out.println("\n\n** "+tokenFilType+" : "+tStream.getTokensAsString());
@@ -46,7 +47,8 @@ public class AnalyzerContent implements Analyzer {
 			}
 		}catch(Exception e){
 			e.printStackTrace();
-			throw new TokenizerException();
+			return false;
+			// throw new TokenizerException();
 		}
 		return false;
 	}

@@ -81,7 +81,8 @@ public class TokenFilterSymbol extends TokenFilter {
 			token.setTermText(str);
 
 		} catch (Exception e) {
-			throw new TokenizerException();
+			return false;
+			// throw new TokenizerException();
 		}
 
 		return true;

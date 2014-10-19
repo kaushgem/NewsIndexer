@@ -39,7 +39,8 @@ public class AnalyzerPlace implements Analyzer {
 				tStream.reset();
 			}
 		}catch(Exception e){
-			throw new TokenizerException();
+			return false;
+			//throw new TokenizerException();
 		}
 		return false;
 	}

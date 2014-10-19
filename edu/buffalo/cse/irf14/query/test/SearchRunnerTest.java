@@ -17,8 +17,8 @@ public class SearchRunnerTest {
 
 	@BeforeClass
 	public static void setUpBeforeClass() throws Exception {
-		
-		
+
+
 
 	}
 
@@ -38,25 +38,25 @@ public class SearchRunnerTest {
 	public void test() throws IOException {
 		String indexDir = "C:\\Users\\Sathish\\Dropbox\\UB\\Fall\\535 - IR\\index";
 		String corpusDir = "C:\\Users\\Sathish\\Dropbox\\UB\\Fall\\535 - IR\\news_training\\training";
-	//	String indexDir = "/Users/kaush/Coding/Dataset/IR/files";
-	//	String corpusDir = "/Users/kaush/Coding/Dataset/IR/corpus";
+		//	String indexDir = "/Users/kaush/Coding/Dataset/IR/files";
+		//	String corpusDir = "/Users/kaush/Coding/Dataset/IR/corpus";
 
-		
-		char mode = 'E';
+
+		char mode = 'Q';
 		PrintStream stream = System.out;
-		
+
 		SearchRunner search = new SearchRunner(indexDir,  corpusDir, mode,  stream);
 
-		String q = "week OR week OR week";// regulatory";
-		q = "lubricating OR marine AND petrochemical";  //CoFAB
+		String q = "PARIS AND government";// regulatory";
+		q = "lubricating OR marine OR petrochemical";  //CoFAB
 		//q = "Category:oil AND place:Dubai AND ( price OR cost )";// regulatory";
 		// q = "NATO AND NATO";
 
-		 File f = new File("C:\\Users\\Sathish\\Dropbox\\UB\\Fall\\535 - IR\\q2.txt");
-		 search.query(f);
+		File f = new File("C:\\Users\\Sathish\\Dropbox\\UB\\Fall\\535 - IR\\q.txt");
+		//search.query(f);
 		//search.query(q,ScoringModel.TFIDF);
-		//search.query(q,ScoringModel.OKAPI);
-		
+		search.query(q,ScoringModel.OKAPI);
+
 	}
 
 }

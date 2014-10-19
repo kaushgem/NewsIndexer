@@ -93,10 +93,11 @@ public class SearchRunner {
 		try {
 			stream.println("Query: "+userQuery);
 			stream.println("Time taken: "+ difference+ "msec");
-			//System.out.println("Query: "+userQuery);
-			//System.out.println("Time taken: "+ difference+ "msec");
+			//// // System.out.println("Query: "+userQuery);
+			//// // System.out.println("Time taken: "+ difference+ "msec");
+			// System.out.println(rankedDocuments.size());
 			ArrayList<QueryModeOutput> qmList = getQueryModeOutput(rankedDocuments);
-			
+			 // System.out.println(qmList.size());
 			if(this.mode == 'Q')
 			{
 				printResultsQmode(qmList);
@@ -124,10 +125,10 @@ public class SearchRunner {
 			stream.println("Result Relavancy: " +qm.resultRelevancy);
 			stream.println("Context: " +qm.snippet);
 
-			//	System.out.println("Result Rank: " +qm.resultRank);
-			//	System.out.println("Result Title: " +qm.resultTitle);
-			//	System.out.println("Result Relavancy: " +qm.resultRelevancy);
-			//	System.out.println("Context: " +qm.snippet);
+			//	// // System.out.println("Result Rank: " +qm.resultRank);
+			//	// // System.out.println("Result Title: " +qm.resultTitle);
+			//	// // System.out.println("Result Relavancy: " +qm.resultRelevancy);
+			//	// // System.out.println("Context: " +qm.snippet);
 		}
 	}
 
@@ -137,11 +138,13 @@ public class SearchRunner {
 			{
 		ArrayList<QueryModeOutput> queryModeList = new ArrayList<QueryModeOutput>();
 		int i = 0;
+		// // System.out.println(rankedDocuments.size());
 		for(Entry<Integer,Float> entry : rankedDocuments.entrySet())
 		{
 			QueryModeOutput qmo = new QueryModeOutput();
 			int fileID = entry.getKey();
 			float rank = entry.getValue();
+			// // System.out.println(fileID);
 			String FileName = indices.docIDLookup.get(fileID);
 			String finalFilePath = this.flattenedCorpusDir + File.separator + FileName;
 			
@@ -155,7 +158,7 @@ public class SearchRunner {
 				qmo.resultTitle = d.getField(FieldNames.TITLE)[0];
 				qmo.snippet =   findSnippet(fileID,indices);
 			}
-			
+			// // System.out.println(qmo.toString());
 			queryModeList.add(qmo);
 		}
 		
@@ -166,6 +169,8 @@ public class SearchRunner {
 	private String findSnippet( int fileID,  IndicesDTO indices) throws IOException
 	{
 		String snippet = "";
+		try
+		{
 		for(QueryInfoDTO queryWord: queryBagWords )
 		{
 			if(queryWord.getType() == IndexType.CATEGORY)
@@ -194,7 +199,7 @@ public class SearchRunner {
 						word = sp[i];
 					}
 				}
-				if(snippet!=null)
+				if(snippet!=null && word!=null)
 				{
 					snippet= snippet.replace(word, "<B>"+word + "</B>");
 				}
@@ -204,6 +209,12 @@ public class SearchRunner {
 					break;
 				}
 			}
+		}
+		}
+		catch(Exception ex)
+		{
+			// // // System.out.println(fileID);
+			// ex.printStackTrace();
 		}
 		return snippet;
 	}
@@ -227,11 +238,11 @@ public class SearchRunner {
 				query = query.replace("{", "").replace("}", "");
 				Map<Integer,Float> rankedDocuments = getRankedDocuments(query,ScoringModel.TFIDF);
 				String result = getStringFromRankedDocuments(rankedDocuments,10);
-				// System.out.println("\n===="+queryID+":"+result);
+				// // // System.out.println("\n===="+queryID+":"+result);
 				resultSet.put(queryID, result);
 			}
 		}
-		//System.out.println(resultSet);
+		//// // System.out.println(resultSet);
 		writeToPrintStreamEvalMode(resultSet);
 
 	}
@@ -285,57 +296,67 @@ public class SearchRunner {
 	{
 		String defaultOperator = "OR";
 		// parse query
-		//System.out.println("user query");
-		//System.out.println(userQuery);
+		//// // System.out.println("user query");
+		//// // System.out.println(userQuery);
 		Query query = QueryParser.parse(userQuery, defaultOperator);
 		String formattedUserQuery =  query.toString();
-		//System.out.println("Formatted user query");
-		//System.out.println(formattedUserQuery);
+		//// // System.out.println("Formatted user query");
+		// // System.out.println(formattedUserQuery);
 
 		//convert to infix
 		InfixExpression infix = new InfixExpression(formattedUserQuery);
 		ArrayList<QueryEntity> infixArrayListEntity = infix.getInfixExpression();
 		//printFix(infixArrayListEntity);
+		try
+		{
 		infixArrayListEntity = getAnalysedQueryTerms(infixArrayListEntity);
-		// printFix(infixArrayListEntity);
+		}
+		catch(Exception ex)
+		{
+			
+		}
+		 printFix(infixArrayListEntity);
 
 		// convert to postfix
-		//System.out.println("Converting to postfix");
+		//// // System.out.println("Converting to postfix");
 		PostfixExpression postfixExpression = new  PostfixExpression(infixArrayListEntity);
 		ArrayList<QueryEntity> postfixArrayListEntity = postfixExpression.getPostfixExpression();
-		//printFix(postfixArrayListEntity);
-		//System.out.println(" postfix converted");
+		printFix(postfixArrayListEntity);
+		//// // System.out.println(" postfix converted");
 		// evaluate postfix
 		QueryEvaluator qEval = new QueryEvaluator(postfixArrayListEntity);
 		ArrayList<Integer> docIDs = qEval.evaluateQuery(reader.getIndexDTO());
 		IndicesDTO indices = reader.getIndexDTO();
 
-		//		System.out.println("out");
-		//		System.out.println(docIDs.toString());
+		//		// // System.out.println("out");
+			// // System.out.println(docIDs.toString());
 
 		// rank documents
 		Ranking ranker = RankingFactory.getRankingInstance(model, indices);
 		queryBagWords = infix.getBagOfQueryWords();
 
 		Map<Integer,Float> rankedDocuments = ranker.getRankedDocIDs(queryBagWords, docIDs);
+		// System.out.println(docIDs);
+		// System.out.println("docIDssize" +docIDs.size());
+		// System.out.println("rankedDocuments.size()"+rankedDocuments.size());
 		return rankedDocuments;
 	}
 
 	private void printFix(ArrayList<QueryEntity> postfixArrayListEntity )
 	{
 		
-	/*	for(QueryEntity qe: postfixArrayListEntity)
+		for(QueryEntity qe: postfixArrayListEntity)
 		{
 			if(qe.isOperator)
 			{
-				System.out.println(qe.operator);
+				// // System.out.println(qe.operator);
 			}
 			else
 			{
-				System.out.println(qe.term);
+				// // System.out.println(qe.term);
 			}
 		}
-		System.out.println("***************");*/
+		// // System.out.println("***************");
 
 	}
 
@@ -352,19 +373,19 @@ public class SearchRunner {
 					String queryTerm = qe.term;
 					if(isPhraseQuery(queryTerm))
 					{
-						//System.out.println("phrase query");
-						//System.out.println("query: "+queryTerm);
+						//// // System.out.println("phrase query");
+						//// // System.out.println("query: "+queryTerm);
 						queryTerm = removeQuorations(queryTerm);
 					}
-					// System.out.println("operand: "+qe.term);
+					// // // System.out.println("operand: "+qe.term);
 					if(queryTerm==null || queryTerm.trim().isEmpty())
 					{
-						//System.out.println("Error:");
+						//// // System.out.println("Error:");
 						
 						printFix(queryExpression);
 					}
 					tStream = tokenizer.consume(queryTerm);
-					// System.out.println("phrase query");
+					// // // System.out.println("phrase query");
 					analyzerObj = getAnalyzerforIndexType(qe.indexType,tStream);
 					analyzerObj.increment();
 					qe.term =tStream.getTokensAsString();
@@ -433,6 +454,7 @@ public class SearchRunner {
 		StringBuilder queryResult = new StringBuilder();
 		limit = (limit <rankedDocuments.size())?limit:rankedDocuments.size();
 		String[] queryResultArr = new String[limit];
+		// // System.out.println(limit);
 		int i=0;
 		queryResult.append(":{");
 		for(Map.Entry<Integer,Float> entry:rankedDocuments.entrySet())
@@ -471,7 +493,7 @@ public class SearchRunner {
 			evalModeOutput.append("\n");
 		}
 
-		// System.out.println("out "+evalModeOutput.toString());
+		// // // System.out.println("out "+evalModeOutput.toString());
 		stream.append(evalModeOutput.toString());
 	}
 

@@ -179,14 +179,12 @@ public class QueryParser {
 				}
 			}
 		}
-		String[] arr = userQuery.split(" ");
 		for(Entry<String, String> e: hs.entrySet())
 		{
-			 userQuery = userQuery.replace(e.getKey(), e.getValue());
-			
+			userQuery = userQuery.replace(e.getKey(), e.getValue());
 		}
 
-		return userQuery ;
+		return userQuery;
 	}
 
 	private static String AddParanthesis(String userQuery)
@@ -242,8 +240,6 @@ public class QueryParser {
 			String []dsf = new String[arrList.size()];
 			arrList.toArray(dsf);*/
 			String queryWithDefaultOperator = Utility.join(wordArr," " + defaultOperator.toString()+ " ");
-			
-		
 			userQuery = userQuery.replace(word, queryWithDefaultOperator);
 		}
 		}

@@ -59,9 +59,9 @@ public class DocumentIDFilter {
 		return docIDList;
 	}
 
-	
-	
-	
+
+
+
 	private ArrayList<Integer> generateDocIDArray(HashMap<Integer, String> postings) {
 		ArrayList<Integer> arrLst = new ArrayList<Integer>();
 		for (Entry<Integer, String> eItr : postings.entrySet()) {
@@ -71,7 +71,7 @@ public class DocumentIDFilter {
 	}
 
 
-	
+
 
 	private HashMap<String, HashMap<Integer, String>> getIndexMap(IndexType type)
 	{
@@ -106,39 +106,39 @@ public class DocumentIDFilter {
 			HashMap<Integer, String> postingsMap = null;
 			if(indexMap.get(term) != null){
 				postingsMap = indexMap.get(term);
-			}
 
-			for (Entry<Integer, String> mapItr : postingsMap.entrySet()) {
 
-				Integer docID = mapItr.getKey();
+				for (Entry<Integer, String> mapItr : postingsMap.entrySet()) {
 
-				String[] str = mapItr.getValue().split(":");
-				String[] posiStr = str[1].split(",");
-				ArrayList<Integer> positionalIndex = new ArrayList<Integer>();
+					Integer docID = mapItr.getKey();
 
-				for(String s:posiStr)
-				{
-					int p = Integer.parseInt(s);
-					positionalIndex.add(p);
+					String[] str = mapItr.getValue().split(":");
+					String[] posiStr = str[1].split(",");
+					ArrayList<Integer> positionalIndex = new ArrayList<Integer>();
+
+					for(String s:posiStr)
+					{
+						int p = Integer.parseInt(s);
+						positionalIndex.add(p);
+					}
+
+					HashMap<String, ArrayList<Integer>> fwdIndexInner = null;
+
+					if(fwdIndex.get(docID)==null)
+					{
+						fwdIndexInner = new HashMap<String, ArrayList<Integer>>();
+						fwdIndexInner.put(term, positionalIndex);
+					}
+					else
+					{
+						fwdIndexInner = fwdIndex.get(docID);
+						fwdIndexInner.put(term, positionalIndex);
+					}
+
+					fwdIndex.put(docID, fwdIndexInner);
 				}
-
-				HashMap<String, ArrayList<Integer>> fwdIndexInner = null;
-
-				if(fwdIndex.get(docID)==null)
-				{
-					fwdIndexInner = new HashMap<String, ArrayList<Integer>>();
-					fwdIndexInner.put(term, positionalIndex);
-				}
-				else
-				{
-					fwdIndexInner = fwdIndex.get(docID);
-					fwdIndexInner.put(term, positionalIndex);
-				}
-
-				fwdIndex.put(docID, fwdIndexInner);
 			}
 		}
-
 
 		// Iterate through fwdIndex and check for positions of the queryTerms
 
