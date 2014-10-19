@@ -289,15 +289,15 @@ public class SearchRunner {
 		//System.out.println(userQuery);
 		Query query = QueryParser.parse(userQuery, defaultOperator);
 		String formattedUserQuery =  query.toString();
-		System.out.println("Formatted user query");
-		System.out.println(formattedUserQuery);
+		//System.out.println("Formatted user query");
+		//System.out.println(formattedUserQuery);
 
 		//convert to infix
 		InfixExpression infix = new InfixExpression(formattedUserQuery);
 		ArrayList<QueryEntity> infixArrayListEntity = infix.getInfixExpression();
 		//printFix(infixArrayListEntity);
 		infixArrayListEntity = getAnalysedQueryTerms(infixArrayListEntity);
-		printFix(infixArrayListEntity);
+		// printFix(infixArrayListEntity);
 
 		// convert to postfix
 		//System.out.println("Converting to postfix");
@@ -323,7 +323,8 @@ public class SearchRunner {
 
 	private void printFix(ArrayList<QueryEntity> postfixArrayListEntity )
 	{
-		for(QueryEntity qe: postfixArrayListEntity)
+		
+	/*	for(QueryEntity qe: postfixArrayListEntity)
 		{
 			if(qe.isOperator)
 			{
@@ -334,7 +335,7 @@ public class SearchRunner {
 				System.out.println(qe.term);
 			}
 		}
-		System.out.println("***************");
+		System.out.println("***************");*/
 
 	}
 
@@ -352,13 +353,13 @@ public class SearchRunner {
 					if(isPhraseQuery(queryTerm))
 					{
 						//System.out.println("phrase query");
-						System.out.println("query: "+queryTerm);
+						//System.out.println("query: "+queryTerm);
 						queryTerm = removeQuorations(queryTerm);
 					}
 					// System.out.println("operand: "+qe.term);
 					if(queryTerm==null || queryTerm.trim().isEmpty())
 					{
-						System.out.println("Error:");
+						//System.out.println("Error:");
 						
 						printFix(queryExpression);
 					}
@@ -371,7 +372,7 @@ public class SearchRunner {
 
 				} catch (TokenizerException e) {
 					// TODO Auto-generated catch block
-					e.printStackTrace();
+					 e.printStackTrace();
 				}
 			}
 		}
@@ -433,7 +434,7 @@ public class SearchRunner {
 		limit = (limit <rankedDocuments.size())?limit:rankedDocuments.size();
 		String[] queryResultArr = new String[limit];
 		int i=0;
-		queryResult.append("{");
+		queryResult.append(":{");
 		for(Map.Entry<Integer,Float> entry:rankedDocuments.entrySet())
 		{
 			int fileID = entry.getKey();

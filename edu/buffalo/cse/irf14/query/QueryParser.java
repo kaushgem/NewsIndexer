@@ -186,7 +186,7 @@ public class QueryParser {
 			
 		}
 
-		return userQuery = Utility.join(arr," ");
+		return userQuery ;
 	}
 
 	private static String AddParanthesis(String userQuery)
