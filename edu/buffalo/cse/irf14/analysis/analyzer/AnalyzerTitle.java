@@ -25,7 +25,7 @@ public class AnalyzerTitle implements Analyzer {
 		TokenFilter tokenFilterObj;
 		try{
 			TokenFilterType[] filterOrder = {
-					TokenFilterType.CAPITALIZATION,
+					TokenFilterType.TITTLECAPITALIZATION,
 					TokenFilterType.SYMBOL,
 					TokenFilterType.SPECIALCHARS,
 					TokenFilterType.STOPWORD,

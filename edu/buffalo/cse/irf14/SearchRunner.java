@@ -11,7 +11,6 @@ import java.util.Map;
 
 import edu.buffalo.cse.irf14.DTO.QueryInfoDTO;
 import edu.buffalo.cse.irf14.analysis.Analyzer;
-import edu.buffalo.cse.irf14.analysis.AnalyzerFactory;
 import edu.buffalo.cse.irf14.analysis.TokenStream;
 import edu.buffalo.cse.irf14.analysis.Tokenizer;
 import edu.buffalo.cse.irf14.analysis.TokenizerException;
@@ -19,7 +18,6 @@ import edu.buffalo.cse.irf14.analysis.analyzer.AnalyzerAuthor;
 import edu.buffalo.cse.irf14.analysis.analyzer.AnalyzerCategory;
 import edu.buffalo.cse.irf14.analysis.analyzer.AnalyzerContent;
 import edu.buffalo.cse.irf14.analysis.analyzer.AnalyzerPlace;
-import edu.buffalo.cse.irf14.document.FieldNames;
 import edu.buffalo.cse.irf14.index.IndexReader;
 import edu.buffalo.cse.irf14.index.IndexType;
 import edu.buffalo.cse.irf14.index.IndicesDTO;
@@ -174,15 +172,16 @@ public class SearchRunner {
 		//convert to infix
 		InfixExpression infix = new InfixExpression(formattedUserQuery);
 		ArrayList<QueryEntity> infixArrayListEntity = infix.getInfixExpression();
+		printFix(infixArrayListEntity);
 		infixArrayListEntity = getAnalysedQueryTerms(infixArrayListEntity);
-
+		printFix(infixArrayListEntity);
 		// convert to postfix
 		PostfixExpression postfixExpression = new  PostfixExpression(infixArrayListEntity);
 		ArrayList<QueryEntity> postfixArrayListEntity = postfixExpression.getPostfixExpression();
-
+		printFix(postfixArrayListEntity);
+		
 		// evaluate postfix
 		QueryEvaluator qEval = new QueryEvaluator(postfixArrayListEntity);
-
 		ArrayList<Integer> docIDs = qEval.evaluateQuery(reader.getIndexDTO());
 		IndicesDTO indices = reader.getIndexDTO();
 
@@ -194,6 +193,23 @@ public class SearchRunner {
 
 		Map<Integer,Float> rankedDocuments = ranker.getRankedDocIDs(queryBagWords, docIDs);
 		return rankedDocuments;
+	}
+	
+	private void printFix(ArrayList<QueryEntity> postfixArrayListEntity )
+	{
+		for(QueryEntity qe: postfixArrayListEntity)
+		{
+			if(qe.isOperator)
+			{
+				System.out.println(qe.operator);
+			}
+			else
+			{
+				System.out.println(qe.term);
+			}
+		}
+		System.out.println("***************");
+		
 	}
 
 	private ArrayList<QueryEntity> getAnalysedQueryTerms(ArrayList<QueryEntity> queryExpression)

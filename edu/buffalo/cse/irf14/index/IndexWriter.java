@@ -6,7 +6,9 @@ package edu.buffalo.cse.irf14.index;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.ObjectOutputStream;
+import java.io.PrintWriter;
 import java.util.HashMap;
+import java.util.Map;
 
 import edu.buffalo.cse.irf14.analysis.Analyzer;
 import edu.buffalo.cse.irf14.analysis.AnalyzerFactory;
@@ -194,11 +196,28 @@ public class IndexWriter {
 			HashMap<String, HashMap<Integer, String>> indexMap)
 					throws IndexerException {
 		try {
-			FileOutputStream fout = new FileOutputStream(path);
-			ObjectOutputStream oout = new ObjectOutputStream(fout);
-			oout.writeObject(indexMap);
-			oout.close();
-			fout.close();
+			
+			StringBuilder sb = new StringBuilder();
+			for(Map.Entry<String, HashMap<Integer, String>> termIDmap :indexMap.entrySet())
+			{
+				sb.append(termIDmap.getKey());
+				sb.append("#$%!@*(");
+				HashMap<Integer, String> hm = termIDmap.getValue();
+				for(Map.Entry<Integer, String> docidMap :hm.entrySet())
+				{
+					sb.append(docidMap.getKey());
+					sb.append("|");
+					sb.append(docidMap.getValue());
+					sb.append("||");
+				}
+				
+				sb.append(System.lineSeparator());
+				
+			}
+			PrintWriter out = new PrintWriter(path);
+			out.println(sb.toString());
+			
+			
 		} catch (Exception e) {
 			e.printStackTrace();
 			throw new IndexerException();
@@ -209,11 +228,18 @@ public class IndexWriter {
 			HashMap<Integer, String> indexMap)
 					throws IndexerException {
 		try {
-			FileOutputStream fout = new FileOutputStream(path);
-			ObjectOutputStream oout = new ObjectOutputStream(fout);
-			oout.writeObject(indexMap);
-			oout.close();
-			fout.close();
+			
+			StringBuilder sb = new StringBuilder();
+			for(Map.Entry<Integer, String> fileID :indexMap.entrySet())
+			{
+				sb.append(fileID.getKey());
+				sb.append("#$%!@*(");
+				sb.append(fileID.getValue());
+				sb.append(System.lineSeparator());
+			}
+			PrintWriter out = new PrintWriter(path);
+			out.println(sb.toString());
+			
 		} catch (Exception e) {
 			e.printStackTrace();
 			throw new IndexerException();
@@ -221,8 +247,4 @@ public class IndexWriter {
 	}
 	
 	
-	private void calculateDocLength()
-	{
-		
-	}
 }

@@ -1,7 +1,11 @@
 package edu.buffalo.cse.irf14.index;
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -9,8 +13,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.regex.Pattern;
 
 import edu.buffalo.cse.util.TrieNode;
+import edu.buffalo.cse.util.Utility;
 
 /**
  * @author nikhillo Class that emulates reading data back from a written index
@@ -283,15 +289,38 @@ public class IndexReader {
 	private static HashMap<String, HashMap<Integer, String>> fileToIndex(
 			String path) throws IndexerException {
 
-		HashMap<String, HashMap<Integer, String>> map = null;
+		HashMap<String, HashMap<Integer, String>> map = new HashMap<String, HashMap<Integer,String>>();
 
 		try {
-			FileInputStream fin = new FileInputStream(path);
-			ObjectInputStream oin = new ObjectInputStream(fin);
-			map = (HashMap<String, HashMap<Integer, String>>) oin.readObject();
-			//System.out.println("a " + map.size());
-			oin.close();
-			fin.close();
+			BufferedReader br = null;
+			String everything = null;
+			try {
+				br = new BufferedReader(new FileReader(path));
+
+				StringBuilder sb = new StringBuilder();
+				String line;
+				line = br.readLine();
+				while (line != null) {
+					
+					String[] hasher = line.split(Pattern.quote("#$%!@*("));
+					String key = hasher[0];
+					HashMap<Integer, String> posting = new HashMap<Integer, String>();
+					String[] postings = hasher[1].split(Pattern.quote("||"));		
+					
+					
+					
+					line = br.readLine();
+				}
+				everything = sb.toString();
+			} catch (FileNotFoundException e) {
+			} catch (IOException e) {
+			} finally {
+
+				br.close();
+			}
+			return everything;
+			
+			
 		} catch (Exception e) {
 			e.printStackTrace();
 			throw new IndexerException();
