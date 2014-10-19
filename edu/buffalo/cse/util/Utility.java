@@ -1,6 +1,7 @@
 package edu.buffalo.cse.util;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
@@ -32,6 +33,35 @@ public class Utility {
 		}
 		return everything;
 	}
+	
+	
+	
+	public static String readStreamFileObj(File queryFile) throws IOException {
+
+		BufferedReader br = null;
+		String everything = null;
+		try {
+			br = new BufferedReader(new FileReader(queryFile));
+
+			StringBuilder sb = new StringBuilder();
+			String line;
+			line = br.readLine();
+			while (line != null) {
+				sb.append(line);
+				sb.append(System.getProperty("line.separator"));
+				line = br.readLine();
+			}
+			everything = sb.toString();
+		} catch (FileNotFoundException e) {
+		} catch (IOException e) {
+		} finally {
+
+			br.close();
+		}
+		return everything;
+	}
+	
+	
 	
 	static public String join(String[] list, String conjunction)
 	{

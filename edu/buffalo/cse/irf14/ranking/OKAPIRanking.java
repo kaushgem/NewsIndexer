@@ -83,9 +83,10 @@ public class OKAPIRanking extends Ranking {
 				int tf = Integer.parseInt(str[0]);
 				int docLen = indices.docLength.get(docID);
 				float aveDocLen = indices.getAverageDocLength();
-
 				float score = RankCalc.calculateOkapi(tf, idf, docLen, aveDocLen, tfQ);
 
+				System.out.println(score);
+				
 				if(rankedDocIDs.get(docID)==null){
 					rankedDocIDs.put(docID, score);
 				}
