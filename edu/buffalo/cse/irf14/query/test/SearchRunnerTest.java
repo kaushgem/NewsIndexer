@@ -16,7 +16,7 @@ public class SearchRunnerTest {
 	@BeforeClass
 	public static void setUpBeforeClass() throws Exception {
 		
-		String indexDir = "/Users/kaush/Coding/Dataset/IR/files";
+		String indexDir = "C:\\Users\\Sathish\\Dropbox\\UB\\Fall\\535 - IR\\index";
 		String corpusDir = "";
 		char mode = 'E';
 		PrintStream stream = System.out;
@@ -24,7 +24,7 @@ public class SearchRunnerTest {
 		SearchRunner search = new SearchRunner(indexDir,  corpusDir, mode,  stream);
 		
 		String q = "week AND regulatory";
-		//q = "CoFAB AND lubricating AND marine AND petrochemical";
+		q = "CoFAB AND lubricating AND marine AND petrochemical";
 		search.query(q,ScoringModel.TFIDF);
 		search.query(q,ScoringModel.OKAPI);
 	}

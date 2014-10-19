@@ -116,7 +116,21 @@ public class IndexWriter {
 	 *             : In case any error occurs
 	 */
 	public void close() throws IndexerException {
+		
+		System.out.println("Term Size : " + indices.termIndex.size());
+		System.out.println("Cate Size : " + indices.categoryIndex.size());
+		System.out.println("Auth Size : " + indices.authorIndex.size());
+		System.out.println("Plac Size : " + indices.placeIndex.size());
+		System.out.println("File Size : " + indices.docIDLookup.size());
+
 		writeIndex();
+		System.out.println("Term Size : " + indices.termIndex.size());
+		System.out.println("Cate Size : " + indices.categoryIndex.size());
+		System.out.println("Auth Size : " + indices.authorIndex.size());
+		System.out.println("Plac Size : " + indices.placeIndex.size());
+		System.out.println("File Size : " + indices.docIDLookup.size());
+
+		
 	}
 
 
@@ -170,15 +184,22 @@ public class IndexWriter {
 
 	public void writeIndex() throws IndexerException {
 		try {
+		
+			
+			String authorIndexFilepath = this.indexDirectory + File.separator
+					+ IndexType.AUTHOR.toString() + ".txt";
+			System.out.println("indices.authorIndex"+ indices.authorIndex.size());
+			indexToFile(authorIndexFilepath, indices.authorIndex);
+			
 			String termIndexFilepath = this.indexDirectory + File.separator
 					+ IndexType.TERM.toString() + ".txt";
 			indexToFile(termIndexFilepath, indices.termIndex);
+			
+			
 			String categoryIndexFilepath = this.indexDirectory + File.separator
 					+ IndexType.CATEGORY.toString() + ".txt";
 			indexToFile(categoryIndexFilepath, indices.categoryIndex);
-			String authorIndexFilepath = this.indexDirectory + File.separator
-					+ IndexType.AUTHOR.toString() + ".txt";
-			indexToFile(authorIndexFilepath, indices.authorIndex);
+			
 			String placeIndexFilepath = this.indexDirectory + File.separator
 					+ IndexType.PLACE.toString() + ".txt";
 			indexToFile(placeIndexFilepath, indices.placeIndex);
@@ -195,12 +216,14 @@ public class IndexWriter {
 	public void indexToFile(String path,
 			HashMap<String, HashMap<Integer, String>> indexMap)
 					throws IndexerException {
+		PrintWriter out = null;
 		try {
 			
 			StringBuilder sb = new StringBuilder();
 			for(Map.Entry<String, HashMap<Integer, String>> termIDmap :indexMap.entrySet())
 			{
 				sb.append(termIDmap.getKey());
+				//System.out.println(termIDmap.getKey());
 				sb.append("#$%!@*(");
 				HashMap<Integer, String> hm = termIDmap.getValue();
 				for(Map.Entry<Integer, String> docidMap :hm.entrySet())
@@ -214,13 +237,16 @@ public class IndexWriter {
 				sb.append(System.lineSeparator());
 				
 			}
-			PrintWriter out = new PrintWriter(path);
+			out = new PrintWriter(path);
 			out.println(sb.toString());
 			
 			
 		} catch (Exception e) {
 			e.printStackTrace();
 			throw new IndexerException();
+		} finally {
+			out.flush();
+			out.close();
 		}
 	}
 
