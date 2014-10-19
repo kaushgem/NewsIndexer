@@ -293,11 +293,9 @@ public class IndexReader {
 
 		try {
 			BufferedReader br = null;
-			String everything = null;
+			
 			try {
 				br = new BufferedReader(new FileReader(path));
-
-				StringBuilder sb = new StringBuilder();
 				String line;
 				line = br.readLine();
 				while (line != null) {
@@ -307,18 +305,22 @@ public class IndexReader {
 					HashMap<Integer, String> posting = new HashMap<Integer, String>();
 					String[] postings = hasher[1].split(Pattern.quote("||"));		
 					
-					
-					
+					for(String postingStr:postings)
+					{
+						String[] freqPosIndex = postingStr.split(Pattern.quote("|"));
+						posting.put(Integer.parseInt(freqPosIndex[0]), freqPosIndex[1]);
+					}
+					map.put(key, posting);
 					line = br.readLine();
 				}
-				everything = sb.toString();
+				
 			} catch (FileNotFoundException e) {
 			} catch (IOException e) {
 			} finally {
 
 				br.close();
 			}
-			return everything;
+			
 			
 			
 		} catch (Exception e) {
@@ -332,15 +334,33 @@ public class IndexReader {
 	public static HashMap<Integer, String> fileToLookup(
 			String path) throws IndexerException {
 
-		HashMap<Integer, String> map = null;
+		HashMap<Integer, String> map = new HashMap<Integer, String>();
 
 		try {
-			FileInputStream fin = new FileInputStream(path);
-			ObjectInputStream oin = new ObjectInputStream(fin);
-			map = (HashMap<Integer, String>) oin.readObject();
-			//System.out.println("a " + map.size());
-			oin.close();
-			fin.close();
+			BufferedReader br = null;
+			
+			try {
+				br = new BufferedReader(new FileReader(path));
+				String line;
+				line = br.readLine();
+				while (line != null) {
+					
+					String[] hasher = line.split(Pattern.quote("#$%!@*("));
+					String key = hasher[0];
+					String value = hasher[1];
+					map.put(Integer.parseInt(key), value);
+					line = br.readLine();
+				}
+				
+			} catch (FileNotFoundException e) {
+			} catch (IOException e) {
+			} finally {
+
+				br.close();
+			}
+			
+			
+			
 		} catch (Exception e) {
 			e.printStackTrace();
 			throw new IndexerException();
