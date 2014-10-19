@@ -3,17 +3,11 @@ package edu.buffalo.cse.irf14;
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintStream;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.UUID;
 
 import edu.buffalo.cse.irf14.DTO.QueryInfoDTO;
 import edu.buffalo.cse.irf14.analysis.Analyzer;
@@ -30,8 +24,6 @@ import edu.buffalo.cse.irf14.document.Parser;
 import edu.buffalo.cse.irf14.document.ParserException;
 import edu.buffalo.cse.irf14.index.IndexReader;
 import edu.buffalo.cse.irf14.index.IndexType;
-import edu.buffalo.cse.irf14.index.IndexWriter;
-import edu.buffalo.cse.irf14.index.IndexerException;
 import edu.buffalo.cse.irf14.index.IndicesDTO;
 import edu.buffalo.cse.irf14.query.DocumentIDFilter;
 import edu.buffalo.cse.irf14.query.InfixExpression;
@@ -44,7 +36,6 @@ import edu.buffalo.cse.irf14.query.QueryParser;
 import edu.buffalo.cse.irf14.ranking.Ranking;
 import edu.buffalo.cse.irf14.ranking.RankingFactory;
 import edu.buffalo.cse.util.Utility;
-import static java.nio.file.StandardCopyOption.*;
 /**
  * Main class to run the searcher.
  * As before implement all TODO methods unless marked for bonus
@@ -83,57 +74,6 @@ public class SearchRunner {
 	}
 
 
-	private void WriteToIndex()
-	{
-		File ipDirectory = new File(corpusDir);
-		String[] catDirectories = ipDirectory.list();
-
-		String[] files;
-		File dir;
-		Utility.createEmptyDir(this.flattenedCorpusDir);
-		Document d = null;
-		IndexWriter writer = new IndexWriter(indexDir);
-
-		Date startTime = new Date();
-		System.out.println(startTime);
-
-		try {
-			for (String cat : catDirectories) {
-				dir = new File(corpusDir + File.separator + cat);
-				files = dir.list();
-
-				if (files == null)
-					continue;
-
-				for (String f : files) {
-					try {
-						String filePath = dir.getAbsolutePath() + File.separator + f;
-						try {
-							d = Parser.parse(filePath);
-							Path source = Paths.get(filePath);
-							Path destination = Paths.get(this.flattenedCorpusDir+File.separator + f);
-							Files.copy(source,destination,StandardCopyOption.REPLACE_EXISTING);
-						} catch (IOException e) {
-							// TODO Auto-generated catch block
-							e.printStackTrace();
-						}
-						writer.addDocument(d);
-					} catch (ParserException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
-				}
-			}
-
-			writer.close();
-
-		} catch (IndexerException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-	}
-
-
 	/**
 	 * Method to execute given query in the Q mode
 	 * @param userQuery : Query to be parsed and executed
@@ -156,7 +96,12 @@ public class SearchRunner {
 			//System.out.println("Query: "+userQuery);
 			//System.out.println("Time taken: "+ difference+ "msec");
 			ArrayList<QueryModeOutput> qmList = getQueryModeOutput(rankedDocuments);
-			printResultsQmode(qmList);
+			
+			if(this.mode == 'Q')
+			{
+				printResultsQmode(qmList);
+			}
+			
 
 		} catch (ParserException e) {
 			// TODO Auto-generated catch block
@@ -173,10 +118,11 @@ public class SearchRunner {
 	{
 		for(QueryModeOutput qm:qmList)
 		{
-			System.out.println("Result Rank: " +qm.resultRank);
-			System.out.println("Result Title: " +qm.resultTitle);
-			System.out.println("Result Relavancy: " +qm.resultRelevancy);
-			System.out.println("Context: " +qm.snippet);
+			stream.println("");
+			stream.println("Result Rank: " +qm.resultRank);
+			stream.println("Result Title: " +qm.resultTitle);
+			stream.println("Result Relavancy: " +qm.resultRelevancy);
+			stream.println("Context: " +qm.snippet);
 
 			//	System.out.println("Result Rank: " +qm.resultRank);
 			//	System.out.println("Result Title: " +qm.resultTitle);
@@ -198,9 +144,10 @@ public class SearchRunner {
 			float rank = entry.getValue();
 			String FileName = indices.docIDLookup.get(fileID);
 			String finalFilePath = this.flattenedCorpusDir + File.separator + FileName;
-
+			
 			qmo.resultRelevancy = rank;
 			qmo.resultRank = ++i;
+
 			File fleobj = new File(finalFilePath);
 			if(fleobj.exists())
 			{
@@ -208,17 +155,16 @@ public class SearchRunner {
 				qmo.resultTitle = d.getField(FieldNames.TITLE)[0];
 				qmo.snippet =   findSnippet(fileID,indices);
 			}
+			
 			queryModeList.add(qmo);
 		}
-
+		
 		return queryModeList;
 			}
 
 	// reference http://stackoverflow.com/questions/16387989/get-words-around-a-position-in-a-string
 	private String findSnippet( int fileID,  IndicesDTO indices) throws IOException
 	{
-
-
 		String snippet = "";
 		for(QueryInfoDTO queryWord: queryBagWords )
 		{
@@ -281,7 +227,7 @@ public class SearchRunner {
 				query = query.replace("{", "").replace("}", "");
 				Map<Integer,Float> rankedDocuments = getRankedDocuments(query,ScoringModel.TFIDF);
 				String result = getStringFromRankedDocuments(rankedDocuments,10);
-				System.out.println("\n===="+queryID+":"+result);
+				// System.out.println("\n===="+queryID+":"+result);
 				resultSet.put(queryID, result);
 			}
 		}
@@ -343,15 +289,15 @@ public class SearchRunner {
 		//System.out.println(userQuery);
 		Query query = QueryParser.parse(userQuery, defaultOperator);
 		String formattedUserQuery =  query.toString();
-		//System.out.println("Formatted user query");
-		//System.out.println(formattedUserQuery);
+		System.out.println("Formatted user query");
+		System.out.println(formattedUserQuery);
 
 		//convert to infix
 		InfixExpression infix = new InfixExpression(formattedUserQuery);
 		ArrayList<QueryEntity> infixArrayListEntity = infix.getInfixExpression();
 		//printFix(infixArrayListEntity);
 		infixArrayListEntity = getAnalysedQueryTerms(infixArrayListEntity);
-		//printFix(infixArrayListEntity);
+		printFix(infixArrayListEntity);
 
 		// convert to postfix
 		//System.out.println("Converting to postfix");
@@ -405,12 +351,19 @@ public class SearchRunner {
 					String queryTerm = qe.term;
 					if(isPhraseQuery(queryTerm))
 					{
+						//System.out.println("phrase query");
+						System.out.println("query: "+queryTerm);
 						queryTerm = removeQuorations(queryTerm);
-
 					}
-					System.out.println("operand: "+qe.term);
+					// System.out.println("operand: "+qe.term);
+					if(queryTerm==null || queryTerm.trim().isEmpty())
+					{
+						System.out.println("Error:");
+						
+						printFix(queryExpression);
+					}
 					tStream = tokenizer.consume(queryTerm);
-
+					// System.out.println("phrase query");
 					analyzerObj = getAnalyzerforIndexType(qe.indexType,tStream);
 					analyzerObj.increment();
 					qe.term =tStream.getTokensAsString();
@@ -430,7 +383,7 @@ public class SearchRunner {
 	private boolean isPhraseQuery(String query)
 	{
 		return (query!=null
-				&& query.isEmpty()
+				&& !query.isEmpty()
 				&& query.startsWith("\"")
 				&& query.endsWith("\"")
 				);
@@ -507,7 +460,7 @@ public class SearchRunner {
 		StringBuilder evalModeOutput = new StringBuilder();
 		evalModeOutput.append("numResults=");
 		evalModeOutput.append(resultSet.size());
-
+		evalModeOutput.append("\n");
 		for(Map.Entry<String, String> result:resultSet.entrySet())
 		{
 			String queryID = result.getKey();
@@ -517,7 +470,7 @@ public class SearchRunner {
 			evalModeOutput.append("\n");
 		}
 
-		System.out.println("out "+evalModeOutput.toString());
+		// System.out.println("out "+evalModeOutput.toString());
 		stream.append(evalModeOutput.toString());
 	}
 
