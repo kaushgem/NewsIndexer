@@ -5,6 +5,10 @@ package edu.buffalo.cse.irf14;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.util.Date;
 import java.util.List;
 
@@ -14,6 +18,7 @@ import edu.buffalo.cse.irf14.document.ParserException;
 import edu.buffalo.cse.irf14.index.IndexReader;
 import edu.buffalo.cse.irf14.index.IndexWriter;
 import edu.buffalo.cse.irf14.index.IndexerException;
+import edu.buffalo.cse.util.Utility;
 
 /**
  * @author nikhillo
@@ -26,6 +31,7 @@ public class Runner {
 	 */
 	public Runner() {
 		// TODO Auto-generated constructor stub
+		
 	}
 	
 	/**
@@ -38,6 +44,8 @@ public class Runner {
 
 		String ipDir = args[0];
 		String indexDir = args[1];
+		String flattenedCorpusDir = ipDir + File.separator+ "75d6e08f656e45febb167d2564a14548";
+		Utility.createEmptyDir(flattenedCorpusDir);
 		// more? idk!
 
 		System.out.println(ipDir);
@@ -65,8 +73,15 @@ public class Runner {
 				for (String f : files) {
 					try {
 						String filePath = dir.getAbsolutePath() + File.separator + f;
+						
+						
+				
 						d = Parser.parse(filePath);
 						writer.addDocument(d);
+						
+						File sourceFile= new File(filePath);
+						File destinationfile = new File(flattenedCorpusDir+File.separator + f);
+						sourceFile.renameTo(destinationfile);
 					} catch (ParserException e) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();

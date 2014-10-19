@@ -269,19 +269,19 @@ public class QueryParser {
 		while(m.find()) {
 
 			String searchTerms = m.group(2); // movies AND crime
-			System.out.println("searchTerms:"+searchTerms);		
+			// System.out.println("searchTerms:"+searchTerms);		
 			String indexType = m.group(1);
-			System.out.println("indexType:"+indexType);		
+			// System.out.println("indexType:"+indexType);		
 			searchTerms = AddIndex(searchTerms,  indexType);
-			System.out.println("searchTerms:"+searchTerms);		
+			// System.out.println("searchTerms:"+searchTerms);		
 			userQuery = userQuery.replaceFirst(indexType+":", "");
 			userQuery = userQuery.replaceFirst(Pattern.quote(m.group(2)), Matcher.quoteReplacement(searchTerms));
-			System.out.println("userQuery:"+userQuery);
+			// System.out.println("userQuery:"+userQuery);
 			//m = p.matcher(userQuery);
 		}
 
 
-		System.out.println("userQuery:"+userQuery);
+		// System.out.println("userQuery:"+userQuery);
 		return userQuery;
 
 

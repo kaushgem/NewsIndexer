@@ -132,8 +132,8 @@ public class SearchRunner {
 			e.printStackTrace();
 		}
 	}
-	
-	
+
+
 	/**
 	 * Method to execute given query in the Q mode
 	 * @param userQuery : Query to be parsed and executed
@@ -141,7 +141,7 @@ public class SearchRunner {
 	 */
 	public void  query(String userQuery, ScoringModel model) {
 
-		
+
 		long start_time = System.nanoTime();
 
 
@@ -165,7 +165,7 @@ public class SearchRunner {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-	
+
 
 	}
 
@@ -178,10 +178,10 @@ public class SearchRunner {
 			System.out.println("Result Relavancy: " +qm.resultRelevancy);
 			System.out.println("Context: " +qm.snippet);
 
-		//	System.out.println("Result Rank: " +qm.resultRank);
-		//	System.out.println("Result Title: " +qm.resultTitle);
-		//	System.out.println("Result Relavancy: " +qm.resultRelevancy);
-		//	System.out.println("Context: " +qm.snippet);
+			//	System.out.println("Result Rank: " +qm.resultRank);
+			//	System.out.println("Result Title: " +qm.resultTitle);
+			//	System.out.println("Result Relavancy: " +qm.resultRelevancy);
+			//	System.out.println("Context: " +qm.snippet);
 		}
 	}
 
@@ -197,12 +197,17 @@ public class SearchRunner {
 			int fileID = entry.getKey();
 			float rank = entry.getValue();
 			String FileName = indices.docIDLookup.get(fileID);
-			Document d = Parser.parse(this.flattenedCorpusDir + File.separator + FileName);
-			qmo.resultTitle = d.getField(FieldNames.TITLE)[0];
+			String finalFilePath = this.flattenedCorpusDir + File.separator + FileName;
+
 			qmo.resultRelevancy = rank;
 			qmo.resultRank = ++i;
-
-			qmo.snippet =   findSnippet(fileID,indices);
+			File fleobj = new File(finalFilePath);
+			if(fleobj.exists())
+			{
+				Document d = Parser.parse(finalFilePath);
+				qmo.resultTitle = d.getField(FieldNames.TITLE)[0];
+				qmo.snippet =   findSnippet(fileID,indices);
+			}
 			queryModeList.add(qmo);
 		}
 
@@ -214,7 +219,7 @@ public class SearchRunner {
 	{
 
 
-		String snippet = null;
+		String snippet = "";
 		for(QueryInfoDTO queryWord: queryBagWords )
 		{
 			if(queryWord.getType() == IndexType.CATEGORY)
@@ -229,6 +234,8 @@ public class SearchRunner {
 				String keyWord = queryWord.getQueryTerm();
 				String documentContent = Utility.readStream(this.flattenedCorpusDir + File.separator+indices.docIDLookup.get(fileID));
 				String[] sp = documentContent.split(" +"); // "+" for multiple spaces
+				String word = null;
+
 				for (int i = 2; i < sp.length; i++) {
 					if (sp[i].contains(keyWord)) {
 						// have to check for ArrayIndexOutOfBoundsException
@@ -238,11 +245,12 @@ public class SearchRunner {
 								(i+1 < sp.length ? " "+sp[i+1] : "") +
 								(i+2 < sp.length ? " "+sp[i+2] : "");
 						snippet +="..."+surr;
+						word = sp[i];
 					}
 				}
 				if(snippet!=null)
 				{
-					snippet= snippet.replace(keyWord, "<B>"+keyWord + "</B>");
+					snippet= snippet.replace(word, "<B>"+word + "</B>");
 				}
 
 				if(snippet!=null && snippet.length() >150)
@@ -331,26 +339,26 @@ public class SearchRunner {
 	{
 		String defaultOperator = "OR";
 		// parse query
-		System.out.println("user query");
-		System.out.println(userQuery);
+		//System.out.println("user query");
+		//System.out.println(userQuery);
 		Query query = QueryParser.parse(userQuery, defaultOperator);
 		String formattedUserQuery =  query.toString();
-		System.out.println("Formatted user query");
-		System.out.println(formattedUserQuery);
+		//System.out.println("Formatted user query");
+		//System.out.println(formattedUserQuery);
 
 		//convert to infix
 		InfixExpression infix = new InfixExpression(formattedUserQuery);
 		ArrayList<QueryEntity> infixArrayListEntity = infix.getInfixExpression();
-		printFix(infixArrayListEntity);
+		//printFix(infixArrayListEntity);
 		infixArrayListEntity = getAnalysedQueryTerms(infixArrayListEntity);
-		printFix(infixArrayListEntity);
+		//printFix(infixArrayListEntity);
 
 		// convert to postfix
-		System.out.println("Converting to postfix");
+		//System.out.println("Converting to postfix");
 		PostfixExpression postfixExpression = new  PostfixExpression(infixArrayListEntity);
 		ArrayList<QueryEntity> postfixArrayListEntity = postfixExpression.getPostfixExpression();
-		printFix(postfixArrayListEntity);
-		System.out.println(" postfix converted");
+		//printFix(postfixArrayListEntity);
+		//System.out.println(" postfix converted");
 		// evaluate postfix
 		QueryEvaluator qEval = new QueryEvaluator(postfixArrayListEntity);
 		ArrayList<Integer> docIDs = qEval.evaluateQuery(reader.getIndexDTO());

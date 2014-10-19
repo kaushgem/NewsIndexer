@@ -28,7 +28,7 @@ public class Utility {
 		} catch (FileNotFoundException e) {
 		} catch (IOException e) {
 		} finally {
-
+			if(br!=null)
 			br.close();
 		}
 		return everything;
