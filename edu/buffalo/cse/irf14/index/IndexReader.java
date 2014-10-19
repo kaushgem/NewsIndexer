@@ -2,11 +2,9 @@ package edu.buffalo.cse.irf14.index;
 
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
-import java.io.ObjectInputStream;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -16,7 +14,6 @@ import java.util.Map.Entry;
 import java.util.regex.Pattern;
 
 import edu.buffalo.cse.util.TrieNode;
-import edu.buffalo.cse.util.Utility;
 
 /**
  * @author nikhillo Class that emulates reading data back from a written index

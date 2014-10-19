@@ -5,6 +5,7 @@ package edu.buffalo.cse.irf14.query;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.UUID;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -164,6 +165,7 @@ public class QueryParser {
 		String[] tokens = userQuery.split("AND|OR|NOT");
 		String extractwordWitheRegex = "[\\w\\:]+";
 		Pattern p = Pattern.compile(extractwordWitheRegex);
+		HashMap<String,String> hs = new HashMap<String, String>();
 		for(String words:tokens)
 		{
 			Matcher m = p.matcher(words);
@@ -172,10 +174,13 @@ public class QueryParser {
 				if(!m.group(0).contains(":"))
 				{
 					System.out.println("m.group(0): "+m.group(0));
-					userQuery = userQuery.replace(m.group(0), Index+":"+m.group(0));
+					hs.put(m.group(0),Index+":"+m.group(0));
 				}
 			}
-
+		}
+		for(Entry<String, String> e: hs.entrySet())
+		{
+			userQuery = userQuery.replace(e.getKey(), e.getValue());
 		}
 
 		return userQuery;

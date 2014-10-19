@@ -4,8 +4,6 @@
 package edu.buffalo.cse.irf14.index;
 
 import java.io.File;
-import java.io.FileOutputStream;
-import java.io.ObjectOutputStream;
 import java.io.PrintWriter;
 import java.util.HashMap;
 import java.util.Map;
@@ -239,7 +237,7 @@ public class IndexWriter {
 					sb.append("||");
 				}
 				
-				sb.append(System.lineSeparator());
+				sb.append(System.getProperty("line.separator"));
 				
 			}
 			out = new PrintWriter(path);
@@ -266,7 +264,7 @@ public class IndexWriter {
 				sb.append(fileID.getKey());
 				sb.append("#$%!@*(");
 				sb.append(fileID.getValue());
-				sb.append(System.lineSeparator());
+				sb.append(System.getProperty("line.separator"));
 			}
 			PrintWriter out = new PrintWriter(path);
 			out.println(sb.toString());
@@ -287,7 +285,7 @@ public class IndexWriter {
 				sb.append(fileID.getKey());
 				sb.append(":");
 				sb.append(fileID.getValue());
-				sb.append(System.lineSeparator());
+				sb.append(System.getProperty("line.separator"));
 			}
 			PrintWriter out = new PrintWriter(path);
 			out.println(sb.toString());
