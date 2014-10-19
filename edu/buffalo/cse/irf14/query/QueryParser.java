@@ -179,12 +179,14 @@ public class QueryParser {
 				}
 			}
 		}
+		String[] arr = userQuery.split(" ");
 		for(Entry<String, String> e: hs.entrySet())
 		{
-			userQuery = userQuery.replace(e.getKey(), e.getValue());
+			 userQuery = userQuery.replace(e.getKey(), e.getValue());
+			
 		}
 
-		return userQuery;
+		return userQuery ;
 	}
 
 	private static String AddParanthesis(String userQuery)
@@ -240,6 +242,8 @@ public class QueryParser {
 			String []dsf = new String[arrList.size()];
 			arrList.toArray(dsf);*/
 			String queryWithDefaultOperator = Utility.join(wordArr," " + defaultOperator.toString()+ " ");
+			
+		
 			userQuery = userQuery.replace(word, queryWithDefaultOperator);
 		}
 		}
@@ -269,19 +273,19 @@ public class QueryParser {
 		while(m.find()) {
 
 			String searchTerms = m.group(2); // movies AND crime
-			System.out.println("searchTerms:"+searchTerms);		
+			// System.out.println("searchTerms:"+searchTerms);		
 			String indexType = m.group(1);
-			System.out.println("indexType:"+indexType);		
+			// System.out.println("indexType:"+indexType);		
 			searchTerms = AddIndex(searchTerms,  indexType);
-			System.out.println("searchTerms:"+searchTerms);		
+			// System.out.println("searchTerms:"+searchTerms);		
 			userQuery = userQuery.replaceFirst(indexType+":", "");
 			userQuery = userQuery.replaceFirst(Pattern.quote(m.group(2)), Matcher.quoteReplacement(searchTerms));
-			System.out.println("userQuery:"+userQuery);
+			// System.out.println("userQuery:"+userQuery);
 			//m = p.matcher(userQuery);
 		}
 
 
-		System.out.println("userQuery:"+userQuery);
+		// System.out.println("userQuery:"+userQuery);
 		return userQuery;
 
 

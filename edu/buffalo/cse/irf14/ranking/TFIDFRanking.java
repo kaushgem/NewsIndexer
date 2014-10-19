@@ -60,47 +60,53 @@ public class TFIDFRanking extends Ranking {
 			String term = queryDTOObj.getQueryTerm();
 			IndexType type = queryDTOObj.getType();
 
-			System.out.println(term);
 
-			// Get the IndexMap corresponding to the type
+			// System.out.println(term);
+
+
 			HashMap<String, HashMap<Integer, String>> indexMap = getIndexMap(type);
 
 			HashMap<Integer, String> postingsMap = null;
+			int noOfDocsTermOccurs = 0;
 			if(indexMap.get(term) != null){
 				postingsMap = indexMap.get(term);
-			}
+				noOfDocsTermOccurs = postingsMap.size();
 
-			// Calculate IDF
-			int totalDocs = indices.docIDLookup.size();
-			int noOfDocsTermOccurs = postingsMap.size();
-			float idf = RankCalc.calculateIDF(totalDocs, noOfDocsTermOccurs);
 
-			for (Entry<Integer, String> mapItr : postingsMap.entrySet()) {
+				// Calculate IDF
+				// System.out.println(term);
+				int totalDocs = indices.docIDLookup.size();
 
-				Integer docID = mapItr.getKey();
+				float idf = RankCalc.calculateIDF(totalDocs, noOfDocsTermOccurs);
 
-				// Check for only the DocIDs received after Query evaluation
-				if(!matchingDocIDs.contains(docID)) { continue; }
+				for (Entry<Integer, String> mapItr : postingsMap.entrySet()) {
 
-				String[] str = mapItr.getValue().split(":");
-				int tf = Integer.parseInt(str[0]);
-				float score = RankCalc.calculateTFIDF(tf, idf);
+					Integer docID = mapItr.getKey();
 
-				// Normalization using doc length
-				int docLen = indices.docLength.get(docID);
-				score = (float) (score/Math.log10(docLen));
-				//System.out.println("Weight = "+docID+":"+score);
+					// Check for only the DocIDs received after Query evaluation
+					if(!matchingDocIDs.contains(docID)) { continue; }
 
-				if(rankedDocIDs.get(docID)==null){
-					rankedDocIDs.put(docID, score);
+					String[] str = mapItr.getValue().split(":");
+					int tf = Integer.parseInt(str[0]);
+					float score = RankCalc.calculateTFIDF(tf, idf);
+
+
+					int docLen = indices.docLength.get(docID);
+					score = (float) (score/Math.log10(docLen));
+					//System.out.println("Weight = "+docID+":"+score);
+
+
+					if(rankedDocIDs.get(docID)==null){
+						rankedDocIDs.put(docID, score);
+					}
+					else{
+						score += rankedDocIDs.get(docID);
+						rankedDocIDs.put(docID, score);
+					}
+					if(maxWeight < score)
+						maxWeight = score;
+					//System.out.println("Score = "+docID+":"+score);
 				}
-				else{
-					score += rankedDocIDs.get(docID);
-					rankedDocIDs.put(docID, score);
-				}
-				if(maxWeight < score)
-					maxWeight = score;
-				//System.out.println("Score = "+docID+":"+score);
 			}
 		}
 

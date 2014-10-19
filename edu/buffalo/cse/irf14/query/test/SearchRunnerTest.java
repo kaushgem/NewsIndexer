@@ -1,6 +1,7 @@
 package edu.buffalo.cse.irf14.query.test;
 
 import java.io.File;
+import java.io.IOException;
 import java.io.PrintStream;
 
 import org.junit.After;
@@ -17,6 +18,7 @@ public class SearchRunnerTest {
 	@BeforeClass
 	public static void setUpBeforeClass() throws Exception {
 		
+
 //		String indexDir = "C:\\Users\\Sathish\\Dropbox\\UB\\Fall\\535 - IR\\index";
 //		String corpusDir = "C:\\Users\\Sathish\\Dropbox\\UB\\Fall\\535 - IR\\news_training\\training";
 		String indexDir = "/Users/kaush/Coding/Dataset/IR/files";
@@ -43,6 +45,9 @@ public class SearchRunnerTest {
 		search.query(q,ScoringModel.TFIDF);
 		search.query(q,ScoringModel.OKAPI);
 
+		
+
+
 	}
 
 	@AfterClass
@@ -58,7 +63,27 @@ public class SearchRunnerTest {
 	}
 
 	@Test
-	public void test() {
+	public void test() throws IOException {
+		String indexDir = "C:\\Users\\Sathish\\Dropbox\\UB\\Fall\\535 - IR\\index";
+		String corpusDir = "C:\\Users\\Sathish\\Dropbox\\UB\\Fall\\535 - IR\\news_training\\training";
+	//	String indexDir = "/Users/kaush/Coding/Dataset/IR/files";
+	//	String corpusDir = "/Users/kaush/Coding/Dataset/IR/corpus";
+
+		
+		char mode = 'E';
+		PrintStream stream = System.out;
+		
+		SearchRunner search = new SearchRunner(indexDir,  corpusDir, mode,  stream);
+
+		String q = "week OR week OR week";// regulatory";
+		q = "lubricating OR marine AND petrochemical";  //CoFAB
+		//q = "Category:oil AND place:Dubai AND ( price OR cost )";// regulatory";
+		// q = "NATO AND NATO";
+
+		 File f = new File("C:\\Users\\Sathish\\Dropbox\\UB\\Fall\\535 - IR\\q2.txt");
+		 search.query(f);
+		//search.query(q,ScoringModel.TFIDF);
+		//search.query(q,ScoringModel.OKAPI);
 		
 	}
 
