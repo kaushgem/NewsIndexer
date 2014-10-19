@@ -3,6 +3,7 @@
  */
 package edu.buffalo.cse.irf14.query;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -85,7 +86,7 @@ public class QueryParser {
 				m.find();
 				String negativeTerm = m.group(0);
 				negativeTerm = "<"+ negativeTerm + ">";
-				System.out.println("(m.group(0): "+m.group(0));
+				// System.out.println("(m.group(0): "+m.group(0));
 				userQuery = userQuery.replaceFirst(Pattern.quote(m.group(0)),Matcher.quoteReplacement(negativeTerm));
 
 
@@ -173,7 +174,7 @@ public class QueryParser {
 				
 				if(!m.group(0).contains(":"))
 				{
-					System.out.println("m.group(0): "+m.group(0));
+					// System.out.println("m.group(0): "+m.group(0));
 					hs.put(m.group(0),Index+":"+m.group(0));
 				}
 			}
@@ -214,12 +215,37 @@ public class QueryParser {
 
 	private static String AddDefaultOperators(String userQuery, Operator defaultOperator)
 	{
+		try
+		{
 		String[] tokens = userQuery.split("[AND|OR|NOT]");
 		for(String word:tokens) 
 		{
 			word = word.trim();
-			String queryWithDefaultOperator = Utility.join( word.split(" ")," " + defaultOperator.toString()+ " ");
+			word = word.replace("( ","(").replace(" )",")");
+			String[] wordArr =  word.split(" ");
+			/*ArrayList<String> arrList = new ArrayList<String>();
+			for(String s: wordArr)
+			{
+				if(s!=null
+						&& !s.trim().isEmpty()
+						&& !s.trim().equals("(")
+						&& !s.trim().equals(")")
+						)
+				{
+					arrList.add(s);
+					
+				}
+			}
+			
+			String []dsf = new String[arrList.size()];
+			arrList.toArray(dsf);*/
+			String queryWithDefaultOperator = Utility.join(wordArr," " + defaultOperator.toString()+ " ");
 			userQuery = userQuery.replace(word, queryWithDefaultOperator);
+		}
+		}
+		catch(Exception ex)
+		{
+			ex.printStackTrace();
 		}
 
 		return userQuery;

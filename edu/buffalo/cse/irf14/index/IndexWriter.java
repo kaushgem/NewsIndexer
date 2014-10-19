@@ -30,12 +30,11 @@ public class IndexWriter {
 	public static boolean inMemory = false;
 	String indexDirectory = null;
 	IndicesDTO indices;
-	
+
 	public IndexWriter(String indexDir) {
 		indexDirectory = indexDir;
 		indices = new IndicesDTO();
-				
-		
+
 	}
 
 	/**
@@ -61,7 +60,7 @@ public class IndexWriter {
 			String fileID = d.getField(FieldNames.FILEID)[0];
 			int docIDLookupIndex = indices.docIDLookup.size() + 1;
 			indices.docIDLookup.put(docIDLookupIndex, fileID);
-//			System.out.println(docIDLookupIndex+" :: "+fileID);
+			// System.out.println(docIDLookupIndex+" :: "+fileID);
 
 			// Iterate FieldNames
 			for (FieldNames field : FieldNames.values()) {
@@ -70,7 +69,8 @@ public class IndexWriter {
 					for (String s : stringArray) {
 						if (s != null && !s.isEmpty()) {
 							TokenStream tStream = tokenizer.consume(s);
-							analyzerObj = analyzerFactoryObj.getAnalyzerForField(field, tStream);
+							analyzerObj = analyzerFactoryObj
+									.getAnalyzerForField(field, tStream);
 							analyzerObj.increment();
 							tStream.reset();
 
@@ -79,17 +79,22 @@ public class IndexWriter {
 							case AUTHORORG:
 							case NEWSDATE:
 							case CONTENT:
-								indices.docLength.put(docIDLookupIndex, tStream.getSizeWithoutNull());
-								insertToIndex(tStream, docIDLookupIndex, indices.termIndex);
+								indices.docLength.put(docIDLookupIndex,
+										tStream.getSizeWithoutNull());
+								insertToIndex(tStream, docIDLookupIndex,
+										indices.termIndex);
 								break;
 							case CATEGORY:
-								insertToIndex(tStream, docIDLookupIndex, indices.categoryIndex);
+								insertToIndex(tStream, docIDLookupIndex,
+										indices.categoryIndex);
 								break;
 							case AUTHOR:
-								insertToIndex(tStream, docIDLookupIndex, indices.authorIndex);
+								insertToIndex(tStream, docIDLookupIndex,
+										indices.authorIndex);
 								break;
 							case PLACE:
-								insertToIndex(tStream, docIDLookupIndex, indices.placeIndex);
+								insertToIndex(tStream, docIDLookupIndex,
+										indices.placeIndex);
 								break;
 							default:
 								break;
@@ -104,8 +109,6 @@ public class IndexWriter {
 		}
 	}
 
-
-
 	/**
 	 * Method that indicates that all open resources must be closed and cleaned
 	 * and that the entire indexing operation has been completed.
@@ -114,24 +117,17 @@ public class IndexWriter {
 	 *             : In case any error occurs
 	 */
 	public void close() throws IndexerException {
-		
+
+		System.out.println("writer");
 		System.out.println("Term Size : " + indices.termIndex.size());
 		System.out.println("Cate Size : " + indices.categoryIndex.size());
 		System.out.println("Auth Size : " + indices.authorIndex.size());
 		System.out.println("Plac Size : " + indices.placeIndex.size());
-		System.out.println("File Size : " + indices.docIDLookup.size());
+		System.out.println("Dcid Size : " + indices.docIDLookup.size());
+		System.out.println("dcln Size : " + indices.docLength.size());
 
 		writeIndex();
-		System.out.println("Term Size : " + indices.termIndex.size());
-		System.out.println("Cate Size : " + indices.categoryIndex.size());
-		System.out.println("Auth Size : " + indices.authorIndex.size());
-		System.out.println("Plac Size : " + indices.placeIndex.size());
-		System.out.println("File Size : " + indices.docIDLookup.size());
-
-		
 	}
-
-
 
 	public void insertToIndex(TokenStream tStream, int docIDLookupIndex,
 			HashMap<String, HashMap<Integer, String>> indexMap)
@@ -152,22 +148,24 @@ public class IndexWriter {
 				indexPostings = indexMap.get(token);
 				if (indexPostings == null) {
 					indexPostings = new HashMap<Integer, String>();
-					indexPostings.put(docIDLookupIndex, 1  +":"+  posiIndex++);
+					indexPostings.put(docIDLookupIndex, 1 + ":" + posiIndex++);
 					indexMap.put(token, indexPostings);
-				}
-				else		// indexPostings map already exists 
-				{ 			// docID doesn't exist
-					if (indexPostings.get(docIDLookupIndex) == null)
-					{
-						indexPostings.put(docIDLookupIndex, 1  +":"+  posiIndex++);
+				} else // indexPostings map already exists
+				{ // docID doesn't exist
+					if (indexPostings.get(docIDLookupIndex) == null) {
+						indexPostings.put(docIDLookupIndex, 1 + ":"
+								+ posiIndex++);
 						posiIndex++;
-					}
-					else	// docID doesn't exist - update term frequency and positional index
+					} else // docID doesn't exist - update term frequency and
+						// positional index
 					{
-						String[] str = indexPostings.get(docIDLookupIndex).split(":");
-						Integer tf = Integer.parseInt(str[0]) +1;		// inc term freq
+						String[] str = indexPostings.get(docIDLookupIndex)
+								.split(":");
+						Integer tf = Integer.parseInt(str[0]) + 1; // inc term
+						// freq
 
-						String tfposiIndex = tf.toString() +":"+ str[1] +","+ posiIndex++ ;		// append positional index
+						String tfposiIndex = tf.toString() + ":" + str[1] + ","
+								+ posiIndex++; // append positional index
 
 						indexPostings.put(docIDLookupIndex, tfposiIndex);
 					}
@@ -179,25 +177,21 @@ public class IndexWriter {
 		}
 	}
 
-
 	public void writeIndex() throws IndexerException {
 		try {
-		
-			
+
 			String authorIndexFilepath = this.indexDirectory + File.separator
 					+ IndexType.AUTHOR.toString() + ".txt";
-			System.out.println("indices.authorIndex"+ indices.authorIndex.size());
 			indexToFile(authorIndexFilepath, indices.authorIndex);
-			
+
 			String termIndexFilepath = this.indexDirectory + File.separator
 					+ IndexType.TERM.toString() + ".txt";
 			indexToFile(termIndexFilepath, indices.termIndex);
-			
-			
+
 			String categoryIndexFilepath = this.indexDirectory + File.separator
 					+ IndexType.CATEGORY.toString() + ".txt";
 			indexToFile(categoryIndexFilepath, indices.categoryIndex);
-			
+
 			String placeIndexFilepath = this.indexDirectory + File.separator
 					+ IndexType.PLACE.toString() + ".txt";
 			indexToFile(placeIndexFilepath, indices.placeIndex);
@@ -205,11 +199,11 @@ public class IndexWriter {
 			String docIDLookupFilepath = this.indexDirectory + File.separator
 					+ "FILEID" + ".txt";
 			lookupToFile(docIDLookupFilepath, indices.docIDLookup);
-			
-			String docIDLength = this.indexDirectory + File.separator
-					+ "FILEID" + ".txt";
-			docLegthToFile(docIDLength, indices.docLength);
-			
+
+			String docIDLengthFilepath = this.indexDirectory + File.separator
+					+ "DOCLENGTH" + ".txt";
+			docLegthToFile(docIDLengthFilepath, indices.docLength);
+
 		} catch (Exception e) {
 			e.printStackTrace();
 			throw new IndexerException();
@@ -221,29 +215,27 @@ public class IndexWriter {
 					throws IndexerException {
 		PrintWriter out = null;
 		try {
-			
+
 			StringBuilder sb = new StringBuilder();
-			for(Map.Entry<String, HashMap<Integer, String>> termIDmap :indexMap.entrySet())
-			{
+			for (Map.Entry<String, HashMap<Integer, String>> termIDmap : indexMap
+					.entrySet()) {
 				sb.append(termIDmap.getKey());
-				//System.out.println(termIDmap.getKey());
+				// System.out.println(termIDmap.getKey());
 				sb.append("#$%!@*(");
 				HashMap<Integer, String> hm = termIDmap.getValue();
-				for(Map.Entry<Integer, String> docidMap :hm.entrySet())
-				{
+				for (Map.Entry<Integer, String> docidMap : hm.entrySet()) {
 					sb.append(docidMap.getKey());
 					sb.append("|");
 					sb.append(docidMap.getValue());
 					sb.append("||");
 				}
-				
+
 				sb.append(System.getProperty("line.separator"));
-				
+
 			}
 			out = new PrintWriter(path);
 			out.println(sb.toString());
-			
-			
+
 		} catch (Exception e) {
 			e.printStackTrace();
 			throw new IndexerException();
@@ -253,48 +245,53 @@ public class IndexWriter {
 		}
 	}
 
-	public void lookupToFile(String path,
-			HashMap<Integer, String> indexMap)
-					throws IndexerException {
+	public void lookupToFile(String path, HashMap<Integer, String> indexMap)
+			throws IndexerException {
+		PrintWriter out = null;
+
 		try {
-			
+
 			StringBuilder sb = new StringBuilder();
-			for(Map.Entry<Integer, String> fileID :indexMap.entrySet())
-			{
-				sb.append(fileID.getKey());
-				sb.append("#$%!@*(");
-				sb.append(fileID.getValue());
-				sb.append(System.getProperty("line.separator"));
-			}
-			PrintWriter out = new PrintWriter(path);
-			out.println(sb.toString());
-			
-		} catch (Exception e) {
-			e.printStackTrace();
-			throw new IndexerException();
-		}
-	}
-	public void docLegthToFile(String path,
-			HashMap<Integer, Integer> indexMap)
-					throws IndexerException {
-		try {
-			
-			StringBuilder sb = new StringBuilder();
-			for(Map.Entry<Integer, Integer> fileID :indexMap.entrySet())
-			{
+			for (Map.Entry<Integer, String> fileID : indexMap.entrySet()) {
 				sb.append(fileID.getKey());
 				sb.append(":");
 				sb.append(fileID.getValue());
 				sb.append(System.getProperty("line.separator"));
 			}
-			PrintWriter out = new PrintWriter(path);
+			out = new PrintWriter(path);
 			out.println(sb.toString());
-			
+
 		} catch (Exception e) {
 			e.printStackTrace();
 			throw new IndexerException();
+		} finally {
+			out.close();
+			out.flush();
 		}
 	}
-	
-	
+
+	public void docLegthToFile(String path, HashMap<Integer, Integer> indexMap)
+			throws IndexerException {
+		PrintWriter out = null;
+		try {
+
+			StringBuilder sb = new StringBuilder();
+			for (Map.Entry<Integer, Integer> fileID : indexMap.entrySet()) {
+				sb.append(fileID.getKey());
+				sb.append(":");
+				sb.append(fileID.getValue());
+				sb.append(System.getProperty("line.separator"));
+			}
+			out = new PrintWriter(path);
+			out.println(sb.toString());
+
+		} catch (Exception e) {
+			e.printStackTrace();
+			throw new IndexerException();
+		} finally {
+			out.close();
+			out.flush();
+		}
+	}
+
 }

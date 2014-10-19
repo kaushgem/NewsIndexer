@@ -79,16 +79,15 @@ public class SearchRunner {
 		// Change the returntype........... to void
 		
 		
-		
 		// WARNINGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGG
 		QueryModeOutput qmo = new QueryModeOutput();
 		Date start = new Date();
-		System.out.println("\n\nStart "+model +" Time: "+start);
+		System.out.println("**Start "+model +" Time: "+start);
 		
-		Map<Integer,Float> rankedDocuments =getRankedDocuments(userQuery,model);
+		Map<Integer,Float> rankedDocuments = getRankedDocuments(userQuery,model);
 		
 		Date end = new Date();
-		System.out.println("\n\nEnd "+model +" Time: "+end);
+		System.out.println("**End "+model +" Time: "+end);
 		System.out.println(rankedDocuments.toString());
 		
 		return false;
@@ -126,13 +125,14 @@ public class SearchRunner {
 		{
 			int queriesCount = Integer.parseInt(lines[0].split("=")[1]);
 
-			for(int i=1; i < queriesCount; i++)
+			for(int i=1; i <= queriesCount; i++)
 			{
 				String queryID = lines[i].split(":")[0];
-				String query = lines[i].split(":")[1];
-
+				String query = lines[i].replace(queryID+":","");
+				query = query.replace("{", "").replace("}", "");
 				Map<Integer,Float> rankedDocuments = getRankedDocuments(query,ScoringModel.TFIDF);
 				String result = getStringFromRankedDocuments(rankedDocuments,10);
+				System.out.println("\n===="+queryID+":"+result);
 				resultSet.put(queryID, result);
 			}
 		}
@@ -190,26 +190,33 @@ public class SearchRunner {
 	{
 		String defaultOperator = "OR";
 		// parse query
+		System.out.println("user query");
+		System.out.println(userQuery);
 		Query query = QueryParser.parse(userQuery, defaultOperator);
 		String formattedUserQuery =  query.toString();
+		System.out.println("Formatted user query");
 		System.out.println(formattedUserQuery);
+		
 		//convert to infix
 		InfixExpression infix = new InfixExpression(formattedUserQuery);
 		ArrayList<QueryEntity> infixArrayListEntity = infix.getInfixExpression();
 		printFix(infixArrayListEntity);
 		infixArrayListEntity = getAnalysedQueryTerms(infixArrayListEntity);
 		printFix(infixArrayListEntity);
+		
 		// convert to postfix
+		System.out.println("Converting to postfix");
 		PostfixExpression postfixExpression = new  PostfixExpression(infixArrayListEntity);
 		ArrayList<QueryEntity> postfixArrayListEntity = postfixExpression.getPostfixExpression();
 		printFix(postfixArrayListEntity);
-		
+		System.out.println(" postfix converted");
 		// evaluate postfix
 		QueryEvaluator qEval = new QueryEvaluator(postfixArrayListEntity);
 		ArrayList<Integer> docIDs = qEval.evaluateQuery(reader.getIndexDTO());
 		IndicesDTO indices = reader.getIndexDTO();
 
-		System.out.println(docIDs.toString());
+//		System.out.println("out");
+//		System.out.println(docIDs.toString());
 		
 		// rank documents
 		Ranking ranker = RankingFactory.getRankingInstance(model, indices);
@@ -252,6 +259,7 @@ public class SearchRunner {
 						queryTerm = removeQuorations(queryTerm);
 
 					}
+					System.out.println("operand: "+qe.term);
 					tStream = tokenizer.consume(queryTerm);
 
 					analyzerObj = getAnalyzerforIndexType(qe.indexType,tStream);
@@ -332,7 +340,7 @@ public class SearchRunner {
 			queryResultArr[i] = FileName;
 			queryResultArr[i]+="#";
 			queryResultArr[i]+=rank;
-			queryResult.append(rank);
+			// queryResult.append(rank);
 			i++;
 
 			if(i>=limit)
@@ -360,10 +368,8 @@ public class SearchRunner {
 			evalModeOutput.append("\n");
 		}
 
+		System.out.println("out "+evalModeOutput.toString());
 		stream.append(evalModeOutput.toString());
-
 	}
-
-
-
+	
 }
