@@ -25,7 +25,7 @@ public class QueryEvaluator {
 		stack = new Stack<ArrayList<Integer>>();
 	}
 
-	public ArrayList<Integer> evaluateQuery(IndexReader reader )
+	public ArrayList<Integer> evaluateQuery(IndicesDTO indices )
 	{
 		for (QueryEntity qe:postfixExpression) {
 
@@ -54,7 +54,7 @@ public class QueryEvaluator {
 			else
 			{
 				// operand
-				stack.push(getDocIdarrayList(qe.term,qe.indexType,reader));
+				stack.push(getDocIdarrayList(qe.term,qe.indexType,indices));
 			}
 		}
 		return stack.pop();
