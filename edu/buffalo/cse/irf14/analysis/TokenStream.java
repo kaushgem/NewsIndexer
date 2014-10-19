@@ -125,9 +125,9 @@ public class TokenStream implements Iterator<Token> {
 
 	public int getSizeWithoutNull() {
 		int size = 0;
-		while(tokens.iterator().hasNext())
+		for(Token t:tokens)
 		{
-			String token = tokens.iterator().next().toString();
+			String token = t.getTermText();
 			if (token == null || token.isEmpty())
 				continue;
 			else
