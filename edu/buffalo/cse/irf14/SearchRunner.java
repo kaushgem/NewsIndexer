@@ -173,24 +173,42 @@ public class SearchRunner {
 		//convert to infix
 		InfixExpression infix = new InfixExpression(formattedUserQuery);
 		ArrayList<QueryEntity> infixArrayListEntity = infix.getInfixExpression();
+		printFix(infixArrayListEntity);
 		infixArrayListEntity = getAnalysedQueryTerms(infixArrayListEntity);
-
+		printFix(infixArrayListEntity);
 		// convert to postfix
 		PostfixExpression postfixExpression = new  PostfixExpression(infixArrayListEntity);
 		ArrayList<QueryEntity> postfixArrayListEntity = postfixExpression.getPostfixExpression();
-
+		printFix(postfixArrayListEntity);
+		
 		// evaluate postfix
 		QueryEvaluator qEval = new QueryEvaluator(postfixArrayListEntity);
-
 		ArrayList<Integer> docIDs = qEval.evaluateQuery(reader.getIndexDTO());
 		IndicesDTO indices = reader.getIndexDTO();
-
+		
 		// rank documents
 		Ranking ranker = RankingFactory.getRankingInstance(model, indices);
 		ArrayList<QueryInfoDTO> queryBagWords = infix.getBagOfQueryWords();
 
 		Map<Integer,Float> rankedDocuments = ranker.getRankedDocIDs(queryBagWords, docIDs);
 		return rankedDocuments;
+	}
+	
+	private void printFix(ArrayList<QueryEntity> postfixArrayListEntity )
+	{
+		for(QueryEntity qe: postfixArrayListEntity)
+		{
+			if(qe.isOperator)
+			{
+				System.out.println(qe.operator);
+			}
+			else
+			{
+				System.out.println(qe.term);
+			}
+		}
+		System.out.println("***************");
+		
 	}
 
 	private ArrayList<QueryEntity> getAnalysedQueryTerms(ArrayList<QueryEntity> queryExpression)

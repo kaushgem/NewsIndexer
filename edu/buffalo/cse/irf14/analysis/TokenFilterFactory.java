@@ -68,6 +68,10 @@ public class TokenFilterFactory {
 			tokenFilterObj = new TokenFilterCapitalization(stream);
 			break;
 		}
+		case TITTLECAPITALIZATION: {
+			tokenFilterObj = new TokenFilterTitleCapitalization(stream);
+			break;
+		}
 		case STOPWORD: {
 			tokenFilterObj = new TokenFilterStopwords(stream);
 			break;
