@@ -16,6 +16,7 @@ public class PostfixExpression {
 	}
 
 	// reference: http://people.cs.clemson.edu/~turner/courses/cs102/spring98/section2/assignments/asg4/InfixToPostfix.java
+	@SuppressWarnings("unchecked")
 	public ArrayList<QueryEntity> getPostfixExpression()
 	{
 		try
@@ -24,12 +25,11 @@ public class PostfixExpression {
 		for(QueryEntity qe:infixList)
 		{     
 			if (qe.isOperator ) {    
-				while (!operatorStack.empty() &&
-						!islowerPrecedence(((QueryEntity)operatorStack.peek()).operator, qe.operator))
-					postFixList.add((QueryEntity)operatorStack.pop());
+				while (!operatorStack.empty() && !islowerPrecedence(((QueryEntity)operatorStack.peek()).operator, qe.operator))
+					postFixList.add(  (QueryEntity)operatorStack.pop());
 				if (qe.operator==Operator.CLOSE_PARANTHESIS) {
 					QueryEntity operator = (QueryEntity)operatorStack.pop();
-					while (operator.operator!=Operator.CLOSE_PARANTHESIS) {
+					while (operator.operator!=Operator.OPEN_PARANTHESIS) {
 						postFixList.add(operator);
 						operator = (QueryEntity)operatorStack.pop();  
 					}
