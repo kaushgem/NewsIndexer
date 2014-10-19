@@ -323,8 +323,6 @@ public class IndexReader {
 				}
 			}
 
-
-
 		} catch (Exception e) {
 			e.printStackTrace();
 			throw new IndexerException();

@@ -1,5 +1,6 @@
 package edu.buffalo.cse.irf14.query.test;
 
+import java.io.File;
 import java.io.PrintStream;
 
 import org.junit.After;
@@ -23,10 +24,16 @@ public class SearchRunnerTest {
 		
 		SearchRunner search = new SearchRunner(indexDir,  corpusDir, mode,  stream);
 		
+
 		String q = "week AND regulatory";
 		q = "CoFAB AND lubricating AND marine AND petrochemical";
+		//q = "lubricating AND marine AND petrochemical";  //CoFAB
+		//q = "NATO AND NATO";
+		File f = new File("/Users/kaush/Coding/Dataset/IR/q.txt");
+		//search.query(f);
+
 		search.query(q,ScoringModel.TFIDF);
-		search.query(q,ScoringModel.OKAPI);
+		//search.query(q,ScoringModel.OKAPI);
 	}
 
 	@AfterClass
