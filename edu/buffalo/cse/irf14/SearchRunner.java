@@ -91,18 +91,19 @@ public class SearchRunner {
 		double difference = (end_time - start_time)/1e6;
 
 		try {
-			stream.println("Query: "+userQuery);
-			stream.println("Time taken: "+ difference+ "msec");
 			//// // System.out.println("Query: "+userQuery);
 			//// // System.out.println("Time taken: "+ difference+ "msec");
 			// System.out.println(rankedDocuments.size());
 			ArrayList<QueryModeOutput> qmList = getQueryModeOutput(rankedDocuments);
-			 // System.out.println(qmList.size());
+			// System.out.println(qmList.size());
 			if(this.mode == 'Q')
 			{
+				stream.println("Query: "+userQuery);
+				stream.println("Time taken: "+ difference+ "msec");
+
 				printResultsQmode(qmList);
 			}
-			
+
 
 		} catch (ParserException e) {
 			// TODO Auto-generated catch block
@@ -147,7 +148,7 @@ public class SearchRunner {
 			// // System.out.println(fileID);
 			String FileName = indices.docIDLookup.get(fileID);
 			String finalFilePath = this.flattenedCorpusDir + File.separator + FileName;
-			
+
 			qmo.resultRelevancy = rank;
 			qmo.resultRank = ++i;
 
@@ -161,7 +162,7 @@ public class SearchRunner {
 			// // System.out.println(qmo.toString());
 			queryModeList.add(qmo);
 		}
-		
+
 		return queryModeList;
 			}
 
@@ -171,45 +172,45 @@ public class SearchRunner {
 		String snippet = "";
 		try
 		{
-		for(QueryInfoDTO queryWord: queryBagWords )
-		{
-			if(queryWord.getType() == IndexType.CATEGORY)
+			for(QueryInfoDTO queryWord: queryBagWords )
 			{
-				continue;
-			}
+				if(queryWord.getType() == IndexType.CATEGORY)
+				{
+					continue;
+				}
 
-			DocumentIDFilter docIDFilter = new DocumentIDFilter(indices);
-			ArrayList<Integer> matchingDocIds = docIDFilter.getDocIDArrayList(queryWord.getType(), queryWord.getQueryTerm());
-			if(matchingDocIds.contains(fileID))
-			{
-				String keyWord = queryWord.getQueryTerm();
-				String documentContent = Utility.readStream(this.flattenedCorpusDir + File.separator+indices.docIDLookup.get(fileID));
-				String[] sp = documentContent.split(" +"); // "+" for multiple spaces
-				String word = null;
+				DocumentIDFilter docIDFilter = new DocumentIDFilter(indices);
+				ArrayList<Integer> matchingDocIds = docIDFilter.getDocIDArrayList(queryWord.getType(), queryWord.getQueryTerm());
+				if(matchingDocIds.contains(fileID))
+				{
+					String keyWord = queryWord.getQueryTerm();
+					String documentContent = Utility.readStream(this.flattenedCorpusDir + File.separator+indices.docIDLookup.get(fileID));
+					String[] sp = documentContent.split(" +"); // "+" for multiple spaces
+					String word = null;
 
-				for (int i = 2; i < sp.length; i++) {
-					if (sp[i].contains(keyWord)) {
-						// have to check for ArrayIndexOutOfBoundsException
-						String surr = (i-2 > 0 ? sp[i-2]+" " : "") +
-								(i-1 > 0 ? sp[i-1]+" " : "") +
-								sp[i] +
-								(i+1 < sp.length ? " "+sp[i+1] : "") +
-								(i+2 < sp.length ? " "+sp[i+2] : "");
-						snippet +="..."+surr;
-						word = sp[i];
+					for (int i = 2; i < sp.length; i++) {
+						if (sp[i].contains(keyWord)) {
+							// have to check for ArrayIndexOutOfBoundsException
+							String surr = (i-2 > 0 ? sp[i-2]+" " : "") +
+									(i-1 > 0 ? sp[i-1]+" " : "") +
+									sp[i] +
+									(i+1 < sp.length ? " "+sp[i+1] : "") +
+									(i+2 < sp.length ? " "+sp[i+2] : "");
+							snippet +="..."+surr;
+							word = sp[i];
+						}
+					}
+					if(snippet!=null && word!=null)
+					{
+						snippet= snippet.replace(word, "<B>"+word + "</B>");
+					}
+
+					if(snippet!=null && snippet.length() >150)
+					{
+						break;
 					}
 				}
-				if(snippet!=null && word!=null)
-				{
-					snippet= snippet.replace(word, "<B>"+word + "</B>");
-				}
-
-				if(snippet!=null && snippet.length() >150)
-				{
-					break;
-				}
 			}
-		}
 		}
 		catch(Exception ex)
 		{
@@ -309,13 +310,13 @@ public class SearchRunner {
 		//printFix(infixArrayListEntity);
 		try
 		{
-		infixArrayListEntity = getAnalysedQueryTerms(infixArrayListEntity);
+			infixArrayListEntity = getAnalysedQueryTerms(infixArrayListEntity);
 		}
 		catch(Exception ex)
 		{
-			
+
 		}
-		 printFix(infixArrayListEntity);
+		printFix(infixArrayListEntity);
 
 		// convert to postfix
 		//// // System.out.println("Converting to postfix");
@@ -329,7 +330,7 @@ public class SearchRunner {
 		IndicesDTO indices = reader.getIndexDTO();
 
 		//		// // System.out.println("out");
-			// // System.out.println(docIDs.toString());
+		// // System.out.println(docIDs.toString());
 
 		// rank documents
 		Ranking ranker = RankingFactory.getRankingInstance(model, indices);
@@ -344,7 +345,7 @@ public class SearchRunner {
 
 	private void printFix(ArrayList<QueryEntity> postfixArrayListEntity )
 	{
-		
+
 		for(QueryEntity qe: postfixArrayListEntity)
 		{
 			if(qe.isOperator)
@@ -381,7 +382,7 @@ public class SearchRunner {
 					if(queryTerm==null || queryTerm.trim().isEmpty())
 					{
 						//// // System.out.println("Error:");
-						
+
 						printFix(queryExpression);
 					}
 					tStream = tokenizer.consume(queryTerm);
@@ -393,7 +394,7 @@ public class SearchRunner {
 
 				} catch (TokenizerException e) {
 					// TODO Auto-generated catch block
-					 e.printStackTrace();
+					e.printStackTrace();
 				}
 			}
 		}
