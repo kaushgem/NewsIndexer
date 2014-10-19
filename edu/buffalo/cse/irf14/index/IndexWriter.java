@@ -207,6 +207,11 @@ public class IndexWriter {
 			String docIDLookupFilepath = this.indexDirectory + File.separator
 					+ "FILEID" + ".txt";
 			lookupToFile(docIDLookupFilepath, indices.docIDLookup);
+			
+			String docIDLength = this.indexDirectory + File.separator
+					+ "FILEID" + ".txt";
+			docLegthToFile(docIDLength, indices.docLength);
+			
 		} catch (Exception e) {
 			e.printStackTrace();
 			throw new IndexerException();
@@ -260,6 +265,27 @@ public class IndexWriter {
 			{
 				sb.append(fileID.getKey());
 				sb.append("#$%!@*(");
+				sb.append(fileID.getValue());
+				sb.append(System.lineSeparator());
+			}
+			PrintWriter out = new PrintWriter(path);
+			out.println(sb.toString());
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+			throw new IndexerException();
+		}
+	}
+	public void docLegthToFile(String path,
+			HashMap<Integer, Integer> indexMap)
+					throws IndexerException {
+		try {
+			
+			StringBuilder sb = new StringBuilder();
+			for(Map.Entry<Integer, Integer> fileID :indexMap.entrySet())
+			{
+				sb.append(fileID.getKey());
+				sb.append(":");
 				sb.append(fileID.getValue());
 				sb.append(System.lineSeparator());
 			}
