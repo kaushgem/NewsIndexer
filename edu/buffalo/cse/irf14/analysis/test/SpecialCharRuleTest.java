@@ -20,8 +20,8 @@ public class SpecialCharRuleTest extends TFRuleBaseTest {
 	public void testRule() {
 			try {
 					//special symbols one by one
-					assertArrayEquals(new String[]{"destructor", "is", "method"}, 
-							runTest(TokenFilterType.SPECIALCHARS, "destructor is ~method()")); //tilda, brackets
+					assertArrayEquals(new String[]{"layoffs", "is", "method"}, 
+							runTest(TokenFilterType.SPECIALCHARS, "lay-offs is ~method()")); //tilda, brackets
 					assertArrayEquals(new String[]{"email", "is", "testbuffalo.edu"}, 
 							runTest(TokenFilterType.SPECIALCHARS, "email is test@buffalo.edu")); //@
 					assertArrayEquals(new String[]{"call", "555-5555"}, 
@@ -35,7 +35,7 @@ public class SpecialCharRuleTest extends TFRuleBaseTest {
 					assertArrayEquals(new String[]{"proctor", "gamble"}, 
 							runTest(TokenFilterType.SPECIALCHARS, "proctor & gamble")); //&
 					assertArrayEquals(new String[]{"abc"}, 
-							runTest(TokenFilterType.SPECIALCHARS, "a+b-c")); //+, -
+							runTest(TokenFilterType.SPECIALCHARS, "b-c")); //+, -
 					assertArrayEquals(new String[]{"case", "x", "continue"}, 
 							runTest(TokenFilterType.SPECIALCHARS, "case x: continue;")); //: ;
 					assertArrayEquals(new String[]{"stdin", "cut", "-f1", "sort", "myfile"}, 
