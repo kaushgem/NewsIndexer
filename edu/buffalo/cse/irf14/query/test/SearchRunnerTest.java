@@ -24,12 +24,12 @@ public class SearchRunnerTest {
 		
 		SearchRunner search = new SearchRunner(indexDir,  corpusDir, mode,  stream);
 		
-		String q = "week OR week";// regulatory";
+		String q = "week OR week OR week";// regulatory";
 		//q = "lubricating AND marine AND petrochemical";  //CoFAB
-		//q = "NATO AND NATO";
+		q = "NATO AND NATO";
 		File f = new File("/Users/kaush/Coding/Dataset/IR/q.txt");
-		//search.query(f);
-		search.query(q,ScoringModel.TFIDF);
+		search.query(f);
+		//search.query(q,ScoringModel.TFIDF);
 		//search.query(q,ScoringModel.OKAPI);
 	}
 

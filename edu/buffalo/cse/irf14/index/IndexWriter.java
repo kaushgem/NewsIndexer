@@ -211,7 +211,7 @@ public class IndexWriter {
 					sb.append("||");
 				}
 				
-				sb.append(System.lineSeparator());
+				sb.append(System.getProperty("line.separator"));
 				
 			}
 			PrintWriter out = new PrintWriter(path);
@@ -235,7 +235,7 @@ public class IndexWriter {
 				sb.append(fileID.getKey());
 				sb.append("#$%!@*(");
 				sb.append(fileID.getValue());
-				sb.append(System.lineSeparator());
+				sb.append(System.getProperty("line.separator"));
 			}
 			PrintWriter out = new PrintWriter(path);
 			out.println(sb.toString());
