@@ -1,5 +1,6 @@
 package edu.buffalo.cse.irf14.query.test;
 
+import java.io.File;
 import java.io.PrintStream;
 
 import org.junit.After;
@@ -16,27 +17,23 @@ public class SearchRunnerTest {
 	@BeforeClass
 	public static void setUpBeforeClass() throws Exception {
 		
-		String indexDir = "C:\\Users\\Sathish\\Dropbox\\UB\\Fall\\535 - IR\\index";
+		String indexDir = "/Users/kaush/Coding/Dataset/IR/files";
 		String corpusDir = "";
 		char mode = 'E';
 		PrintStream stream = System.out;
 		
 		SearchRunner search = new SearchRunner(indexDir,  corpusDir, mode,  stream);
 		
-<<<<<<< HEAD
+
 		String q = "week OR week OR week";// regulatory";
 		//q = "lubricating AND marine AND petrochemical";  //CoFAB
 		q = "NATO AND NATO";
 		File f = new File("/Users/kaush/Coding/Dataset/IR/q.txt");
-		search.query(f);
-		//search.query(q,ScoringModel.TFIDF);
-		//search.query(q,ScoringModel.OKAPI);
-=======
-		String q = "week AND regulatory";
-		q = "CoFAB AND lubricating AND marine AND petrochemical";
+		//search.query(f);
 		search.query(q,ScoringModel.TFIDF);
-		search.query(q,ScoringModel.OKAPI);
->>>>>>> f651a15daf6df6322cc3c9eafd562a34d77340ee
+		//search.query(q,ScoringModel.OKAPI);
+
+		
 	}
 
 	@AfterClass

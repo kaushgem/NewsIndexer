@@ -39,6 +39,7 @@ public class AnalyzerTitle implements Analyzer {
 				tStream.reset();
 			}
 		}catch(Exception e){
+			e.printStackTrace();
 			throw new TokenizerException();
 		}
 		return false;
