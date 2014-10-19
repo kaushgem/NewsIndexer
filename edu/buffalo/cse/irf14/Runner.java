@@ -6,10 +6,12 @@ package edu.buffalo.cse.irf14;
 import java.io.File;
 import java.io.IOException;
 import java.util.Date;
+import java.util.List;
 
 import edu.buffalo.cse.irf14.document.Document;
 import edu.buffalo.cse.irf14.document.Parser;
 import edu.buffalo.cse.irf14.document.ParserException;
+import edu.buffalo.cse.irf14.index.IndexReader;
 import edu.buffalo.cse.irf14.index.IndexWriter;
 import edu.buffalo.cse.irf14.index.IndexerException;
 
@@ -72,9 +74,13 @@ public class Runner {
 			}
 
 			writer.close();
+
 			System.out.println(startTime);
 			Date endTime = new Date();
 			System.out.println(endTime);
+			
+			IndexReader r = new IndexReader(indexDir);
+			List<String> a = r.getTopK(10);
 
 		} catch (IndexerException e) {
 			// TODO Auto-generated catch block
