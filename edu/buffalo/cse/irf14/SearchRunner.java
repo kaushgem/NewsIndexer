@@ -252,6 +252,8 @@ public class SearchRunner {
 	 * General cleanup method
 	 */
 	public void close() {
+		stream.flush();
+		stream.close();
 		//TODO : IMPLEMENT THIS METHOD
 	}
 
@@ -484,14 +486,16 @@ public class SearchRunner {
 		StringBuilder evalModeOutput = new StringBuilder();
 		evalModeOutput.append("numResults=");
 		evalModeOutput.append(resultSet.size());
-		evalModeOutput.append("\n");
+		// evalModeOutput.append("\n");
+		evalModeOutput.append(System.getProperty("line.separator"));
 		for(Map.Entry<String, String> result:resultSet.entrySet())
 		{
 			String queryID = result.getKey();
 			String queryResult = result.getValue();
 			evalModeOutput.append(queryID);
 			evalModeOutput.append(queryResult);
-			evalModeOutput.append("\n");
+			// evalModeOutput.append("\n");
+			evalModeOutput.append(System.getProperty("line.separator"));
 		}
 
 		// // // System.out.println("out "+evalModeOutput.toString());
