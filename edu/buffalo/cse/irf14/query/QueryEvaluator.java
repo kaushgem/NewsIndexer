@@ -127,11 +127,8 @@ public class QueryEvaluator {
 		}
 		else
 		{
-			lhs.removeAll(rhs);
-			stack.push(rhs);
+			stack.push(lhs);
 		}
-		
-		
 	}
 
 

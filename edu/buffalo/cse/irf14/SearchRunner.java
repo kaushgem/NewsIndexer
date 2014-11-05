@@ -158,6 +158,8 @@ public class SearchRunner {
 				Document d = Parser.parse(finalFilePath);
 				qmo.resultTitle = d.getField(FieldNames.TITLE)[0];
 				qmo.snippet =   findSnippet(fileID,indices);
+				
+				System.out.println(FileName);
 			}
 			// // System.out.println(qmo.toString());
 			queryModeList.add(qmo);
@@ -189,7 +191,7 @@ public class SearchRunner {
 					String word = null;
 
 					for (int i = 2; i < sp.length; i++) {
-						if (sp[i].contains(keyWord)) {
+						if (sp[i].toLowerCase().contains(keyWord.toLowerCase())) {
 							// have to check for ArrayIndexOutOfBoundsException
 							String surr = (i-2 > 0 ? sp[i-2]+" " : "") +
 									(i-1 > 0 ? sp[i-1]+" " : "") +
@@ -304,7 +306,7 @@ public class SearchRunner {
 		Query query = QueryParser.parse(userQuery, defaultOperator);
 		String formattedUserQuery =  query.toString();
 		//// // System.out.println("Formatted user query");
-		// // System.out.println(formattedUserQuery);
+		System.out.println(formattedUserQuery);
 
 		//convert to infix
 		InfixExpression infix = new InfixExpression(formattedUserQuery);
