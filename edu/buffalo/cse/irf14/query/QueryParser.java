@@ -261,7 +261,7 @@ public class QueryParser {
 
 
 		//String termsToInsertIndexRegex = ":\\((.*?)\\)";
-		String extractIndexTypeRegex = "(Author|Category|Term|Place):\\(((?:[^\\)])+)";
+		String extractIndexTypeRegex = "(Author|Category|Term|Place|author|category|term|place):\\(((?:[^\\)])+)";
 		Pattern p = Pattern.compile(extractIndexTypeRegex);
 		Matcher m = p.matcher(userQuery);
 

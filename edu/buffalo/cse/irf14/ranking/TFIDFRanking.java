@@ -51,6 +51,8 @@ public class TFIDFRanking extends Ranking {
 			ArrayList<Integer> matchingDocIDs) {
 
 		HashMap<Integer, Float> rankedDocIDs = new HashMap<Integer, Float>();
+		try
+		{
 		float maxWeight = 0;
 
 		// Iterate for queryTerm in the Query
@@ -119,7 +121,7 @@ public class TFIDFRanking extends Ranking {
 			//System.out.println(wt.getValue());
 		}
 		
-		
+		}catch(Exception ex){}
 
 		return RankingHelper.sortUsingRank(rankedDocIDs);
 	}

@@ -46,7 +46,7 @@ public class PostfixExpression {
 		}
 		catch(Exception ex)
 		{
-			ex.printStackTrace();
+			//ex.printStackTrace();
 		}
 		return postFixList;
 	}

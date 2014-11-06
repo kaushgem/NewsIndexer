@@ -127,7 +127,16 @@ public class QueryEvaluator {
 		}
 		else
 		{
+			lhs.removeAll(rhs);
+			if(lhs!=null && lhs.size()!=0)
+			{
 			stack.push(lhs);
+			}
+			else
+			{
+				stack.push(new ArrayList<Integer>());
+			}
+			
 		}
 	}
 

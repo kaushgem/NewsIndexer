@@ -52,6 +52,9 @@ public class OKAPIRanking extends Ranking {
 
 		// Iterate for queryTerm in the queryBagWords
 
+		try{
+			
+		
 		for(QueryInfoDTO queryDTOObj : queryBagWords)
 		{
 			String term = queryDTOObj.getQueryTerm();
@@ -113,6 +116,8 @@ public class OKAPIRanking extends Ranking {
 			//System.out.println(wt.getValue());
 		}
 
+		}
+		catch(Exception ex){}
 		return RankingHelper.sortUsingRank(rankedDocIDs);
 	}
 

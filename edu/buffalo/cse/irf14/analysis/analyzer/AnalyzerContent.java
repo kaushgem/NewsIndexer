@@ -34,8 +34,9 @@ public class AnalyzerContent implements Analyzer {
 					TokenFilterType.STOPWORD,
 					TokenFilterType.DATE,
 					TokenFilterType.NUMERIC,
-					TokenFilterType.ACCENT,
-					TokenFilterType.STEMMER};
+					TokenFilterType.ACCENT
+					//TokenFilterType.STEMMER
+					};
 			for (TokenFilterType tokenFilType : filterOrder) {
 				tokenFilterObj = factory.getFilterByType(tokenFilType, tStream);
 				while (tokenFilterObj.increment()) {}

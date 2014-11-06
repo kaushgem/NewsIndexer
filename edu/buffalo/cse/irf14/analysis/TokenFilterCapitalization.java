@@ -18,35 +18,50 @@ public class TokenFilterCapitalization extends TokenFilter {
 			if (str == null || str.isEmpty())
 				return true;
 
+			//System.out.println("=="+tStream.getTokensAsString());
+			
 			// Abbrevation Check
 			//if (str.matches("[A-Za-z ]+[,-_.\"'?]*"))
 			if (str.matches("[A-Z][A-Z]+"))
 				if (str.equals(str.toUpperCase())) {
 					// No change
+					//System.out.println(token.getTermText());
 					return true;
 				}
 
+			
+			
 			// Camel Case Check
+			String strOriginal = str;
 			String strCheck = str;
 			boolean prevStrCheck = false;
 			boolean strAppend = false;
 			while (strCheck.matches("[A-Z][a-z]+[,-_.\"'?]*")) {
 				if (prevStrCheck) {
 					str += " " + strCheck;
-					tStream.next().setTermText("");
+					//tStream.next().setTermText("");
+					tStream.getNextWithoutChangingPtr().setTermText(tStream.getNextWithoutChangingPtr().getTermText().toLowerCase());
+					tStream.next();
 					strAppend = true;
 				}
 				prevStrCheck = true;
 				Token nextToken = tStream.getNextWithoutChangingPtr();
 				if (nextToken == null) {
-					token.setTermText(str);
+					token.setTermText(strOriginal.toLowerCase());
+					Token nToken = new Token(str.toLowerCase());
+					tStream.insertToken(nToken);
+					//System.out.println(token.getTermText());
 					return true;
 				} else {
 					strCheck = nextToken.getTermText();
 				}
 			}
+			
 			if (strAppend) {
-				token.setTermText(str);
+				token.setTermText(strOriginal.toLowerCase());
+				Token nToken = new Token(str.toLowerCase());
+				tStream.insertToken(nToken);
+				//System.out.println(token.getTermText());
 				return true;
 			} else {
 				// Check FirstChar
@@ -55,20 +70,29 @@ public class TokenFilterCapitalization extends TokenFilter {
 					Token prevToken = tStream.getPreviousWithoutChangingPtr();
 					if (prevToken == null) {
 						token.setTermText(str.toLowerCase());
+						//System.out.println(token.getTermText());
 						return true;
 					}
 					String prevStr = prevToken.getTermText();
 					if (prevStr.matches(".*[.]$")) {
 						token.setTermText(str.toLowerCase());
+						//System.out.println(token.getTermText());
+						return true;
+					}
+					else{
+						token.setTermText(str.toLowerCase());
+						//System.out.println(token.getTermText());
 						return true;
 					}
 				}
 			}
 			token.setTermText(str.toLowerCase());
+			//System.out.println(token.getTermText());
 		} catch (Exception e) {
 			 //throw new TokenizerException();
 			return false;
 		}
+
 		return true;
 	}
 

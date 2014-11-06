@@ -8,6 +8,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import edu.buffalo.cse.irf14.DTO.QueryInfoDTO;
 import edu.buffalo.cse.irf14.analysis.Analyzer;
@@ -33,6 +35,7 @@ import edu.buffalo.cse.irf14.query.QueryEntity;
 import edu.buffalo.cse.irf14.query.QueryEvaluator;
 import edu.buffalo.cse.irf14.query.QueryModeOutput;
 import edu.buffalo.cse.irf14.query.QueryParser;
+import edu.buffalo.cse.irf14.query.SpellChecker;
 import edu.buffalo.cse.irf14.ranking.Ranking;
 import edu.buffalo.cse.irf14.ranking.RankingFactory;
 import edu.buffalo.cse.util.Utility;
@@ -52,6 +55,10 @@ public class SearchRunner {
 	IndicesDTO indices;
 	ArrayList<QueryInfoDTO> queryBagWords;
 	String flattenedCorpusDir;
+	String userquery;
+	SpellChecker sp;
+	
+	
 	/**
 	 * Default (and only public) constuctor
 	 * @param indexDir : The directory where the index resides
@@ -70,6 +77,7 @@ public class SearchRunner {
 		// WriteToIndex();
 		reader = new IndexReader(indexDir);
 		this.indices = reader.getIndexDTO();
+		this.sp = new SpellChecker(indices);
 
 	}
 
@@ -83,7 +91,7 @@ public class SearchRunner {
 
 
 		long start_time = System.nanoTime();
-
+		this.userquery = userQuery;
 
 		Map<Integer,Float> rankedDocuments = getRankedDocuments(userQuery,model);
 
@@ -107,10 +115,10 @@ public class SearchRunner {
 
 		} catch (ParserException e) {
 			// TODO Auto-generated catch block
-			e.printStackTrace();
+			//e.printStackTrace();
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
-			e.printStackTrace();
+			//e.printStackTrace();
 		}
 
 
@@ -121,10 +129,10 @@ public class SearchRunner {
 		for(QueryModeOutput qm:qmList)
 		{
 			stream.println("");
-			stream.println("Result Rank: " +qm.resultRank);
-			stream.println("Result Title: " +qm.resultTitle);
-			stream.println("Result Relavancy: " +qm.resultRelevancy);
-			stream.println("Context: " +qm.snippet);
+			stream.println("Rank      :  " +qm.resultRank);
+			stream.println("Title     :  " +qm.resultTitle);
+			stream.println("Relavancy :  " +qm.resultRelevancy);
+			stream.println("Context   :  " +qm.snippet);
 
 			//	// // System.out.println("Result Rank: " +qm.resultRank);
 			//	// // System.out.println("Result Title: " +qm.resultTitle);
@@ -149,7 +157,7 @@ public class SearchRunner {
 			String FileName = indices.docIDLookup.get(fileID);
 			String finalFilePath = this.flattenedCorpusDir + File.separator + FileName;
 
-			qmo.resultRelevancy = rank;
+			qmo.resultRelevancy = rank; 
 			qmo.resultRank = ++i;
 
 			File fleobj = new File(finalFilePath);
@@ -159,7 +167,7 @@ public class SearchRunner {
 				qmo.resultTitle = d.getField(FieldNames.TITLE)[0];
 				qmo.snippet =   findSnippet(fileID,indices);
 				
-				System.out.println(FileName);
+				//System.out.println(FileName);
 			}
 			// // System.out.println(qmo.toString());
 			queryModeList.add(qmo);
@@ -219,7 +227,7 @@ public class SearchRunner {
 			// // // System.out.println(fileID);
 			// ex.printStackTrace();
 		}
-		return snippet;
+		return snippet.replace("\n", " ");
 	}
 	/**
 	 * Method to execute queries in E mode
@@ -284,8 +292,8 @@ public class SearchRunner {
 	 * @return true if supported, false otherwise
 	 */
 	public static boolean spellCorrectSupported() {
-		//TODO: CHANGE THIS TO TRUE ONLY IF SPELLCHECK BONUS ATTEMPTED
-		return false;
+		// Bonus Attempted for both modes (Q and E)
+		return true;
 	}
 
 	/**
@@ -294,8 +302,69 @@ public class SearchRunner {
 	 */
 	public List<String> getCorrections() {
 		//TODO: IMPLEMENT THIS METHOD IFF SPELLCHECK EXECUTED
-		return null;
+		
+		List<String> suggestionsQueryList = new ArrayList<String>();
+		HashMap<String,ArrayList<String>> suggestionsMap = new HashMap<String, ArrayList<String>>();
+		
+		try{
+		String extractwordWitheRegex = "[\\w\\:]+";
+		Pattern p = Pattern.compile(extractwordWitheRegex);
+		Matcher m = p.matcher(this.userquery);
+		HashMap<String,String> stemmerMap = new HashMap<String, String>();
+				
+		while(m.find()) {
+			
+			String term = m.group(0);
+			if(!(term.equals("AND") || term.equals("OR")|| term.equals("NOT")))
+			{
+				if(term.contains(":"))
+				{
+					term = term.split(":")[0];
+					
+				}
+				term = term.replace("(", "").replace(")", "").trim();
+				Analyzer analyzerObj = null;
+				Tokenizer tokenizer = new Tokenizer();
+				TokenStream tStream = null;
+				try {
+					tStream = tokenizer.consume(term);
+				} catch (TokenizerException e) {
+					// TODO Auto-generated catch block
+					//e.printStackTrace();
+				}
+				// // // System.out.println("phrase query");
+				analyzerObj = getAnalyzerforIndexType(IndexType.TERM,tStream);
+				try {
+					analyzerObj.increment();
+				} catch (TokenizerException e) {
+					// TODO Auto-generated catch block
+					// e.printStackTrace();
+				}
+				String stemmedTerm = tStream.getTokensAsString();
+				stemmerMap.put(term,stemmedTerm );
+				ArrayList<String> suggestionsList = new ArrayList<String>();
+				suggestionsList.addAll(sp.correct(stemmedTerm));
+				
+				suggestionsMap.put(stemmedTerm,suggestionsList);
+			}
+			
+		}
+		
+		String suggestionQuery = this.userquery;
+		
+		for(Entry<String,String> stemm : stemmerMap.entrySet())
+		{
+			String suggestionWord = stemm.getKey();
+			suggestionQuery = suggestionQuery.replace(suggestionWord,suggestionsMap.get(stemm.getValue()).get(0) );
+		}
+		suggestionsQueryList.add(suggestionQuery);
+		
+		}
+		catch(Exception e){}
+		
+		return suggestionsQueryList;
 	}
+
 
 	private Map<Integer,Float> getRankedDocuments(String userQuery, ScoringModel model)
 	{
@@ -306,7 +375,7 @@ public class SearchRunner {
 		Query query = QueryParser.parse(userQuery, defaultOperator);
 		String formattedUserQuery =  query.toString();
 		//// // System.out.println("Formatted user query");
-		System.out.println(formattedUserQuery);
+		// System.out.println(formattedUserQuery);
 
 		//convert to infix
 		InfixExpression infix = new InfixExpression(formattedUserQuery);
@@ -315,6 +384,7 @@ public class SearchRunner {
 		try
 		{
 			infixArrayListEntity = getAnalysedQueryTerms(infixArrayListEntity);
+			infixArrayListEntity = getSuggestedInfixTerm(infixArrayListEntity);
 		}
 		catch(Exception ex)
 		{
@@ -345,6 +415,18 @@ public class SearchRunner {
 		// System.out.println("docIDssize" +docIDs.size());
 		// System.out.println("rankedDocuments.size()"+rankedDocuments.size());
 		return rankedDocuments;
+	}
+	
+	private ArrayList<QueryEntity> getSuggestedInfixTerm(ArrayList<QueryEntity> infixArrayListEntity)
+	{
+		for(QueryEntity qe: infixArrayListEntity)
+		{
+			if(!qe.isOperator)
+			{
+				qe.term = this.sp.correct(qe.term).get(0);
+			}
+		}
+		return infixArrayListEntity;
 	}
 
 	private void printFix(ArrayList<QueryEntity> postfixArrayListEntity )
@@ -379,9 +461,10 @@ public class SearchRunner {
 					if(isPhraseQuery(queryTerm))
 					{
 						//// // System.out.println("phrase query");
-						//// // System.out.println("query: "+queryTerm);
+						//System.out.println("query: "+queryTerm);
 						queryTerm = removeQuorations(queryTerm);
 					}
+					
 					// // // System.out.println("operand: "+qe.term);
 					if(queryTerm==null || queryTerm.trim().isEmpty())
 					{
@@ -409,6 +492,7 @@ public class SearchRunner {
 
 	private boolean isPhraseQuery(String query)
 	{
+		//System.out.println("aa");
 		return (query!=null
 				&& !query.isEmpty()
 				&& query.startsWith("\"")

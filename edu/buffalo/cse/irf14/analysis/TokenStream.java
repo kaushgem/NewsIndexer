@@ -172,5 +172,13 @@ public class TokenStream implements Iterator<Token> {
 		
 		return sb.toString().trim();
 	}
+	
+	public void insertToken(Token tkn) {
+		if (currentIndex > 0 && currentIndex <= tokens.size())
+		{
+			tokens.add(tkn);
+			//tokens.add(currentIndex, tkn);
+		}
+	}
 
 }
