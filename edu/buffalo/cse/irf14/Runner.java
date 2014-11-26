@@ -35,8 +35,8 @@ public class Runner {
 	 * @throws InterruptedException
 	 * @throws IOException
 	 */
-	public static void main(String[] args) throws InterruptedException,
-			IOException {
+	public static void main(String[] args) {
+			//throws InterruptedException,IOException {
 
 		String ipDir = args[0];
 		String indexDir = args[1];
@@ -69,8 +69,6 @@ public class Runner {
 				for (String f : files) {
 					try {
 						String filePath = dir.getAbsolutePath() + File.separator + f;
-						
-						
 				
 						d = Parser.parse(filePath);
 						writer.addDocument(d);
@@ -81,7 +79,7 @@ public class Runner {
 					} catch (ParserException e) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
-					}
+					} 
 				}
 			}
 
