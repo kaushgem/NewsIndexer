@@ -19,10 +19,6 @@ import edu.buffalo.cse.util.TrieNode;
  * @author nikhillo Class that emulates reading data back from a written index
  */
 
-/**
- * @author kaush
- *
- */
 public class IndexReader {
 	/**
 	 * Default constructor
@@ -269,13 +265,15 @@ public class IndexReader {
 					+ "DOCLENGTH" + ".txt";
 			indices.docLength = fileToDocLength(docIDLengthFilepath);
 
-//			System.out.println("Reader");
-//			System.out.println("Term Size : " + indices.termIndex.size());
-//			System.out.println("Cate Size : " + indices.categoryIndex.size());
-//			System.out.println("Auth Size : " + indices.authorIndex.size());
-//			System.out.println("Plac Size : " + indices.placeIndex.size());
-//			System.out.println("Dcid Size : " + indices.docIDLookup.size());
-//			System.out.println("dcLe Size : " + indices.docLength.size());
+			/*
+			System.out.println("Reader");
+			System.out.println("Term Size : " + indices.termIndex.size());
+			System.out.println("Cate Size : " + indices.categoryIndex.size());
+			System.out.println("Auth Size : " + indices.authorIndex.size());
+			System.out.println("Plac Size : " + indices.placeIndex.size());
+			System.out.println("Dcid Size : " + indices.docIDLookup.size());
+			System.out.println("dcLe Size : " + indices.docLength.size());
+			 */
 
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -283,7 +281,6 @@ public class IndexReader {
 		}
 	}
 
-	@SuppressWarnings("unchecked")
 	private static HashMap<String, HashMap<Integer, String>> fileToIndex(
 			String path) throws IndexerException {
 
@@ -337,7 +334,6 @@ public class IndexReader {
 		return map;
 	}
 
-	@SuppressWarnings("unchecked")
 	public static HashMap<Integer, String> fileToLookup(String path)
 			throws IndexerException {
 

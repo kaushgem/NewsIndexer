@@ -3,7 +3,6 @@
  */
 package edu.buffalo.cse.irf14.query;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -41,15 +40,10 @@ public class QueryParser {
 	private static boolean ValidateQuery(String userQuery )
 	{
 		//TODO: 4 types of validation
-
 		// validate brackets (( 
-
 		// validate quotes """
-
 		// validate operators AND OR
-
 		// validate operator followed by closing bracket
-
 		return true;
 	}
 
@@ -66,7 +60,6 @@ public class QueryParser {
 		userQuery = ReplaceParanthesisWithSquareBrackets(userQuery);
 		userQuery = EncloseWithCurlyBrackets(userQuery);
 		userQuery = ReplaceHashValuesWithQuotedString(userQuery,quotedSearchTerms);
-
 
 		return userQuery;
 	}
@@ -88,7 +81,6 @@ public class QueryParser {
 				negativeTerm = "<"+ negativeTerm + ">";
 				// System.out.println("(m.group(0): "+m.group(0));
 				userQuery = userQuery.replaceFirst(Pattern.quote(m.group(0)),Matcher.quoteReplacement(negativeTerm));
-
 
 			}
 		}
@@ -124,11 +116,9 @@ public class QueryParser {
 		// #1 GUID replacement for quoted strings 
 		// replace "hi quote" with a random UUID like 38400000-8cf0-11bd-b23e-10b96e4ef00d
 
-
 		HashMap<String,String> quotedSearchTerms = new HashMap<String,String>(); 
 
 		String RegexQuotesString = "([\"'])(?:\\\\\\1|.)*?\\1";
-
 
 		Pattern p = Pattern.compile(RegexQuotesString);
 		Matcher m = p.matcher(userQuery);
@@ -142,7 +132,6 @@ public class QueryParser {
 		}
 
 		return quotedSearchTerms;
-
 	}
 
 	private static String EncloseWithCurlyBrackets(String userQuery) {
@@ -156,9 +145,7 @@ public class QueryParser {
 	}
 
 	private static String AddDefaultIndex(String userQuery) {
-
 		userQuery = AddIndex(userQuery, "Term");
-
 		return userQuery;
 	}
 
@@ -205,7 +192,6 @@ public class QueryParser {
 				{
 					String paranthesisEnclosedWords = "("+ word + ")";
 					userQuery = userQuery.replace(word, paranthesisEnclosedWords);
-
 				}
 			}
 		}
@@ -247,9 +233,7 @@ public class QueryParser {
 		{
 			ex.printStackTrace();
 		}
-
 		return userQuery;
-
 	}
 
 	private static String AddCategoryToIndividualTermsInsideParanthesis(String userQuery)
@@ -259,15 +243,12 @@ public class QueryParser {
 		// the content inside brackets with categories
 		// Category:(movies AND crime) will be changed to (Category:movies AND Category:crime)
 
-
 		//String termsToInsertIndexRegex = ":\\((.*?)\\)";
 		String extractIndexTypeRegex = "(Author|Category|Term|Place|author|category|term|place):\\(((?:[^\\)])+)";
 		Pattern p = Pattern.compile(extractIndexTypeRegex);
 		Matcher m = p.matcher(userQuery);
 
-
 		while(m.find()) {
-
 			String searchTerms = m.group(2); // movies AND crime
 			// System.out.println("searchTerms:"+searchTerms);		
 			String indexType = m.group(1);
@@ -280,11 +261,8 @@ public class QueryParser {
 			//m = p.matcher(userQuery);
 		}
 
-
 		// System.out.println("userQuery:"+userQuery);
 		return userQuery;
-
-
 	}
 
 	private static Operator getDefaultOperator(String defaultOperator)
@@ -295,10 +273,6 @@ public class QueryParser {
 		{
 			defaultOper = Operator.AND;
 		}
-
 		return defaultOper;
 	}
-	
-	
-	
 }

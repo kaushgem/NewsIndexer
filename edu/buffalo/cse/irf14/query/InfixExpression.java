@@ -1,11 +1,13 @@
 package edu.buffalo.cse.irf14.query;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 
 import edu.buffalo.cse.irf14.DTO.QueryInfoDTO;
 import edu.buffalo.cse.irf14.index.IndexType;
-
+/**
+ * @author Sathish
+ *
+ */
 public class InfixExpression {
 
 	ArrayList<QueryEntity> infixList;

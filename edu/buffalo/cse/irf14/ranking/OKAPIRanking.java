@@ -53,7 +53,6 @@ public class OKAPIRanking extends Ranking {
 		// Iterate for queryTerm in the queryBagWords
 
 		try{
-			
 		
 		for(QueryInfoDTO queryDTOObj : queryBagWords)
 		{

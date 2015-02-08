@@ -12,14 +12,14 @@ import java.util.HashMap;
 public class Document {
 	//Sample implementation - you can change this if you like
 	private HashMap<FieldNames, String[]> map;
-	
+
 	/**
 	 * Default constructor
 	 */
 	public Document() {
 		map = new HashMap<FieldNames, String[]>();
 	}
-	
+
 	/**
 	 * Method to set the field value for the given {@link FieldNames} field
 	 * @param fn : The {@link FieldNames} to be set
@@ -28,7 +28,7 @@ public class Document {
 	public void setField(FieldNames fn, String... o) {
 		map.put(fn, o);
 	}
-	
+
 	/**
 	 * Method to get the field value for a given {@link FieldNames} field
 	 * @param fn : The field name to query

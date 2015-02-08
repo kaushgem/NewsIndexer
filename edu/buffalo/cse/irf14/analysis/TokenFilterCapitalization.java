@@ -1,5 +1,8 @@
 package edu.buffalo.cse.irf14.analysis;
-
+/**
+ * @author Kaushik
+ *
+ */
 public class TokenFilterCapitalization extends TokenFilter {
 
 	public TokenFilterCapitalization(TokenStream stream) {
@@ -19,8 +22,9 @@ public class TokenFilterCapitalization extends TokenFilter {
 				return true;
 
 			//System.out.println("=="+tStream.getTokensAsString());
-			
+
 			// Abbrevation Check
+
 			//if (str.matches("[A-Za-z ]+[,-_.\"'?]*"))
 			if (str.matches("[A-Z][A-Z]+"))
 				if (str.equals(str.toUpperCase())) {
@@ -29,8 +33,8 @@ public class TokenFilterCapitalization extends TokenFilter {
 					return true;
 				}
 
-			
-			
+
+
 			// Camel Case Check
 			String strOriginal = str;
 			String strCheck = str;
@@ -56,7 +60,7 @@ public class TokenFilterCapitalization extends TokenFilter {
 					strCheck = nextToken.getTermText();
 				}
 			}
-			
+
 			if (strAppend) {
 				token.setTermText(strOriginal.toLowerCase());
 				Token nToken = new Token(str.toLowerCase());
@@ -89,7 +93,7 @@ public class TokenFilterCapitalization extends TokenFilter {
 			token.setTermText(str.toLowerCase());
 			//System.out.println(token.getTermText());
 		} catch (Exception e) {
-			 //throw new TokenizerException();
+			//throw new TokenizerException();
 			return false;
 		}
 

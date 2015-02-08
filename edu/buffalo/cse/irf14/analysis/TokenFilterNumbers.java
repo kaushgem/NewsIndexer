@@ -1,6 +1,9 @@
 package edu.buffalo.cse.irf14.analysis;
 
-
+/**
+ * @author Kaushik
+ *
+ */
 public class TokenFilterNumbers extends TokenFilter {
 
 	public TokenFilterNumbers(TokenStream stream) {
@@ -17,7 +20,7 @@ public class TokenFilterNumbers extends TokenFilter {
 			String str = token.getTermText();
 			if(str == null || str.isEmpty())
 				return true;
-			
+
 			str = str.replaceAll("^[0-9]+[.,][0-9]+", "");
 			if (str.matches("^[0-9]+[/][0-9]+$"))
 				str = str.replaceAll("[0-9]+", "");

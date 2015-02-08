@@ -7,7 +7,7 @@ import java.util.Comparator;
 import java.util.Map;
 
 /**
- * @author kaush
+ * @author Kaushik
  *
  */
 

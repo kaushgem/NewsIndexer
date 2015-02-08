@@ -10,7 +10,7 @@ import java.util.TreeMap;
 import edu.buffalo.cse.util.SortMapUsingValueCompare;
 
 /**
- * @author kaush
+ * @author Kaushik
  *
  */
 public class RankingHelper {

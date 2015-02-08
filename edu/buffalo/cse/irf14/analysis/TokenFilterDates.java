@@ -2,6 +2,7 @@ package edu.buffalo.cse.irf14.analysis;
 
 import java.util.HashMap;
 
+
 public class TokenFilterDates extends TokenFilter {
 
 	public TokenFilterDates(TokenStream stream) {
@@ -12,7 +13,7 @@ public class TokenFilterDates extends TokenFilter {
 	@Override
 	public boolean increment() throws TokenizerException {
 		return false;
-		
+
 		/*
 		if (!tStream.hasNext())
 			return false;
@@ -68,6 +69,7 @@ public class TokenFilterDates extends TokenFilter {
 		 */
 	}
 
+	@SuppressWarnings("unused")
 	private int getMonth(String str) {
 		HashMap<String, Integer> hm = new HashMap<String, Integer>();
 		hm.put("january", 1);

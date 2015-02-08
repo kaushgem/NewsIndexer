@@ -25,14 +25,12 @@ public class Parser {
 	 * @throws IOException
 	 */
 	public static Document parse(String filepath) throws ParserException
-			{
+	{
 		// System.out.println("Parser.parse() in..");
-
 		Document documentObj = new Document();
 		String article = "";
 
 		// file not found todo
-
 		try {
 
 			// System.out.println(filepath);
@@ -76,7 +74,7 @@ public class Parser {
 
 				if (line != null
 						&& !line.replace("\n", "").replace("\r", "")
-								.replace(" ", "").replace("\t", "").isEmpty()) {
+						.replace(" ", "").replace("\t", "").isEmpty()) {
 
 					// title parsing starts
 					if (!isTitle) {
@@ -92,8 +90,8 @@ public class Parser {
 							// if next line is empty end the loop
 							if (nextLine == null
 									|| nextLine.replace("\n", "")
-											.replace("\r", "").replace(" ", "")
-											.replace("\t", "").isEmpty()) {
+									.replace("\r", "").replace(" ", "")
+									.replace("\t", "").isEmpty()) {
 								isTitle = true;
 
 							} else {
@@ -163,7 +161,7 @@ public class Parser {
 						String[] datePlace = line.split("-");
 						Pattern p = Pattern.compile(".*,\\s*(.*)");
 						Matcher m = p.matcher(datePlace[0]); // string before
-																// '-'
+						// '-'
 						if (m.find()) {
 							newsDate = m.group(1); // anything after last comma
 							documentObj.setField(FieldNames.NEWSDATE,

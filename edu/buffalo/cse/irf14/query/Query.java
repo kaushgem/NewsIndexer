@@ -12,7 +12,6 @@ public class Query {
 	 * Method to convert given parsed query into string
 	 */
 
-
 	String formatedQueryOutput ;
 	String userQuery;
 	Operator defaultOperator;
@@ -30,8 +29,6 @@ public class Query {
 		this.infixExpression = infixExpression;
 		this.postfixExpression = postfixExpression;
 	}
-
-	
 
 
 	public String toString() {

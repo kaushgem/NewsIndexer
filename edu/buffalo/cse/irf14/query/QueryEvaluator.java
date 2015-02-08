@@ -6,7 +6,6 @@ package edu.buffalo.cse.irf14.query;
 import java.util.ArrayList;
 import java.util.Stack;
 
-import edu.buffalo.cse.irf14.index.IndexReader;
 import edu.buffalo.cse.irf14.index.IndexType;
 import edu.buffalo.cse.irf14.index.IndicesDTO;
 
@@ -57,8 +56,8 @@ public class QueryEvaluator {
 				{
 					// operand
 					ArrayList operandArrList = getDocIdarrayList(qe.term,qe.indexType,indices);
-					 // System.out.println("Index: "+ qe.indexType+ " Operand: "+ qe.term);
-					  // System.out.println("Doc list Size: "+ ((operandArrList==null)?0: operandArrList.size()));
+					// System.out.println("Index: "+ qe.indexType+ " Operand: "+ qe.term);
+					// System.out.println("Doc list Size: "+ ((operandArrList==null)?0: operandArrList.size()));
 					stack.push(operandArrList);
 				}
 
@@ -112,7 +111,7 @@ public class QueryEvaluator {
 	{
 		ArrayList<Integer> rhs = stack.pop( );
 		ArrayList<Integer> lhs =stack.pop( );
-		
+
 		if(lhs== null && rhs== null)
 		{
 			stack.push(new ArrayList<Integer>());
@@ -130,13 +129,13 @@ public class QueryEvaluator {
 			lhs.removeAll(rhs);
 			if(lhs!=null && lhs.size()!=0)
 			{
-			stack.push(lhs);
+				stack.push(lhs);
 			}
 			else
 			{
 				stack.push(new ArrayList<Integer>());
 			}
-			
+
 		}
 	}
 

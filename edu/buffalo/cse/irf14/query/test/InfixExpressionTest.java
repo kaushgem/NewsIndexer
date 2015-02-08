@@ -1,6 +1,6 @@
 package edu.buffalo.cse.irf14.query.test;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 
 import java.util.ArrayList;
 
@@ -13,9 +13,7 @@ import org.junit.Test;
 import edu.buffalo.cse.irf14.index.IndexType;
 import edu.buffalo.cse.irf14.query.InfixExpression;
 import edu.buffalo.cse.irf14.query.Operator;
-import edu.buffalo.cse.irf14.query.Query;
 import edu.buffalo.cse.irf14.query.QueryEntity;
-import edu.buffalo.cse.irf14.query.QueryParser;
 
 public class InfixExpressionTest {
 
@@ -35,8 +33,6 @@ public class InfixExpressionTest {
 	public void tearDown() throws Exception {
 		
 	}
-
-	
 
 	@Test
 	public void testGetInfixExpression() {

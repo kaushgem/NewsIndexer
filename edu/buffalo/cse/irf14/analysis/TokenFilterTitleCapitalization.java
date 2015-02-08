@@ -1,5 +1,9 @@
 package edu.buffalo.cse.irf14.analysis;
 
+/**
+ * @author Kaushik
+ *
+ */
 public class TokenFilterTitleCapitalization extends TokenFilter {
 
 	public TokenFilterTitleCapitalization(TokenStream stream) {

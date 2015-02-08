@@ -53,80 +53,70 @@ public class TFIDFRanking extends Ranking {
 		HashMap<Integer, Float> rankedDocIDs = new HashMap<Integer, Float>();
 		try
 		{
-		float maxWeight = 0;
+			float maxWeight = 0;
 
-		// Iterate for queryTerm in the Query
-
-		for (QueryInfoDTO queryDTOObj : queryBagWords)
-		{
-			String term = queryDTOObj.getQueryTerm();
-			IndexType type = queryDTOObj.getType();
-
-
-			// System.out.println(term);
-
-
-			HashMap<String, HashMap<Integer, String>> indexMap = getIndexMap(type);
-
-			HashMap<Integer, String> postingsMap = null;
-			int noOfDocsTermOccurs = 0;
-			if(indexMap.get(term) != null){
-				postingsMap = indexMap.get(term);
-				noOfDocsTermOccurs = postingsMap.size();
-
-
-				// Calculate IDF
+			// Iterate for queryTerm in the Query
+			for (QueryInfoDTO queryDTOObj : queryBagWords)
+			{
+				String term = queryDTOObj.getQueryTerm();
+				IndexType type = queryDTOObj.getType();
 				// System.out.println(term);
-				int totalDocs = indices.docIDLookup.size();
+				HashMap<String, HashMap<Integer, String>> indexMap = getIndexMap(type);
 
-				float idf = RankCalc.calculateIDF(totalDocs, noOfDocsTermOccurs);
-
-				for (Entry<Integer, String> mapItr : postingsMap.entrySet()) {
-
-					Integer docID = mapItr.getKey();
-
-					// Check for only the DocIDs received after Query evaluation
-					if(!matchingDocIDs.contains(docID)) { continue; }
-
-					String[] str = mapItr.getValue().split(":");
-					int tf = Integer.parseInt(str[0]);
-					float score = RankCalc.calculateTFIDF(tf, idf);
+				HashMap<Integer, String> postingsMap = null;
+				int noOfDocsTermOccurs = 0;
+				if(indexMap.get(term) != null){
+					postingsMap = indexMap.get(term);
+					noOfDocsTermOccurs = postingsMap.size();
 
 
-					int docLen = indices.docLength.get(docID);
-					score = (float) (score/Math.log10(docLen));
-					//System.out.println("Weight = "+docID+":"+score);
+					// Calculate IDF
+					// System.out.println(term);
+					int totalDocs = indices.docIDLookup.size();
 
+					float idf = RankCalc.calculateIDF(totalDocs, noOfDocsTermOccurs);
 
-					if(rankedDocIDs.get(docID)==null){
-						rankedDocIDs.put(docID, score);
+					for (Entry<Integer, String> mapItr : postingsMap.entrySet()) {
+
+						Integer docID = mapItr.getKey();
+
+						// Check for only the DocIDs received after Query evaluation
+						if(!matchingDocIDs.contains(docID)) { continue; }
+
+						String[] str = mapItr.getValue().split(":");
+						int tf = Integer.parseInt(str[0]);
+						float score = RankCalc.calculateTFIDF(tf, idf);
+
+						int docLen = indices.docLength.get(docID);
+						score = (float) (score/Math.log10(docLen));
+						//System.out.println("Weight = "+docID+":"+score);
+
+						if(rankedDocIDs.get(docID)==null){
+							rankedDocIDs.put(docID, score);
+						}
+						else{
+							score += rankedDocIDs.get(docID);
+							rankedDocIDs.put(docID, score);
+						}
+						if(maxWeight < score)
+							maxWeight = score;
+						//System.out.println("Score = "+docID+":"+score);
 					}
-					else{
-						score += rankedDocIDs.get(docID);
-						rankedDocIDs.put(docID, score);
-					}
-					if(maxWeight < score)
-						maxWeight = score;
-					//System.out.println("Score = "+docID+":"+score);
 				}
 			}
-		}
 
-		// Normalization:
-		maxWeight++;
-		for(Entry<Integer, Float> wt:rankedDocIDs.entrySet())
-		{
-			//System.out.println(wt.getValue());
-			wt.setValue(wt.getValue()/maxWeight);
-			//System.out.println(wt.getValue());
-		}
-		
+			// Normalization:
+			maxWeight++;
+			for(Entry<Integer, Float> wt:rankedDocIDs.entrySet())
+			{
+				//System.out.println(wt.getValue());
+				wt.setValue(wt.getValue()/maxWeight);
+				//System.out.println(wt.getValue());
+			}
+
 		}catch(Exception ex){}
-
 		return RankingHelper.sortUsingRank(rankedDocIDs);
 	}
-
-
 }
 
 

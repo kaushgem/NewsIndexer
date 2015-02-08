@@ -57,10 +57,10 @@ public class SearchRunner {
 	String flattenedCorpusDir;
 	String userquery;
 	SpellChecker sp;
-	
-	
+
+
 	/**
-	 * Default (and only public) constuctor
+	 * Default (and only public) constructor
 	 * @param indexDir : The directory where the index resides
 	 * @param corpusDir : Directory where the (flattened) corpus resides
 	 * @param mode : Mode, one of Q or E
@@ -166,7 +166,7 @@ public class SearchRunner {
 				Document d = Parser.parse(finalFilePath);
 				qmo.resultTitle = d.getField(FieldNames.TITLE)[0];
 				qmo.snippet =   findSnippet(fileID,indices);
-				
+
 				//System.out.println(FileName);
 			}
 			// // System.out.println(qmo.toString());
@@ -302,66 +302,66 @@ public class SearchRunner {
 	 */
 	public List<String> getCorrections() {
 		//TODO: IMPLEMENT THIS METHOD IFF SPELLCHECK EXECUTED
-		
+
 		List<String> suggestionsQueryList = new ArrayList<String>();
 		HashMap<String,ArrayList<String>> suggestionsMap = new HashMap<String, ArrayList<String>>();
-		
+
 		try{
-		String extractwordWitheRegex = "[\\w\\:]+";
-		Pattern p = Pattern.compile(extractwordWitheRegex);
-		Matcher m = p.matcher(this.userquery);
-		HashMap<String,String> stemmerMap = new HashMap<String, String>();
-				
-		while(m.find()) {
-			
-			String term = m.group(0);
-			if(!(term.equals("AND") || term.equals("OR")|| term.equals("NOT")))
-			{
-				if(term.contains(":"))
+			String extractwordWitheRegex = "[\\w\\:]+";
+			Pattern p = Pattern.compile(extractwordWitheRegex);
+			Matcher m = p.matcher(this.userquery);
+			HashMap<String,String> stemmerMap = new HashMap<String, String>();
+
+			while(m.find()) {
+
+				String term = m.group(0);
+				if(!(term.equals("AND") || term.equals("OR")|| term.equals("NOT")))
 				{
-					term = term.split(":")[0];
-					
+					if(term.contains(":"))
+					{
+						term = term.split(":")[0];
+
+					}
+					term = term.replace("(", "").replace(")", "").trim();
+					Analyzer analyzerObj = null;
+					Tokenizer tokenizer = new Tokenizer();
+					TokenStream tStream = null;
+					try {
+						tStream = tokenizer.consume(term);
+					} catch (TokenizerException e) {
+						// TODO Auto-generated catch block
+						//e.printStackTrace();
+					}
+					// // // System.out.println("phrase query");
+					analyzerObj = getAnalyzerforIndexType(IndexType.TERM,tStream);
+					try {
+						analyzerObj.increment();
+					} catch (TokenizerException e) {
+						// TODO Auto-generated catch block
+						// e.printStackTrace();
+					}
+					String stemmedTerm = tStream.getTokensAsString();
+					stemmerMap.put(term,stemmedTerm );
+					ArrayList<String> suggestionsList = new ArrayList<String>();
+					suggestionsList.addAll(sp.correct(stemmedTerm));
+
+					suggestionsMap.put(stemmedTerm,suggestionsList);
 				}
-				term = term.replace("(", "").replace(")", "").trim();
-				Analyzer analyzerObj = null;
-				Tokenizer tokenizer = new Tokenizer();
-				TokenStream tStream = null;
-				try {
-					tStream = tokenizer.consume(term);
-				} catch (TokenizerException e) {
-					// TODO Auto-generated catch block
-					//e.printStackTrace();
-				}
-				// // // System.out.println("phrase query");
-				analyzerObj = getAnalyzerforIndexType(IndexType.TERM,tStream);
-				try {
-					analyzerObj.increment();
-				} catch (TokenizerException e) {
-					// TODO Auto-generated catch block
-					// e.printStackTrace();
-				}
-				String stemmedTerm = tStream.getTokensAsString();
-				stemmerMap.put(term,stemmedTerm );
-				ArrayList<String> suggestionsList = new ArrayList<String>();
-				suggestionsList.addAll(sp.correct(stemmedTerm));
-				
-				suggestionsMap.put(stemmedTerm,suggestionsList);
+
 			}
-			
-		}
-		
-		String suggestionQuery = this.userquery;
-		
-		for(Entry<String,String> stemm : stemmerMap.entrySet())
-		{
-			String suggestionWord = stemm.getKey();
-			suggestionQuery = suggestionQuery.replace(suggestionWord,suggestionsMap.get(stemm.getValue()).get(0) );
-		}
-		suggestionsQueryList.add(suggestionQuery);
-		
+
+			String suggestionQuery = this.userquery;
+
+			for(Entry<String,String> stemm : stemmerMap.entrySet())
+			{
+				String suggestionWord = stemm.getKey();
+				suggestionQuery = suggestionQuery.replace(suggestionWord,suggestionsMap.get(stemm.getValue()).get(0) );
+			}
+			suggestionsQueryList.add(suggestionQuery);
+
 		}
 		catch(Exception e){}
-		
+
 		return suggestionsQueryList;
 	}
 
@@ -416,7 +416,7 @@ public class SearchRunner {
 		// System.out.println("rankedDocuments.size()"+rankedDocuments.size());
 		return rankedDocuments;
 	}
-	
+
 	private ArrayList<QueryEntity> getSuggestedInfixTerm(ArrayList<QueryEntity> infixArrayListEntity)
 	{
 		for(QueryEntity qe: infixArrayListEntity)
@@ -464,7 +464,7 @@ public class SearchRunner {
 						//System.out.println("query: "+queryTerm);
 						queryTerm = removeQuorations(queryTerm);
 					}
-					
+
 					// // // System.out.println("operand: "+qe.term);
 					if(queryTerm==null || queryTerm.trim().isEmpty())
 					{

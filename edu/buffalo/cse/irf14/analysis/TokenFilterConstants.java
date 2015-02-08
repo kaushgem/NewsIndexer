@@ -284,7 +284,7 @@ public class TokenFilterConstants {
 		addToStopWordMap("yet", true);
 		addToStopWordMap("you", true);
 		addToStopWordMap("your", true);
-		
+
 		// Accents - Reference - https://raw.githubusercontent.com/lmjabreu/solr-conftemplate/master/mapping-ISOLatin1Accent.txt
 		addToAccentsMap('\u00C0', "A");
 		addToAccentsMap('\u00C1', "A");

@@ -2,7 +2,10 @@ package edu.buffalo.cse.irf14.query;
 
 import java.util.ArrayList;
 import java.util.Stack;
-
+/**
+ * @author Sathish
+ *
+ */
 public class PostfixExpression {
 
 
@@ -52,8 +55,6 @@ public class PostfixExpression {
 	}
 
 
-
-
 	private boolean islowerPrecedence(Operator op1, Operator op2) {
 		// verify if operator op1 is of lower precendence than operator op2
 		switch (op1) {
@@ -69,8 +70,5 @@ public class PostfixExpression {
 		}
 
 	} 
-
-
-
 
 }

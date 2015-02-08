@@ -30,8 +30,6 @@ public class SpellChecker {
 		fillWords(indices.authorIndex);
 		fillWords(indices.categoryIndex);
 		fillWords(indices.placeIndex);
-
-
 	}
 
 	private void fillWords(HashMap<String,HashMap<Integer,String>> index)

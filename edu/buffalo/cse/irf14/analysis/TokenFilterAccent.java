@@ -1,6 +1,9 @@
 package edu.buffalo.cse.irf14.analysis;
 
-
+/**
+ * @author Kaushik
+ *
+ */
 public class TokenFilterAccent extends TokenFilter {
 
 	public TokenFilterAccent(TokenStream stream) {
@@ -18,7 +21,7 @@ public class TokenFilterAccent extends TokenFilter {
 			if(str == null || str.isEmpty())
 				return true;
 			StringBuilder strB = new StringBuilder("");
-			
+
 			if (!str.matches("^\\w*$")) {
 				char[] chArray = str.toCharArray();
 				TokenFilterConstants tConst = TokenFilterConstants.getInstance();

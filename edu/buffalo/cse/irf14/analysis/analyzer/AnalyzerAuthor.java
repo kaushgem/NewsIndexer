@@ -8,7 +8,7 @@ import edu.buffalo.cse.irf14.analysis.TokenStream;
 import edu.buffalo.cse.irf14.analysis.TokenizerException;
 
 /**
- * @author kaush
+ * @author Kaushik
  *
  */
 public class AnalyzerAuthor implements Analyzer {
@@ -34,7 +34,7 @@ public class AnalyzerAuthor implements Analyzer {
 					TokenFilterType.NUMERIC,
 					TokenFilterType.ACCENT
 					//TokenFilterType.STEMMER
-					};
+			};
 			for (TokenFilterType tokenFilType : filterOrder) {
 				tokenFilterObj = factory.getFilterByType(tokenFilType, tStream);
 				while (tokenFilterObj.increment()) {}

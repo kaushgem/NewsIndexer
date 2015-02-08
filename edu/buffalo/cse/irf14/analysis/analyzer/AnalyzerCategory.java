@@ -5,13 +5,13 @@ import edu.buffalo.cse.irf14.analysis.TokenStream;
 import edu.buffalo.cse.irf14.analysis.TokenizerException;
 
 /**
- * @author kaush
+ * @author Kaushik
  *
  */
 public class AnalyzerCategory implements Analyzer {
 
 	TokenStream tStream;
-	
+
 	public AnalyzerCategory(TokenStream tStream) {
 		this.tStream = tStream;
 	}

@@ -6,28 +6,24 @@ package edu.buffalo.cse.irf14.DTO;
 import edu.buffalo.cse.irf14.index.IndexType;
 
 /**
- * @author kaush
+ * @author Kaushik
  *
  */
 public class QueryInfoDTO {
 	private String queryTerm;
 	private IndexType type;
 	private int freq;
-	
-	public QueryInfoDTO ()
-	{
-		
-	}
-	
+
+	public QueryInfoDTO ()	{}
+
 	public QueryInfoDTO (String queryTerm,IndexType type ,int freq)
 	{
 		this.queryTerm = queryTerm;
 		this.type = type;
 		this.freq = freq;
-		
+
 	}
-	
-	
+
 	/**
 	 * @return the queryTerm
 	 */
@@ -64,5 +60,5 @@ public class QueryInfoDTO {
 	public void setFreq(int freq) {
 		this.freq = freq;
 	}
-	
+
 }

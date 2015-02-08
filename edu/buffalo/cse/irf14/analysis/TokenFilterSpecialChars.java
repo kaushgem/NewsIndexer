@@ -2,7 +2,10 @@ package edu.buffalo.cse.irf14.analysis;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
+/**
+ * @author Kaushik
+ *
+ */
 public class TokenFilterSpecialChars extends TokenFilter {
 
 	public TokenFilterSpecialChars(TokenStream stream) {
@@ -17,25 +20,22 @@ public class TokenFilterSpecialChars extends TokenFilter {
 				return false;
 			Token token = tStream.next();
 			String str = token.getTermText();
-			//System.out.println("layoff: "+ str);
 			if(str == null || str.isEmpty())
 				return true;
-			
+
 			// Pattern p = Pattern.compile("[$&+,:;=?@#|`~()]+");
 			// str = str.replaceAll("[^a-zA-Z0-9.-]+", "");
 			str = str.replaceAll("[^a-zA-Z0-9.\\-\\s]+", "");
 			//str = str.replaceAll("[^.-]+", "");
 			// Pattern p = Pattern.compile("[a-zA-Z]*-+[a-zA-Z]*");
-			
-			
-			
+
 			Pattern p = Pattern.compile("[^0-9]+-+[^0-9]*");
 			Matcher m = p.matcher(str);
 			if (m.find()) {
 				str = str.replaceAll("[-]+", "");
 			}
 			str = str.replaceAll("^[.-]+$", "");
-			
+
 			//System.out.println(str);
 			//System.out.println("layoff: "+ str);
 			token.setTermText(str);

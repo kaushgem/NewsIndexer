@@ -1,6 +1,9 @@
 package edu.buffalo.cse.irf14.analysis;
 
-
+/**
+ * @author Kaushik
+ *
+ */
 public class TokenFilterStemmer extends TokenFilter {
 
 	public TokenFilterStemmer(TokenStream stream) {

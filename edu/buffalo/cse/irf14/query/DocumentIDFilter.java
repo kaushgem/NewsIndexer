@@ -60,8 +60,6 @@ public class DocumentIDFilter {
 	}
 
 
-
-
 	private ArrayList<Integer> generateDocIDArray(HashMap<Integer, String> postings) {
 		ArrayList<Integer> arrLst = new ArrayList<Integer>();
 		for (Entry<Integer, String> eItr : postings.entrySet()) {
@@ -69,8 +67,6 @@ public class DocumentIDFilter {
 		}
 		return arrLst;
 	}
-
-
 
 
 	private HashMap<String, HashMap<Integer, String>> getIndexMap(IndexType type)
@@ -88,7 +84,6 @@ public class DocumentIDFilter {
 			return null;
 		}
 	}
-
 
 
 	public ArrayList<Integer> getDocIDArrayListForPhraseQueries(IndexType type, String query) {
@@ -177,6 +172,5 @@ public class DocumentIDFilter {
 		}
 		return filteredDocIDs;
 	}
-
 
 }

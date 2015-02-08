@@ -11,7 +11,7 @@ import edu.buffalo.cse.irf14.analysis.TokenStream;
 import edu.buffalo.cse.irf14.analysis.TokenizerException;
 
 /**
- * @author kaush
+ * @author Kaushik
  *
  */
 public class AnalyzerContent implements Analyzer {
@@ -36,15 +36,15 @@ public class AnalyzerContent implements Analyzer {
 					TokenFilterType.NUMERIC,
 					TokenFilterType.ACCENT
 					//TokenFilterType.STEMMER
-					};
+			};
 			for (TokenFilterType tokenFilType : filterOrder) {
 				tokenFilterObj = factory.getFilterByType(tokenFilType, tStream);
 				while (tokenFilterObj.increment()) {}
 				if(tStream!=null)
-				tStream.reset();
-				
+					tStream.reset();
+
 				//System.out.println("\n\n** "+tokenFilType+" : "+tStream.getTokensAsString());
-				
+
 			}
 		}catch(Exception e){
 			e.printStackTrace();
@@ -53,7 +53,7 @@ public class AnalyzerContent implements Analyzer {
 		}
 		return false;
 	}
-	
+
 	@Override
 	public TokenStream getStream() {
 		return tStream;

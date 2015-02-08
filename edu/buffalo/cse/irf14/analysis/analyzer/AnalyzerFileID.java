@@ -5,7 +5,7 @@ import edu.buffalo.cse.irf14.analysis.TokenStream;
 import edu.buffalo.cse.irf14.analysis.TokenizerException;
 
 /**
- * @author kaush
+ * @author Kaushik
  *
  */
 public class AnalyzerFileID implements Analyzer {

@@ -1,5 +1,9 @@
 package edu.buffalo.cse.irf14.analysis;
 
+/**
+ * @author Kaushik
+ *
+ */
 
 public class TokenFilterStopwords extends TokenFilter {
 
@@ -22,7 +26,6 @@ public class TokenFilterStopwords extends TokenFilter {
 			if (tConst.stopWords.get(str.toLowerCase()) != null)
 				if (tConst.stopWords.get(str.toLowerCase()))
 					str = "";
-			//System.out.println(str);
 			token.setTermText(str);
 		} catch (Exception e) {
 			return false;
